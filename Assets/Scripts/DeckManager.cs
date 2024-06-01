@@ -22,41 +22,39 @@ public class DeckManager : MonoBehaviour
 
     void InitializeDeck()
     {
-        // Ensure the deck has unique cards
-        HashSet<int> uniqueIndices = new HashSet<int>();
+        // Shuffle allCards
+        Shuffle(allCards);
 
-        while (uniqueIndices.Count < 10)
+        // Take the first 10 cards for the deck
+        for (int i = 0; i < Mathf.Min(10, allCards.Count); i++)
         {
-            int randomIndex = Random.Range(0, allCards.Count);
-            uniqueIndices.Add(randomIndex);
-        }
-
-        foreach (int index in uniqueIndices)
-        {
-            deck.Add(allCards[index]);
+            deck.Add(allCards[i]);
         }
     }
 
     void DrawHand()
     {
-        HashSet<int> usedIndices = new HashSet<int>();
+        // Shuffle the deck
+        Shuffle(deck);
 
-        for (int i = 0; i < 5; i++)
+        // Take the first 5 cards for the hand
+        for (int i = 0; i < Mathf.Min(5, deck.Count); i++)
         {
-            int randomIndex;
-
-            // Ensure the hand has unique cards
-            do
-            {
-                randomIndex = Random.Range(0, deck.Count);
-            } while (usedIndices.Contains(randomIndex));
-
-            usedIndices.Add(randomIndex);
-
-            GameObject card = Instantiate(deck[randomIndex], handPositions[i].position, Quaternion.identity);
+            GameObject card = Instantiate(deck[i], handPositions[i].position, Quaternion.identity);
             var cardClickHandler = card.GetComponent<CardClickHandler>();
             cardClickHandler.confirmButton = confirmButton;  // Assign the confirm button
             hand.Add(card);
+        }
+    }
+
+    void Shuffle(List<GameObject> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int randomIndex = Random.Range(i, list.Count);
+            GameObject temp = list[randomIndex];
+            list[randomIndex] = list[i];
+            list[i] = temp;
         }
     }
 }

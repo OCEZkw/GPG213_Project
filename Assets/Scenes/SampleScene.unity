@@ -780,6 +780,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1280359852}
   - component: {fileID: 1280359853}
+  - component: {fileID: 1280359854}
   m_Layer: 0
   m_Name: DeckManager
   m_TagString: Untagged
@@ -832,9 +833,24 @@ MonoBehaviour:
   - {fileID: 2145705643}
   deck: []
   hand: []
-  confirmButton: {fileID: 0}
+  confirmButton: {fileID: 632543664}
   confirmedCardPosition: {fileID: 1870931658}
-  confirmHandler: {fileID: 0}
+  confirmHandler: {fileID: 1280359854}
+--- !u!114 &1280359854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280359851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f613d590b2f8ee14d93951336cc6588e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  confirmedCardPosition: {fileID: 1870931658}
+  confirmButton: {fileID: 632543664}
+  deckManager: {fileID: 1280359853}
 --- !u!1 &1364926250
 GameObject:
   m_ObjectHideFlags: 0

@@ -67,18 +67,29 @@ public class ConfirmHandler : MonoBehaviour
 
             if (deckManager.deck.Count > 0)
             {
-                int randomIndex = Random.Range(0, deckManager.deck.Count);
-                GameObject newCard = Instantiate(deckManager.deck[randomIndex], deckManager.handPositions[cardIndex].position, Quaternion.identity);
-                var cardClickHandler = newCard.GetComponent<CardClickHandler>();
-                cardClickHandler.confirmButton = confirmButton;  // Assign the confirm button
-                deckManager.hand.Insert(cardIndex, newCard);
-                deckManager.deck.RemoveAt(randomIndex);
+                List<GameObject> availableCards = new List<GameObject>(deckManager.allCards);
 
-                // Show all cards again
-                foreach (GameObject card in deckManager.hand)
+                // Remove cards that are already in hand (including the used card)
+                foreach (var card in deckManager.hand)
                 {
-                    card.SetActive(true);
+                    availableCards.Remove(card);
                 }
+
+                // Draw a new card from the available cards
+                if (availableCards.Count > 0)
+                {
+                    int randomIndex = Random.Range(0, availableCards.Count);
+                    GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.handPositions[cardIndex].position, Quaternion.identity);
+                    var cardClickHandler = newCard.GetComponent<CardClickHandler>();
+                    cardClickHandler.confirmButton = confirmButton;  // Assign the confirm button
+                    deckManager.hand.Insert(cardIndex, newCard);
+                }
+            }
+
+            // Show all cards again
+            foreach (GameObject card in deckManager.hand)
+            {
+                card.SetActive(true);
             }
         }
     }
