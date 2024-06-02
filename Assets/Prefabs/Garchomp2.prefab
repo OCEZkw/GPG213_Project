@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8909409459665628834}
   - component: {fileID: 8339547405885881183}
   - component: {fileID: -1982962613337770064}
+  - component: {fileID: -2639531411542854380}
   m_Layer: 0
   m_Name: Garchomp2
   m_TagString: Card
@@ -144,3 +145,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmButton: {fileID: 0}
+--- !u!114 &-2639531411542854380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41378519186766993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectType: 0
+  effectValue: 10
