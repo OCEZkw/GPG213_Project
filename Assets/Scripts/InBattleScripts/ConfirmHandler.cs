@@ -32,6 +32,7 @@ public class ConfirmHandler : MonoBehaviour
             playerInstance = Instantiate(playerPrefab, new Vector3(-2, 0, 0), Quaternion.identity);
         }
     }
+
     void ConfirmCard()
     {
         if (CardClickHandler.selectedCard != null)

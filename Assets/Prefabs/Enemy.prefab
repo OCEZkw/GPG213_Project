@@ -100,8 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
-  defense: 0
-  magicDefense: 0
+  defense: 40
+  magicDefense: 40
   healthSlider: {fileID: 2267409602215981154}
 --- !u!1001 &692698505038973792
 PrefabInstance:

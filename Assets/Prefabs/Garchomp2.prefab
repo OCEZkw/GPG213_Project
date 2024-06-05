@@ -158,4 +158,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectType: 0
-  effectValue: 10
+  effectValue: 64

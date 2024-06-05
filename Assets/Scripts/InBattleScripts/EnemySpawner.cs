@@ -16,9 +16,9 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        if (enemyPrefab != null && enemySpawnPoint != null)
+        if (enemyPrefab != null && enemySpawnPoint != null && enemyInstance == null)
         {
-            enemyInstance = Instantiate(enemyPrefab, enemySpawnPoint[1].position, Quaternion.identity);
+            enemyInstance = Instantiate(enemyPrefab, enemySpawnPoint[0].position, Quaternion.identity);
         }
     }
 
