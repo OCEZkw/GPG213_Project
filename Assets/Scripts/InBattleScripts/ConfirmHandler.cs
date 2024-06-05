@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class ConfirmHandler : MonoBehaviour
 {
     public Transform confirmedCardPosition;  // Position where the confirmed card will be displayed
     public Button confirmButton;  // Reference to the confirm button
     public DeckManager deckManager;  // Reference to the DeckManager
-    public GameObject enemyPrefab;  // Reference to the enemy prefab
     public GameObject playerPrefab;  // Reference to the player prefab
-    private GameObject enemyInstance;  // Instance of the enemy
+    public EnemySpawner enemySpawner; // Reference to the EnemySpawner script
     private GameObject playerInstance;  // Instance of the player
+    private GameObject enemyInstance;  // Instance of the enemy
 
     void Start()
     {
@@ -19,16 +20,9 @@ public class ConfirmHandler : MonoBehaviour
         confirmButton.gameObject.SetActive(false);
 
         // Spawn the enemy and player instances
-        SpawnEnemy();
+        enemySpawner.SpawnEnemy();
+        enemyInstance = enemySpawner.GetEnemyInstance(); // Get reference to the enemy instance
         SpawnPlayer();
-    }
-
-    void SpawnEnemy()
-    {
-        if (enemyPrefab != null)
-        {
-            enemyInstance = Instantiate(enemyPrefab, new Vector3(2, 0, 0), Quaternion.identity);
-        }
     }
 
     void SpawnPlayer()
@@ -38,7 +32,6 @@ public class ConfirmHandler : MonoBehaviour
             playerInstance = Instantiate(playerPrefab, new Vector3(-2, 0, 0), Quaternion.identity);
         }
     }
-
     void ConfirmCard()
     {
         if (CardClickHandler.selectedCard != null)

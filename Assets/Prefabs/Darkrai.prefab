@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7811838616120180438}
   - component: {fileID: 3332125630465746527}
   - component: {fileID: -7503779196663498658}
+  - component: {fileID: 869131480001722219}
   m_Layer: 0
   m_Name: Darkrai
   m_TagString: Card
@@ -144,3 +145,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmButton: {fileID: 0}
+--- !u!114 &869131480001722219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322704796960998920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectType: 1
+  effectValue: 15

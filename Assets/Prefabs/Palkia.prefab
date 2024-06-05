@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 277435507776992075}
   - component: {fileID: 9106806834462745888}
   - component: {fileID: -3837282681906268495}
+  - component: {fileID: -7131308387454879414}
   m_Layer: 0
   m_Name: Palkia
   m_TagString: Card
@@ -144,3 +145,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmButton: {fileID: 0}
+--- !u!114 &-7131308387454879414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364158192161390105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectType: 0
+  effectValue: 0

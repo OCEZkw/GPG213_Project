@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2147710343753939063}
   - component: {fileID: -124912130647884920}
   - component: {fileID: 1011548753930644984}
+  - component: {fileID: 986071663510404449}
   m_Layer: 0
   m_Name: Yveltal
   m_TagString: Card
@@ -144,3 +145,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmButton: {fileID: 0}
+--- !u!114 &986071663510404449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6618350786322986621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectType: 0
+  effectValue: 0
