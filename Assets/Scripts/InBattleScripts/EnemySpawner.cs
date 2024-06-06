@@ -5,25 +5,29 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;  // Reference to the enemy prefab
-    public Transform[] enemySpawnPoint; // Reference to the enemy spawn point
+    public Transform[] enemySpawnPoints; // Reference to the enemy spawn points
 
-    private GameObject enemyInstance;  // Instance of the enemy
+    private List<GameObject> enemyInstances = new List<GameObject>();  // List of enemy instances
 
     void Start()
     {
-        SpawnEnemy();
+        // SpawnEnemies();
     }
 
-    public void SpawnEnemy()
+    public void SpawnEnemies()
     {
-        if (enemyPrefab != null && enemySpawnPoint != null && enemyInstance == null)
+        if (enemyPrefab != null && enemySpawnPoints != null )
         {
-            enemyInstance = Instantiate(enemyPrefab, enemySpawnPoint[0].position, Quaternion.identity);
+            for (int i = 0; i < enemySpawnPoints.Length; i++)
+            {
+                GameObject enemyInstance = Instantiate(enemyPrefab, enemySpawnPoints[i].position, Quaternion.identity);
+                enemyInstances.Add(enemyInstance);
+            }
         }
     }
 
-    public GameObject GetEnemyInstance()
+    public List<GameObject> GetEnemyInstances()
     {
-        return enemyInstance;
+        return enemyInstances;
     }
 }

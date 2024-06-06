@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
-  defense: 0
+  defense: 20
   magicDefense: 20
   healthSlider: {fileID: 0}
 --- !u!1001 &6307027986522392424

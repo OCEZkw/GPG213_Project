@@ -11,14 +11,20 @@ public class PlayerSpawner : MonoBehaviour
 
     void Start()
     {
-        SpawnPlayer();
+        Debug.Log("PlayerSpawner Start() called.");
+       // SpawnPlayer();
     }
 
     public void SpawnPlayer()
     {
-        if (playerPrefab != null && playerSpawnPoint != null)
+        Debug.Log("Spawning player...");
+        if (playerPrefab != null && playerSpawnPoint != null && playerInstance == null)
         {
             playerInstance = Instantiate(playerPrefab, playerSpawnPoint.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("Player prefab or spawn point not set in PlayerSpawner.");
         }
     }
 

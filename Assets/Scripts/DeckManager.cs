@@ -9,7 +9,6 @@ public class DeckManager : MonoBehaviour
     public Transform[] handPositions;  // Positions where the cards will be displayed
     public List<GameObject> deck = new List<GameObject>();  // Player's selected deck
     public List<GameObject> hand = new List<GameObject>();  // Cards currently in hand
-    public Button confirmButton;  // Reference to the confirm button
     public Transform confirmedCardPosition;  // Position for the confirmed card
     public ConfirmHandler confirmHandler;  // Reference to the ConfirmHandler
 
@@ -42,7 +41,6 @@ public class DeckManager : MonoBehaviour
         {
             GameObject card = Instantiate(deck[i], handPositions[i].position, Quaternion.identity);
             var cardClickHandler = card.GetComponent<CardClickHandler>();
-            cardClickHandler.confirmButton = confirmButton;  // Assign the confirm button
             hand.Add(card);
         }
     }
