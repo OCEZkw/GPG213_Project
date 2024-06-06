@@ -8,8 +8,11 @@ public class Player : MonoBehaviour
 {
     public int maxHealth = 100;
     public int currentHealth;
-    public int defense;
+    public int defense = 20; // Initial defense value
+    public int magicDefense = 20; // Initial magic defense value
     public Slider healthSlider;
+
+    private Coroutine healthSliderCoroutine;
 
     void Start()
     {
@@ -28,16 +31,28 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int actualDamage = Mathf.Max(damage - defense, 0);
+        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
         currentHealth -= actualDamage;
         if (currentHealth < 0)
         {
             currentHealth = 0;
         }
-        if (healthSlider != null)
+        UpdateHealthSlider();
+        if (currentHealth == 0)
         {
-            healthSlider.value = currentHealth;
+            Die();
         }
+    }
+
+    public void TakeMagicDamage(int magicDamage)
+    {
+        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
+        currentHealth -= actualMagicDamage;
+        if (currentHealth < 0)
+        {
+            currentHealth = 0;
+        }
+        UpdateHealthSlider();
         if (currentHealth == 0)
         {
             Die();
@@ -51,15 +66,43 @@ public class Player : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-        if (healthSlider != null)
-        {
-            healthSlider.value = currentHealth;
-        }
+        UpdateHealthSlider();
     }
 
     public void IncreaseDefense(int amount)
     {
         defense += amount;
+    }
+
+    public void IncreaseMagicDefense(int amount)
+    {
+        magicDefense += amount;
+    }
+
+    void UpdateHealthSlider()
+    {
+        if (healthSliderCoroutine != null)
+        {
+            StopCoroutine(healthSliderCoroutine);
+        }
+        healthSliderCoroutine = StartCoroutine(SmoothHealthSliderUpdate());
+    }
+
+    IEnumerator SmoothHealthSliderUpdate()
+    {
+        float elapsedTime = 0f;
+        float duration = 0.5f; // Duration of the animation
+        float startValue = healthSlider.value;
+        float endValue = currentHealth;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            healthSlider.value = Mathf.Lerp(startValue, endValue, elapsedTime / duration);
+            yield return null;
+        }
+
+        healthSlider.value = endValue;
     }
 
     void Die()

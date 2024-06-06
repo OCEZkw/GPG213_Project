@@ -9,8 +9,9 @@ public class ConfirmHandler : MonoBehaviour
     public Transform confirmedCardPosition;  // Position where the confirmed card will be displayed
     public Button confirmButton;  // Reference to the confirm button
     public DeckManager deckManager;  // Reference to the DeckManager
-    public GameObject playerPrefab;  // Reference to the player prefab
     public EnemySpawner enemySpawner; // Reference to the EnemySpawner script
+    public PlayerSpawner playerSpawner; // Reference to the PlayerSpawner script
+
     private GameObject playerInstance;  // Instance of the player
     private GameObject enemyInstance;  // Instance of the enemy
 
@@ -22,15 +23,8 @@ public class ConfirmHandler : MonoBehaviour
         // Spawn the enemy and player instances
         enemySpawner.SpawnEnemy();
         enemyInstance = enemySpawner.GetEnemyInstance(); // Get reference to the enemy instance
-        SpawnPlayer();
-    }
-
-    void SpawnPlayer()
-    {
-        if (playerPrefab != null)
-        {
-            playerInstance = Instantiate(playerPrefab, new Vector3(-2, 0, 0), Quaternion.identity);
-        }
+        playerSpawner.SpawnPlayer();
+        playerInstance = playerSpawner.GetPlayerInstance(); // Get reference to the player instance
     }
 
     void ConfirmCard()
@@ -73,8 +67,41 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
+        // Enemy attacks the player after the card's effect is applied
+        yield return new WaitForSeconds(1f);
+        EnemyAttack();
+
+        // Wait for the enemy attack animation/effect
+        yield return new WaitForSeconds(1f);
+
+        // Start the next round
+        StartNextRound();
+
         // Replace the used card with a new card from the deck
         ReplaceCardInHand(confirmedCard);
+    }
+
+    void EnemyAttack()
+    {
+        if (enemyInstance != null && playerInstance != null)
+        {
+            // Assuming the enemy has a method to attack the player
+            Enemy enemy = enemyInstance.GetComponent<Enemy>();
+            Player player = playerInstance.GetComponent<Player>();
+            if (enemy != null && player != null)
+            {
+                int damage = enemy.CalculateDamage();  // Assume CalculateDamage() method exists in the Enemy script
+                player.TakeDamage(damage);
+                Debug.Log("Enemy attacked player for " + damage + " damage.");
+            }
+        }
+    }
+
+    void StartNextRound()
+    {
+        // Reset card positions, enable interactions, and show the confirm button
+        ShowAllCards();
+        confirmButton.gameObject.SetActive(true);
     }
 
     void HideOtherCards()
@@ -86,6 +113,15 @@ public class ConfirmHandler : MonoBehaviour
             {
                 card.SetActive(false);
             }
+        }
+    }
+
+    void ShowAllCards()
+    {
+        GameObject[] allCards = GameObject.FindGameObjectsWithTag("Card");
+        foreach (GameObject card in allCards)
+        {
+            card.SetActive(true);
         }
     }
 

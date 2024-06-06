@@ -7,19 +7,17 @@ public class Enemy : MonoBehaviour
 {
     public int maxHealth = 100;
     public int currentHealth;
-    public int defense = 20; // Initial defense value
-    public int magicDefense = 20; // Initial magic defense value
+    public int defense;
+    public int magicDefense;
+    public int attackDamage; // Add this variable for the enemy's attack damage
     public Slider healthSlider;
-
-    private Coroutine healthSliderCoroutine;
 
     void Start()
     {
-        // Find the slider component in the child objects
         healthSlider = GetComponentInChildren<Slider>();
-
-        // Initialize health
         currentHealth = maxHealth;
+        defense = 20;  // Initial defense value
+        magicDefense = 20;  // Initial magic defense value
 
         if (healthSlider != null)
         {
@@ -28,30 +26,66 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public int CalculateDamage()
+    {
+        // Calculate and return the damage dealt by the enemy
+        return attackDamage;
+    }
+
     public void TakeDamage(int damage)
     {
-        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
+        int actualDamage = Mathf.Max(damage * 100 / (100 + defense), 0);
+        StartCoroutine(UpdateHealthSlider(currentHealth, currentHealth - actualDamage));
         currentHealth -= actualDamage;
         if (currentHealth < 0)
         {
             currentHealth = 0;
         }
-        UpdateHealthSlider();
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
         if (currentHealth == 0)
         {
             Die();
         }
     }
 
+    IEnumerator UpdateHealthSlider(int oldHealth, int newHealth)
+    {
+        float elapsedTime = 0f;
+        float duration = 0.5f; // Duration of the health slider update
+
+        while (elapsedTime < duration)
+        {
+            currentHealth = (int)Mathf.Lerp(oldHealth, newHealth, elapsedTime / duration);
+            if (healthSlider != null)
+            {
+                healthSlider.value = currentHealth;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        currentHealth = newHealth;
+        if (healthSlider != null)
+        {
+            healthSlider.value = newHealth;
+        }
+    }
+
     public void TakeMagicDamage(int magicDamage)
     {
-        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
+        int actualMagicDamage = Mathf.Max(magicDamage * 100 / (100 + magicDefense), 0);
+        StartCoroutine(UpdateHealthSlider(currentHealth, currentHealth - actualMagicDamage));
         currentHealth -= actualMagicDamage;
         if (currentHealth < 0)
         {
             currentHealth = 0;
         }
-        UpdateHealthSlider();
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
         if (currentHealth == 0)
         {
             Die();
@@ -65,7 +99,7 @@ public class Enemy : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-        UpdateHealthSlider();
+        StartCoroutine(UpdateHealthSlider(currentHealth - amount, currentHealth));
     }
 
     public void IncreaseDefense(int amount)
@@ -76,32 +110,6 @@ public class Enemy : MonoBehaviour
     public void IncreaseMagicDefense(int amount)
     {
         magicDefense += amount;
-    }
-
-    void UpdateHealthSlider()
-    {
-        if (healthSliderCoroutine != null)
-        {
-            StopCoroutine(healthSliderCoroutine);
-        }
-        healthSliderCoroutine = StartCoroutine(SmoothHealthSliderUpdate());
-    }
-
-    IEnumerator SmoothHealthSliderUpdate()
-    {
-        float elapsedTime = 0f;
-        float duration = 0.5f; // Duration of the animation
-        float startValue = healthSlider.value;
-        float endValue = currentHealth;
-
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            healthSlider.value = Mathf.Lerp(startValue, endValue, elapsedTime / duration);
-            yield return null;
-        }
-
-        healthSlider.value = endValue;
     }
 
     void Die()

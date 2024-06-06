@@ -48,6 +48,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   defense: 0
+  magicDefense: 20
   healthSlider: {fileID: 0}
 --- !u!1001 &6307027986522392424
 PrefabInstance:
@@ -57,6 +58,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4993111342461428546}
     m_Modifications:
+    - target: {fileID: 1651555095146298114, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2727178064059984850, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 3026222995343814081, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 3026222995343814081, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 5622749377818726829, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -160,6 +177,10 @@ PrefabInstance:
     - target: {fileID: 6946760861353123253, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7253853577810462309, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 40
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
