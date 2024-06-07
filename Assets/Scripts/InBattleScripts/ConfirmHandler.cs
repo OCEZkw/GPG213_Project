@@ -94,6 +94,8 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
+        yield return new WaitForSeconds(2f);
+
         // Disable the confirmed card after its effect is applied
         confirmedCard.SetActive(false);
         Debug.Log("Confirmed card disabled.");

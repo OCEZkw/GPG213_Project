@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 852db94555ed4f14f88153b40bc8076b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  confirmButton: {fileID: 0}
+  buttonManager: {fileID: 0}
 --- !u!114 &2731981309040273176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,5 +157,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectType: 0
-  effectValue: 0
+  effectType: 3
+  effectValue: 10
