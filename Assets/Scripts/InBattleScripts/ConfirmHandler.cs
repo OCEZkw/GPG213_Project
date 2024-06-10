@@ -32,18 +32,15 @@ public class ConfirmHandler : MonoBehaviour
 
     void Start()
     {
-        // Spawn the enemy instances
-        enemySpawner.SpawnEnemies();
-        List<GameObject> enemyInstances = enemySpawner.GetEnemyInstances();
-
-        // Assuming you only need one enemy instance for now
-        if (enemyInstances.Count > 0)
+        // Ensure waves are managed by WaveManager
+        WaveManager waveManager = FindObjectOfType<WaveManager>();
+        if (waveManager != null)
         {
-            enemyInstance = enemyInstances[0]; // Get reference to the first enemy instance
+            waveManager.StartNextWave();
         }
         else
         {
-            Debug.LogWarning("No enemy instances spawned.");
+            Debug.LogWarning("WaveManager not found.");
         }
 
         // Spawn the player instance
@@ -136,6 +133,9 @@ public class ConfirmHandler : MonoBehaviour
         selectedEnemy = null;
         // Reset card positions, enable interactions, and show the confirm button
         ShowAllCards();
+
+        // Start the next round in RoundManager
+        RoundManager.Instance.StartNextRound();
     }
 
     void HideOtherCards()

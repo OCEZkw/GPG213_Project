@@ -26,6 +26,20 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    public void AddEnemyInstance(GameObject enemyInstance)
+    {
+        enemyInstances.Add(enemyInstance);
+    }
+
+    public void RemoveEnemyInstance(GameObject enemyInstance)
+    {
+        enemyInstances.Remove(enemyInstance);
+        if (enemyInstance != null)
+        {
+            Destroy(enemyInstance);
+        }
+    }
+
     public List<GameObject> GetEnemyInstances()
     {
         return enemyInstances;

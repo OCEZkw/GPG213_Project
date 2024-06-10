@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public int defense = 20; // Initial defense value
     public int magicDefense = 20; // Initial magic defense value
     public Slider healthSlider;
+    public int currentCost;
 
     private Coroutine healthSliderCoroutine;
 
@@ -27,6 +28,15 @@ public class Player : MonoBehaviour
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
+
+        // Initialize cost
+        currentCost = RoundManager.Instance.playerCost;
+    }
+
+    public void UpdateCost(int newCost)
+    {
+        currentCost = newCost;
+        // Update any UI elements or other logic related to cost here
     }
 
     public void TakeDamage(int damage)

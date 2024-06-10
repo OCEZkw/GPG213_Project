@@ -172,6 +172,12 @@ public class Enemy : MonoBehaviour
     void Die()
     {
         Debug.Log("Enemy died!");
+        WaveManager waveManager = FindObjectOfType<WaveManager>();
+        if (waveManager != null)
+        {
+            waveManager.OnEnemyDefeated();
+        }
+        FindObjectOfType<EnemySpawner>().RemoveEnemyInstance(gameObject);
         Destroy(gameObject);
     }
 }
