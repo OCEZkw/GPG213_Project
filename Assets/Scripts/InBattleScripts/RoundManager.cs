@@ -28,17 +28,19 @@ public class RoundManager : MonoBehaviour
     void Start()
     {
         UpdateUI();
+        player.UpdateCost(playerCost); // Initialize player cost
     }
 
     public void StartNextRound()
     {
         currentRound++;
-        playerCost++;
+        playerCost++; // Increase the total cost available
+        player.UpdateCost(playerCost); // Reset player's current cost to the new total cost
+        player.ResetCost(); // Reset player's current cost to full
         UpdateUI();
-        player.UpdateCost(playerCost); // Assume Player has a method to update the cost
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         if (roundText != null)
         {
@@ -47,7 +49,7 @@ public class RoundManager : MonoBehaviour
 
         if (costText != null)
         {
-            costText.text = "Cost: " + playerCost;
+            costText.text = "Costs: " + player.currentCost + "/" + playerCost;
         }
     }
 }

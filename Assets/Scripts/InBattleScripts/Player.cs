@@ -8,8 +8,8 @@ public class Player : MonoBehaviour
 {
     public int maxHealth = 100;
     public int currentHealth;
-    public int defense = 20; // Initial defense value
-    public int magicDefense = 20; // Initial magic defense value
+    public int defense = 20;
+    public int magicDefense = 20;
     public Slider healthSlider;
     public int currentCost;
 
@@ -17,10 +17,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        // Find the slider component in the child objects
         healthSlider = GetComponentInChildren<Slider>();
-
-        // Initialize health
         currentHealth = maxHealth;
 
         if (healthSlider != null)
@@ -29,14 +26,26 @@ public class Player : MonoBehaviour
             healthSlider.value = currentHealth;
         }
 
-        // Initialize cost
         currentCost = RoundManager.Instance.playerCost;
     }
+
+    public bool HasEnoughCost(int cost)
+    {
+        return RoundManager.Instance.playerCost >= cost;
+    }
+    
 
     public void UpdateCost(int newCost)
     {
         currentCost = newCost;
         // Update any UI elements or other logic related to cost here
+        RoundManager.Instance.UpdateUI();
+    }
+
+    public void ResetCost()
+    {
+        currentCost = RoundManager.Instance.playerCost;
+        RoundManager.Instance.UpdateUI();
     }
 
     public void TakeDamage(int damage)
@@ -101,7 +110,7 @@ public class Player : MonoBehaviour
     IEnumerator SmoothHealthSliderUpdate()
     {
         float elapsedTime = 0f;
-        float duration = 0.5f; // Duration of the animation
+        float duration = 0.5f;
         float startValue = healthSlider.value;
         float endValue = currentHealth;
 

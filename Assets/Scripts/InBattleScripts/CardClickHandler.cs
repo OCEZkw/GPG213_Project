@@ -12,11 +12,15 @@ public class CardClickHandler : MonoBehaviour
 
     public static GameObject selectedCard;
     public ButtonManager buttonManager;  // Reference to the ButtonManager
+    public RoundManager roundManager;    // Reference to the RoundManager
+    private CardEffect cardEffect;       // Reference to the CardEffect
 
     void Start()
     {
         originalPosition = transform.position;
         buttonManager = FindObjectOfType<ButtonManager>(); // Initialize buttonManager
+        roundManager = FindObjectOfType<RoundManager>();   // Initialize roundManager
+        cardEffect = GetComponent<CardEffect>();           // Initialize cardEffect
     }
 
     void OnMouseDown()
@@ -46,6 +50,9 @@ public class CardClickHandler : MonoBehaviour
         buttonManager.ShowSelectTargetButton(true);
         selectedCard = gameObject;
 
+        // Update the cost UI
+        UpdateCostUI();
+
         // Show all reticles on enemies
         ShowAllReticles(true);
     }
@@ -64,6 +71,9 @@ public class CardClickHandler : MonoBehaviour
         {
             buttonManager.ShowSelectTargetButton(false);
             buttonManager.ShowConfirmButton(false);
+
+            // Reset cost UI
+            roundManager.UpdateUI();
         }
 
         // Hide all reticles on enemies
@@ -76,6 +86,15 @@ public class CardClickHandler : MonoBehaviour
         foreach (Enemy enemy in enemies)
         {
             enemy.ShowReticle(show);
+        }
+    }
+
+    private void UpdateCostUI()
+    {
+        if (cardEffect != null && roundManager != null && roundManager.costText != null)
+        {
+            int remainingCost = roundManager.playerCost - cardEffect.cost;
+            roundManager.costText.text = $"Costs: {remainingCost}/{roundManager.playerCost}";
         }
     }
 }

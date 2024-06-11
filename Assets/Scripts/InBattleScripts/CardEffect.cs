@@ -6,6 +6,7 @@ public class CardEffect : MonoBehaviour
 {
     public CardEffectType effectType;
     public int effectValue;
+    public int cost; // Add cost property
 
     public void ApplyEffect(GameObject target)
     {
