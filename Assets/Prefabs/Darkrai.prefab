@@ -145,6 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonManager: {fileID: 0}
+  roundManager: {fileID: 0}
 --- !u!114 &869131480001722219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdff16898d82b21499db7c65915bdc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTypes: 
-  effectValues: 
+  effectType: 0
+  effectValue: 82
   cost: 2

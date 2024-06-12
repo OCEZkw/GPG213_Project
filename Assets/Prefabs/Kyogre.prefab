@@ -159,5 +159,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectType: 0
-  effectValue: 0
+  effectValue: 76
   cost: 2
