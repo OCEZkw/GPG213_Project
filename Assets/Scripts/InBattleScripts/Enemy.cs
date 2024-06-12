@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,8 +14,10 @@ public class Enemy : MonoBehaviour
     public Slider healthSlider;
     public GameObject reticle;  // Reference to the reticle GameObject
 
+    public GameObject damageTextPrefab;  // Reference to the damage text prefab
+
     private bool isSelected = false;
-    [SerializeField]private ButtonManager buttonManager;
+    [SerializeField] private ButtonManager buttonManager;
 
     void Start()
     {
@@ -96,6 +99,8 @@ public class Enemy : MonoBehaviour
         {
             Die();
         }
+
+        ShowDamageText(damage);  // Show damage text after updating health
     }
 
     public void TakeMagicDamage(int magicDamage)
@@ -119,6 +124,8 @@ public class Enemy : MonoBehaviour
         {
             Die();
         }
+
+        ShowDamageText(magicDamage);  // Show damage text after updating health
     }
 
     IEnumerator UpdateHealthSlider(int oldHealth, int newHealth)
@@ -179,5 +186,19 @@ public class Enemy : MonoBehaviour
         }
         FindObjectOfType<EnemySpawner>().RemoveEnemyInstance(gameObject);
         Destroy(gameObject);
+    }
+
+    void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null)
+        {
+            GameObject damageTextInstance = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, transform);
+            TextMeshProUGUI damageText = damageTextInstance.GetComponent<TextMeshProUGUI>();
+            if (damageText != null)
+            {
+                damageText.text = damage.ToString();
+            }
+            Destroy(damageTextInstance, 1f); // Destroy the text after 1 second
+        }
     }
 }

@@ -107,6 +107,7 @@ MonoBehaviour:
   attackDamage: 5
   healthSlider: {fileID: 2267409602215981154}
   reticle: {fileID: 8311896794162698830}
+  damageTextPrefab: {fileID: 6735584358987700647, guid: fc91a597c69bd284f8b8c324bb508e15, type: 3}
   buttonManager: {fileID: 0}
 --- !u!61 &6412463970114718845
 BoxCollider2D:
