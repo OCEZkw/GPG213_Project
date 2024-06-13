@@ -85,9 +85,8 @@ public class ConfirmHandler : MonoBehaviour
         {
             cardEffect.ApplyEffect(selectedEnemy.gameObject);
         }
-
-        yield return new WaitForSeconds(2f);
         confirmedCard.SetActive(false);
+        yield return new WaitForSeconds(2f);
 
         foreach (GameObject enemy in enemySpawner.GetEnemyInstances())
         {

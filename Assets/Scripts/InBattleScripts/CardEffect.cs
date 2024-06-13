@@ -56,4 +56,9 @@ public class CardEffect : MonoBehaviour
                 break;
         }
     }
+
+    public bool IsDefenseOrHealCard()
+    {
+        return effectType == CardEffectType.Healing || effectType == CardEffectType.Defense;
+    }
 }

@@ -91,7 +91,7 @@ public class Enemy : MonoBehaviour
         {
             newHealth = 0;
         }
-
+        ShowDamageText(damage);  // Show damage text after updating health
         yield return StartCoroutine(UpdateHealthSlider(currentHealth, newHealth));
 
         currentHealth = newHealth;
@@ -100,7 +100,7 @@ public class Enemy : MonoBehaviour
             Die();
         }
 
-        ShowDamageText(damage);  // Show damage text after updating health
+
     }
 
     public void TakeMagicDamage(int magicDamage)
@@ -116,7 +116,7 @@ public class Enemy : MonoBehaviour
         {
             newHealth = 0;
         }
-
+        ShowDamageText(magicDamage);  // Show damage text after updating health
         yield return StartCoroutine(UpdateHealthSlider(currentHealth, newHealth));
 
         currentHealth = newHealth;
@@ -125,7 +125,7 @@ public class Enemy : MonoBehaviour
             Die();
         }
 
-        ShowDamageText(magicDamage);  // Show damage text after updating health
+
     }
 
     IEnumerator UpdateHealthSlider(int oldHealth, int newHealth)
@@ -192,13 +192,37 @@ public class Enemy : MonoBehaviour
     {
         if (damageTextPrefab != null)
         {
-            GameObject damageTextInstance = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, transform);
-            TextMeshProUGUI damageText = damageTextInstance.GetComponent<TextMeshProUGUI>();
+            Vector3 spawnPosition = transform.position + new Vector3(0, 1, 0);
+            GameObject damageTextInstance = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity, transform);
+            TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
             if (damageText != null)
             {
                 damageText.text = damage.ToString();
             }
-            Destroy(damageTextInstance, 1f); // Destroy the text after 1 second
+            StartCoroutine(AnimateDamageText(damageTextInstance));
         }
+    }
+
+    IEnumerator AnimateDamageText(GameObject damageTextInstance)
+    {
+        TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
+        Vector3 initialPosition = damageTextInstance.transform.position;
+        Vector3 targetPosition = initialPosition + new Vector3(0, 1, 0);
+        float duration = 1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            damageTextInstance.transform.position = Vector3.Lerp(initialPosition, targetPosition, t);
+            Color color = damageText.color;
+            color.a = Mathf.Lerp(1, 0, t);
+            damageText.color = color;
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(damageTextInstance);
     }
 }

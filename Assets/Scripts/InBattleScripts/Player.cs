@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 
 public class Player : MonoBehaviour
@@ -12,12 +13,16 @@ public class Player : MonoBehaviour
     public int magicDefense = 20;
     public Slider healthSlider;
     public int currentCost;
+    public GameObject damageTextPrefab;
+    public TextMeshProUGUI healthText;
+    public GameObject reticle;
 
     private Coroutine healthSliderCoroutine;
 
     void Start()
     {
         healthSlider = GetComponentInChildren<Slider>();
+        healthText = healthSlider.GetComponentInChildren<TextMeshProUGUI>();  // Assuming TextMeshProUGUI is a child of the Slider
         currentHealth = maxHealth;
 
         if (healthSlider != null)
@@ -25,8 +30,9 @@ public class Player : MonoBehaviour
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
-
+        UpdateHealthText();
         currentCost = RoundManager.Instance.playerCost;
+        reticle.SetActive(false);
     }
 
     public bool HasEnoughCost(int cost)
@@ -56,6 +62,7 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
+        ShowDamageText(actualDamage);
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
@@ -71,6 +78,7 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
+        ShowDamageText(actualMagicDamage);
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
@@ -122,11 +130,66 @@ public class Player : MonoBehaviour
         }
 
         healthSlider.value = endValue;
+        UpdateHealthText();
+    }
+
+    void UpdateHealthText()
+    {
+        if (healthText != null)
+        {
+            healthText.text = currentHealth.ToString();
+        }
     }
 
     void Die()
     {
         Debug.Log("Player died!");
         // Add logic for player death
+    }
+
+    void ShowDamageText(int damage)
+    {
+        if (damageTextPrefab != null)
+        {
+            Vector3 spawnPosition = transform.position + new Vector3(0, 1, 0);  // Adjust the offset as needed
+            GameObject damageTextInstance = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity, transform);
+            TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
+            if (damageText != null)
+            {
+                damageText.text = damage.ToString();
+            }
+            StartCoroutine(AnimateDamageText(damageTextInstance));
+        }
+    }
+
+    IEnumerator AnimateDamageText(GameObject damageTextInstance)
+    {
+        TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
+        Vector3 initialPosition = damageTextInstance.transform.position;
+        Vector3 targetPosition = initialPosition + new Vector3(0, 1, 0);
+        float duration = 1f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            damageTextInstance.transform.position = Vector3.Lerp(initialPosition, targetPosition, t);
+            Color color = damageText.color;
+            color.a = Mathf.Lerp(1, 0, t);
+            damageText.color = color;
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(damageTextInstance);
+    }
+
+    public void ShowReticle(bool show)
+    {
+        if (reticle != null)
+        {
+            reticle.SetActive(show);
+        }
     }
 }

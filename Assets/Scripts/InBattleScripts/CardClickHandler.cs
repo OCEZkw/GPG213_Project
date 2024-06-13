@@ -14,6 +14,7 @@ public class CardClickHandler : MonoBehaviour
     public ButtonManager buttonManager;  // Reference to the ButtonManager
     public RoundManager roundManager;    // Reference to the RoundManager
     private CardEffect cardEffect;       // Reference to the CardEffect
+    public Player player;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class CardClickHandler : MonoBehaviour
         buttonManager = FindObjectOfType<ButtonManager>(); // Initialize buttonManager
         roundManager = FindObjectOfType<RoundManager>();   // Initialize roundManager
         cardEffect = GetComponent<CardEffect>();           // Initialize cardEffect
+        player = FindObjectOfType<Player>();
     }
 
     void OnMouseDown()
@@ -53,8 +55,15 @@ public class CardClickHandler : MonoBehaviour
         // Update the cost UI
         UpdateCostUI();
 
-        // Show all reticles on enemies
-        ShowAllReticles(true);
+        // Determine whether to show the reticle on the player or enemies
+        if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
+        {
+            ShowPlayerReticle(true);
+        }
+        else
+        {
+            ShowAllReticles(true);
+        }
     }
 
     public void Deselect()
@@ -76,16 +85,30 @@ public class CardClickHandler : MonoBehaviour
             roundManager.UpdateUI();
         }
 
-        // Hide all reticles on enemies
-        ShowAllReticles(false);
+        // Determine whether to hide the reticle on the player or enemies
+        if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
+        {
+            ShowPlayerReticle(false);
+        }
+        else
+        {
+            ShowAllReticles(false);
+        }
     }
-
     private void ShowAllReticles(bool show)
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         foreach (Enemy enemy in enemies)
         {
             enemy.ShowReticle(show);
+        }
+    }
+
+    private void ShowPlayerReticle(bool show)
+    {
+        if (player != null)
+        {
+            player.ShowReticle(show); // Assuming the player has a ShowReticle method
         }
     }
 
