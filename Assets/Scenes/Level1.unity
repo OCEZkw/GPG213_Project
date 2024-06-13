@@ -1756,6 +1756,7 @@ MonoBehaviour:
   enemySpawner: {fileID: 1280359855}
   playerSpawner: {fileID: 1280359856}
   buttonManager: {fileID: 1280359858}
+  player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
 --- !u!114 &1280359855
 MonoBehaviour:
   m_ObjectHideFlags: 0

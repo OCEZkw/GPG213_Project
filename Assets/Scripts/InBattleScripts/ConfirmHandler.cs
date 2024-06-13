@@ -13,10 +13,13 @@ public class ConfirmHandler : MonoBehaviour
     public PlayerSpawner playerSpawner;
 
     public static Enemy selectedEnemy;
+    public static Player selectedPlayer;
 
     private GameObject playerInstance;
     private GameObject enemyInstance;
     public ButtonManager buttonManager;
+    public Player player;
+
 
     private void Awake()
     {
@@ -48,23 +51,55 @@ public class ConfirmHandler : MonoBehaviour
 
     public void ConfirmCard()
     {
-        if (CardClickHandler.selectedCard != null && selectedEnemy != null)
+        if (CardClickHandler.selectedCard != null)
         {
             CardEffect cardEffect = CardClickHandler.selectedCard.GetComponent<CardEffect>();
-            Player player = playerInstance.GetComponent<Player>();
 
-            if (player.HasEnoughCost(cardEffect.cost))
+            if (selectedEnemy != null)
             {
-                buttonManager.ShowConfirmButton(false);
-                CardClickHandler.selectedCard.transform.position = confirmedCardPosition.position;
-                HideOtherCards();
-                CardClickHandler.selectedCard.GetComponent<Collider2D>().enabled = false;
-                selectedEnemy.ShowReticle(false);
-                StartCoroutine(UseConfirmedCard(CardClickHandler.selectedCard, cardEffect));
+                // Handle card effect on selected enemy
+                Enemy enemy = selectedEnemy.GetComponent<Enemy>();
+
+                // Check if player has enough cost to use the card
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    // Perform actions similar to when selecting a player
+                    buttonManager.ShowConfirmButton(false); // Hide confirm button
+                    CardClickHandler.selectedCard.transform.position = confirmedCardPosition.position; // Move card to confirmed position
+                    HideOtherCards(); // Hide other cards
+                    CardClickHandler.selectedCard.GetComponent<Collider2D>().enabled = false; // Disable card collider
+                    selectedEnemy.ShowReticle(false); // Hide enemy reticle
+
+                    // Start coroutine to use confirmed card
+                    StartCoroutine(UseConfirmedCard(CardClickHandler.selectedCard, cardEffect));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
+            }
+            else if (selectedPlayer != null)
+            {
+                // Handle card effect on selected player (already existing logic)
+                Player player = selectedPlayer.GetComponent<Player>();
+
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    buttonManager.ShowConfirmButton(false);
+                    CardClickHandler.selectedCard.transform.position = confirmedCardPosition.position;
+                    HideOtherCards();
+                    CardClickHandler.selectedCard.GetComponent<Collider2D>().enabled = false;
+                    selectedPlayer.ShowReticle(false);
+                    StartCoroutine(UseConfirmedCard(CardClickHandler.selectedCard, cardEffect));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
             }
             else
             {
-                Debug.Log("Not enough resources to use this card.");
+                Debug.LogWarning("No valid target selected.");
             }
         }
     }
@@ -73,25 +108,32 @@ public class ConfirmHandler : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
 
-        Player player = playerInstance.GetComponent<Player>();
-
-        player.UpdateCost(player.currentCost - cardEffect.cost);
-
-        if (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense)
-        {
-            cardEffect.ApplyEffect(playerInstance);
-        }
-        else
+        if (selectedEnemy != null)
         {
             cardEffect.ApplyEffect(selectedEnemy.gameObject);
         }
+        else if (selectedPlayer != null)
+        {
+            Player player = selectedPlayer.GetComponent<Player>();
+            player.UpdateCost(player.currentCost - cardEffect.cost);
+
+            if (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense)
+            {
+                cardEffect.ApplyEffect(selectedPlayer.gameObject);
+            }
+            else
+            {
+                Debug.Log("Invalid card effect for player target.");
+            }
+        }
+
         confirmedCard.SetActive(false);
         yield return new WaitForSeconds(2f);
 
         foreach (GameObject enemy in enemySpawner.GetEnemyInstances())
         {
             EnemyAttack(enemy);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
         }
 
         StartNextRound();
@@ -108,8 +150,16 @@ public class ConfirmHandler : MonoBehaviour
             if (enemy != null && player != null)
             {
                 int damage = enemy.CalculateDamage();
-                player.TakeDamage(damage);
-                Debug.Log("Enemy attacked player for " + damage + " damage.");
+                if (enemy.enemyDamageType == Enemy.DamageType.Physical)
+                {
+                    player.TakeDamage(damage);
+                    Debug.Log("Enemy attacked player for " + damage + " physical damage.");
+                }
+                else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
+                {
+                    player.TakeMagicDamage(damage);
+                    Debug.Log("Enemy attacked player for " + damage + " magical damage.");
+                }
             }
         }
     }

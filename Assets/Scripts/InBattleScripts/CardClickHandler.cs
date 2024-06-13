@@ -59,10 +59,14 @@ public class CardClickHandler : MonoBehaviour
         if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
         {
             ShowPlayerReticle(true);
+            DisableEnemyColliders(true); // Disable enemy colliders if it's a heal or defense card
+            DisablePlayerCollider(false); // Enable player collider for heal or defense card
         }
         else
         {
             ShowAllReticles(true);
+            DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
+            DisablePlayerCollider(true); // Disable player collider for other card types
         }
     }
 
@@ -89,12 +93,17 @@ public class CardClickHandler : MonoBehaviour
         if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
         {
             ShowPlayerReticle(false);
+            DisableEnemyColliders(false); // Enable enemy colliders if it's a heal or defense card
+            DisablePlayerCollider(false); // Enable player collider for heal or defense card
         }
         else
         {
             ShowAllReticles(false);
+            DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
+            DisablePlayerCollider(false); // Enable player collider for other card types
         }
     }
+
     private void ShowAllReticles(bool show)
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
@@ -118,6 +127,28 @@ public class CardClickHandler : MonoBehaviour
         {
             int remainingCost = roundManager.playerCost - cardEffect.cost;
             roundManager.costText.text = $"Costs: {remainingCost}/{roundManager.playerCost}";
+        }
+    }
+
+    private void DisableEnemyColliders(bool disable)
+    {
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        foreach (Enemy enemy in enemies)
+        {
+            Collider2D collider = enemy.GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                collider.enabled = !disable;
+            }
+        }
+    }
+
+    private void DisablePlayerCollider(bool disable)
+    {
+        Collider2D collider = player.GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = !disable;
         }
     }
 }

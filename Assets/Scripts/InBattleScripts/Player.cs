@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class Player : MonoBehaviour
 {
     public int maxHealth = 100;
@@ -15,12 +14,20 @@ public class Player : MonoBehaviour
     public int currentCost;
     public GameObject damageTextPrefab;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI healText;
     public GameObject reticle;
+
+    public Vector3 damageTextOffset = new Vector3(0, 2, 0);
+    public Vector3 healTextOffset = new Vector3(0, 2, 0);
 
     private Coroutine healthSliderCoroutine;
 
+    private bool isSelected = false;
+    [SerializeField] private ButtonManager buttonManager;
+
     void Start()
     {
+        buttonManager = FindObjectOfType<ButtonManager>();
         healthSlider = GetComponentInChildren<Slider>();
         healthText = healthSlider.GetComponentInChildren<TextMeshProUGUI>();  // Assuming TextMeshProUGUI is a child of the Slider
         currentHealth = maxHealth;
@@ -33,13 +40,69 @@ public class Player : MonoBehaviour
         UpdateHealthText();
         currentCost = RoundManager.Instance.playerCost;
         reticle.SetActive(false);
+
+        if (healText != null)
+        {
+            healText.gameObject.SetActive(false);
+        }
+    }
+
+    void OnMouseDown()
+    {
+        if (CardClickHandler.selectedCard != null)
+        {
+            Player[] players = FindObjectsOfType<Player>();
+            foreach (Player player in players)
+            {
+                if (player != this)
+                {
+                    player.Deselect();
+                }
+            }
+
+            isSelected = true;
+            ShowReticle(false);
+
+            if (buttonManager != null)
+            {
+                buttonManager.ShowSelectTargetButton(false);
+                buttonManager.ShowConfirmButton(true);
+            }
+            else
+            {
+                Debug.LogWarning("ButtonManager is null. Unable to show Confirm Button.");
+            }
+
+            ConfirmHandler.selectedPlayer = this; // Corrected to use the class name
+        }
+    }
+
+    public void Deselect()
+    {
+        isSelected = false;
+        ShowReticle(false);
+
+        if (buttonManager != null)
+        {
+            buttonManager.ShowConfirmButton(false);
+        }
+    }
+
+    public void ConfirmAction()
+    {
+        // Check if a card is selected and player is selected
+        if (CardClickHandler.selectedCard != null && isSelected)
+        {
+            // Call ConfirmCard function from ConfirmHandler
+            ConfirmHandler.Instance.ConfirmCard();
+        }
     }
 
     public bool HasEnoughCost(int cost)
     {
         return RoundManager.Instance.playerCost >= cost;
     }
-    
+
 
     public void UpdateCost(int newCost)
     {
@@ -62,7 +125,7 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
-        ShowDamageText(actualDamage);
+        ShowDamageText(actualDamage, "PHYSICAL");
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
@@ -78,7 +141,7 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
-        ShowDamageText(actualMagicDamage);
+        ShowDamageText(actualMagicDamage, "MAGICAL");
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
@@ -94,7 +157,43 @@ public class Player : MonoBehaviour
             currentHealth = maxHealth;
         }
         UpdateHealthSlider();
+
+        // Display heal text
+        if (healText != null)
+        {
+            healText.gameObject.SetActive(true); // Ensure healText is active
+            healText.text = $"{amount}";
+            StartCoroutine(AnimateHealText());
+        }
     }
+
+    IEnumerator AnimateHealText()
+    {
+        if (healText != null)
+        {
+            healText.gameObject.SetActive(true);
+            Vector3 initialPosition = healText.transform.position;
+            Vector3 targetPosition = initialPosition + healTextOffset;
+            float duration = 1f;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                float t = elapsedTime / duration;
+                healText.transform.position = Vector3.Lerp(initialPosition, targetPosition, t);
+                Color color = healText.color;
+                color.a = Mathf.Lerp(1, 0, t);
+                healText.color = color;
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            healText.gameObject.SetActive(false);
+            healText.transform.position = initialPosition;
+        }
+    }
+
 
     public void IncreaseDefense(int amount)
     {
@@ -147,16 +246,18 @@ public class Player : MonoBehaviour
         // Add logic for player death
     }
 
-    void ShowDamageText(int damage)
+    void ShowDamageText(int damage, string damageType)
     {
         if (damageTextPrefab != null)
         {
-            Vector3 spawnPosition = transform.position + new Vector3(0, 1, 0);  // Adjust the offset as needed
+            // Apply the offset to the initial position
+            Vector3 spawnPosition = transform.position + damageTextOffset;
+
             GameObject damageTextInstance = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity, transform);
             TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
             if (damageText != null)
             {
-                damageText.text = damage.ToString();
+                damageText.text = $"{damage} {damageType}";
             }
             StartCoroutine(AnimateDamageText(damageTextInstance));
         }
