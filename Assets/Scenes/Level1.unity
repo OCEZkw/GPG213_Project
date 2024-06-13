@@ -1819,7 +1819,7 @@ MonoBehaviour:
     spawnInterval: 0
   - numberOfEnemies: 3
     spawnInterval: 0
-  - numberOfEnemies: 0
+  - numberOfEnemies: 1
     spawnInterval: 0
   spawnPoints:
   - {fileID: 1337436759}

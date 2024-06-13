@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonManager: {fileID: 0}
   roundManager: {fileID: 0}
+  player: {fileID: 0}
 --- !u!114 &986071663510404449
 MonoBehaviour:
   m_ObjectHideFlags: 0

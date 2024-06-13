@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI healText;
     public GameObject reticle;
+    public GameObject defenseTextPrefab;
+    public Vector3 defenseTextOffset = new Vector3(0, 2, 0);
 
     public Vector3 damageTextOffset = new Vector3(0, 2, 0);
     public Vector3 healTextOffset = new Vector3(0, 2, 0);
@@ -195,14 +197,40 @@ public class Player : MonoBehaviour
     }
 
 
-    public void IncreaseDefense(int amount)
+    public void IncreasePhysicalDefense(int amount)
     {
         defense += amount;
+
+        // Show defense text
+        ShowDefenseText($"Increased Players Physical Defense");
     }
 
-    public void IncreaseMagicDefense(int amount)
+    public void IncreaseMagicalDefense(int amount)
     {
         magicDefense += amount;
+
+        // Show defense text
+        ShowDefenseText($"Increased Players Magical Defense");
+    }
+
+    void ShowDefenseText(string message)
+    {
+        if (defenseTextPrefab != null)
+        {
+            GameObject defenseTextInstance = Instantiate(defenseTextPrefab, transform.position + defenseTextOffset, Quaternion.identity, transform);
+            TextMeshPro defenseText = defenseTextInstance.GetComponent<TextMeshPro>();
+            if (defenseText != null)
+            {
+                defenseText.text = message;
+                StartCoroutine(DestroyDefenseTextAfterDelay(defenseTextInstance));
+            }
+        }
+    }
+
+    IEnumerator DestroyDefenseTextAfterDelay(GameObject defenseTextInstance)
+    {
+        yield return new WaitForSeconds(2f); // Wait for 1 second
+        Destroy(defenseTextInstance);
     }
 
     void UpdateHealthSlider()

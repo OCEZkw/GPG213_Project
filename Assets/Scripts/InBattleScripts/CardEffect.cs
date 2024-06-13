@@ -36,7 +36,7 @@ public class CardEffect : MonoBehaviour
                 player.Heal(effectValue);
                 break;
             case CardEffectType.Defense:
-                player.IncreaseDefense(effectValue);
+                player.IncreasePhysicalDefense(effectValue);
                 break;
         }
     }

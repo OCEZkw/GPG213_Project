@@ -191,6 +191,8 @@ MonoBehaviour:
   healthText: {fileID: 1702989528304329869}
   healText: {fileID: 3414473885102282219}
   reticle: {fileID: 2885949079630325}
+  defenseTextPrefab: {fileID: 939297345729354921, guid: 79fd32ac25e13224b98a6308e76935c8, type: 3}
+  defenseTextOffset: {x: 15, y: 10, z: 0}
   damageTextOffset: {x: 1, y: 1.5, z: 0}
   healTextOffset: {x: 0, y: 2, z: 0}
   buttonManager: {fileID: 0}
