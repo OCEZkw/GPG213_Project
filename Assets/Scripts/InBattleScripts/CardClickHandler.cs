@@ -16,6 +16,9 @@ public class CardClickHandler : MonoBehaviour
     private CardEffect cardEffect;       // Reference to the CardEffect
     public Player player;
 
+    public static Enemy selectedEnemy;
+    public static Player selectedPlayer;
+
     void Start()
     {
         originalPosition = transform.position;
@@ -31,11 +34,13 @@ public class CardClickHandler : MonoBehaviour
         {
             // Deselect the card and move it back to the original position
             Deselect();
+            selectedPlayer = null;
+            selectedEnemy = null;
         }
         else
         {
-            // If another card is selected, deselect it
-            if (selectedCard != null)
+            // If another card is selected, deselect it unless an enemy or player is selected
+            if (selectedCard != null && selectedEnemy == null && selectedPlayer == null)
             {
                 selectedCard.GetComponent<CardClickHandler>().Deselect();
             }

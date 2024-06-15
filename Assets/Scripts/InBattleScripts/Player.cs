@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
             }
 
             ConfirmHandler.selectedPlayer = this; // Corrected to use the class name
+            CardClickHandler.selectedPlayer = this;
         }
     }
 

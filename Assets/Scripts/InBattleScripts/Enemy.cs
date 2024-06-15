@@ -70,6 +70,7 @@ public class Enemy : MonoBehaviour
                 Debug.LogWarning("ButtonManager is null. Unable to call ShowSelectTargetButton.");
             }
             ConfirmHandler.selectedEnemy = this;
+            CardClickHandler.selectedEnemy = this;
         }
     }
 
