@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (CardClickHandler.selectedCard != null)
+        if (CardClickHandler.selectedCards.Count > 0)
         {
             Enemy[] enemies = FindObjectsOfType<Enemy>();
             foreach (Enemy enemy in enemies)

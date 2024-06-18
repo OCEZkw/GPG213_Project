@@ -10,7 +10,7 @@ public class CardClickHandler : MonoBehaviour
     private Vector3 originalPosition;
     private float moveDistance = 1f;  // Distance to move the card upwards when selected
 
-    public static GameObject selectedCard;
+    public static List<GameObject> selectedCards = new List<GameObject>();
     public ButtonManager buttonManager;  // Reference to the ButtonManager
     public RoundManager roundManager;    // Reference to the RoundManager
     private CardEffect cardEffect;       // Reference to the CardEffect
@@ -19,13 +19,35 @@ public class CardClickHandler : MonoBehaviour
     public static Enemy selectedEnemy;
     public static Player selectedPlayer;
 
+    public DeckManager deckManager;
+
+    public GameObject notEnoughCostIndicator;  // The UI element to indicate not enough cost
+
     void Start()
     {
         originalPosition = transform.position;
         buttonManager = FindObjectOfType<ButtonManager>(); // Initialize buttonManager
         roundManager = FindObjectOfType<RoundManager>();   // Initialize roundManager
+        deckManager = FindObjectOfType<DeckManager>();
         cardEffect = GetComponent<CardEffect>();           // Initialize cardEffect
         player = FindObjectOfType<Player>();
+        notEnoughCostIndicator.SetActive(false);
+        // Check if the player has enough cost to use this card
+        if (cardEffect != null && !player.HasEnoughCost(cardEffect.cost))
+        {
+            // Show the not enough cost indicator
+            if (notEnoughCostIndicator != null)
+            {
+                notEnoughCostIndicator.SetActive(true);
+            }
+
+            // Disable the collider to prevent selection
+            Collider2D collider = GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
+        }
     }
 
     void OnMouseDown()
@@ -40,9 +62,36 @@ public class CardClickHandler : MonoBehaviour
         else
         {
             // If another card is selected, deselect it unless an enemy or player is selected
-            if (selectedCard != null && selectedEnemy == null && selectedPlayer == null)
+            if (selectedCards.Count > 0 && selectedEnemy == null && selectedPlayer == null)
             {
-                selectedCard.GetComponent<CardClickHandler>().Deselect();
+                // Create a list to hold cards to be deselected
+                List<GameObject> cardsToDeselect = new List<GameObject>();
+
+                // Collect cards to be deselected
+                foreach (GameObject card in selectedCards)
+                {
+                    if (card != null) // Check if card is not null
+                    {
+                        CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
+                        if (cardClickHandler != null)
+                        {
+                            cardsToDeselect.Add(card);
+                        }
+                    }
+                }
+
+                // Deselect collected cards
+                foreach (GameObject card in cardsToDeselect)
+                {
+                    if (card != null) // Check if card is not null
+                    {
+                        CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
+                        if (cardClickHandler != null)
+                        {
+                            cardClickHandler.Deselect();
+                        }
+                    }
+                }
             }
 
             // Select this card and move it upwards
@@ -55,7 +104,7 @@ public class CardClickHandler : MonoBehaviour
         isSelected = true;
         transform.position = new Vector3(originalPosition.x, originalPosition.y + moveDistance, originalPosition.z);
         buttonManager.ShowSelectTargetButton(true);
-        selectedCard = gameObject;
+        selectedCards.Add(gameObject);
 
         // Update the cost UI
         UpdateCostUI();
@@ -79,19 +128,21 @@ public class CardClickHandler : MonoBehaviour
     {
         isSelected = false;
         transform.position = originalPosition;
-        if (selectedCard == gameObject)
-        {
-            selectedCard = null;
-        }
+        selectedCards.Remove(gameObject);
 
         // Check if any card is still selected
-        if (selectedCard == null)
+        if (selectedCards.Count == 0)
         {
             buttonManager.ShowSelectTargetButton(false);
             buttonManager.ShowConfirmButton(false);
 
             // Reset cost UI
             roundManager.UpdateUI();
+        }
+        else
+        {
+            // Update the cost UI if there are still selected cards
+            UpdateCostUI();
         }
 
         // Determine whether to hide the reticle on the player or enemies
@@ -128,11 +179,19 @@ public class CardClickHandler : MonoBehaviour
 
     private void UpdateCostUI()
     {
-        if (cardEffect != null && roundManager != null && roundManager.costText != null)
+        int totalCost = 0;
+
+        foreach (var card in selectedCards)
         {
-            int remainingCost = roundManager.playerCost - cardEffect.cost;
-            roundManager.costText.text = $"Costs: {remainingCost}/{roundManager.playerCost}";
+            CardEffect effect = card.GetComponent<CardEffect>();
+            if (effect != null)
+            {
+                totalCost += effect.cost;
+            }
         }
+
+        int remainingCost = roundManager.playerCost - totalCost;
+        roundManager.costText.text = $"Costs: {remainingCost}/{roundManager.playerCost}";
     }
 
     private void DisableEnemyColliders(bool disable)
@@ -154,6 +213,38 @@ public class CardClickHandler : MonoBehaviour
         if (collider != null)
         {
             collider.enabled = !disable;
+        }
+    }
+
+    void UpdateCostAndEnable()
+    {
+        if (cardEffect != null && !player.HasEnoughCost(cardEffect.cost))
+        {
+            // Show the not enough cost indicator
+            if (notEnoughCostIndicator != null)
+            {
+                notEnoughCostIndicator.SetActive(true);
+            }
+
+            // Disable the collider to prevent selection
+            Collider2D collider = GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
+        }
+        else
+        {
+            if (notEnoughCostIndicator != null)
+            {
+                notEnoughCostIndicator.SetActive(false);
+            }
+
+            Collider2D collider = GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                collider.enabled = true;
+            }
         }
     }
 }

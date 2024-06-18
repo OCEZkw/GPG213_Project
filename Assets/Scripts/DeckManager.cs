@@ -11,6 +11,7 @@ public class DeckManager : MonoBehaviour
     public List<GameObject> hand = new List<GameObject>();  // Cards currently in hand
     public Transform confirmedCardPosition;  // Position for the confirmed card
     public ConfirmHandler confirmHandler;  // Reference to the ConfirmHandler
+    public Transform canvasTransform;
 
     void Start()
     {
@@ -39,8 +40,42 @@ public class DeckManager : MonoBehaviour
         // Take the first 5 cards for the hand
         for (int i = 0; i < Mathf.Min(5, deck.Count); i++)
         {
-            GameObject card = Instantiate(deck[i], handPositions[i].position, Quaternion.identity);
+            // Instantiate the card prefab and parent it to the canvas
+            GameObject card = Instantiate(deck[i], canvasTransform);
+
+            // Set the card's RectTransform properties to match the corresponding hand position
+            RectTransform cardRectTransform = card.GetComponent<RectTransform>();
+            RectTransform handPositionRectTransform = handPositions[i] as RectTransform;
+
+            // Copy RectTransform properties
+            cardRectTransform.anchorMin = handPositionRectTransform.anchorMin;
+            cardRectTransform.anchorMax = handPositionRectTransform.anchorMax;
+            cardRectTransform.pivot = handPositionRectTransform.pivot;
+            cardRectTransform.anchoredPosition = handPositionRectTransform.anchoredPosition;
+            cardRectTransform.sizeDelta = handPositionRectTransform.sizeDelta;
+
+            // Ensure the card has a Graphic component with Raycast Target enabled
+            Image image = card.GetComponent<Image>();
+            if (image != null)
+            {
+                image.raycastTarget = true;
+            }
+
+            // Ensure the card has a BoxCollider2D and adjust its size
+            BoxCollider2D boxCollider = card.GetComponent<BoxCollider2D>();
+            if (boxCollider == null)
+            {
+                boxCollider = card.AddComponent<BoxCollider2D>();
+            }
+            boxCollider.size = cardRectTransform.sizeDelta;
+
+            // Get the CardClickHandler component if it exists and add the card to the hand list
             var cardClickHandler = card.GetComponent<CardClickHandler>();
+            if (cardClickHandler != null)
+            {
+                cardClickHandler.deckManager = this;
+            }
+
             hand.Add(card);
         }
     }

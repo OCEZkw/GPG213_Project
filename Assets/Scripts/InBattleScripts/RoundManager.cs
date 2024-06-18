@@ -38,6 +38,7 @@ public class RoundManager : MonoBehaviour
         player.UpdateCost(playerCost); // Reset player's current cost to the new total cost
         player.ResetCost(); // Reset player's current cost to full
         UpdateUI();
+        UpdateAllCardColliders();
     }
 
     public void UpdateUI()
@@ -50,6 +51,31 @@ public class RoundManager : MonoBehaviour
         if (costText != null)
         {
             costText.text = "Costs: " + player.currentCost + "/" + playerCost;
+        }
+    }
+
+    private void UpdateAllCardColliders()
+    {
+        CardClickHandler[] cards = FindObjectsOfType<CardClickHandler>();
+        foreach (var card in cards)
+        {
+            CardEffect cardEffect = card.GetComponent<CardEffect>();
+            Collider2D collider = card.GetComponent<Collider2D>();
+            GameObject warning = card.transform.Find("Warning").gameObject;
+
+            if (cardEffect != null && collider != null && warning != null)
+            {
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    collider.enabled = true;
+                    warning.SetActive(false);
+                }
+                else
+                {
+                    collider.enabled = false;
+                    warning.SetActive(true);
+                }
+            }
         }
     }
 }

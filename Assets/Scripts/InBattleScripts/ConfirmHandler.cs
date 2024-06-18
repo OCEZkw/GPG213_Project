@@ -51,85 +51,73 @@ public class ConfirmHandler : MonoBehaviour
 
     public void ConfirmCard()
     {
-        if (CardClickHandler.selectedCard != null)
+        Debug.Log("ConfirmCard Function");
+        List<GameObject> selectedCards = CardClickHandler.selectedCards;
+        if (selectedCards.Count > 0)
         {
-            CardEffect cardEffect = CardClickHandler.selectedCard.GetComponent<CardEffect>();
-
-            if (selectedEnemy != null)
-            {
-                // Handle card effect on selected enemy
-                Enemy enemy = selectedEnemy.GetComponent<Enemy>();
-
-                // Check if player has enough cost to use the card
-                if (player.HasEnoughCost(cardEffect.cost))
-                {
-                    // Perform actions similar to when selecting a player
-                    buttonManager.ShowConfirmButton(false); // Hide confirm button
-                    CardClickHandler.selectedCard.transform.position = confirmedCardPosition.position; // Move card to confirmed position
-                    HideOtherCards(); // Hide other cards
-                    CardClickHandler.selectedCard.GetComponent<Collider2D>().enabled = false; // Disable card collider
-                    selectedEnemy.ShowReticle(false); // Hide enemy reticle
-
-                    // Start coroutine to use confirmed card
-                    StartCoroutine(UseConfirmedCard(CardClickHandler.selectedCard, cardEffect));
-                }
-                else
-                {
-                    Debug.Log("Not enough resources to use this card.");
-                }
-            }
-            else if (selectedPlayer != null)
-            {
-                // Handle card effect on selected player (already existing logic)
-                Player player = selectedPlayer.GetComponent<Player>();
-
-                if (player.HasEnoughCost(cardEffect.cost))
-                {
-                    buttonManager.ShowConfirmButton(false);
-                    CardClickHandler.selectedCard.transform.position = confirmedCardPosition.position;
-                    HideOtherCards();
-                    CardClickHandler.selectedCard.GetComponent<Collider2D>().enabled = false;
-                    selectedPlayer.ShowReticle(false);
-                    StartCoroutine(UseConfirmedCard(CardClickHandler.selectedCard, cardEffect));
-                }
-                else
-                {
-                    Debug.Log("Not enough resources to use this card.");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("No valid target selected.");
-            }
+            StartCoroutine(UseConfirmedCards(selectedCards));
+        }
+        else
+        {
+            Debug.LogWarning("No cards selected for confirmation.");
         }
     }
 
-    IEnumerator UseConfirmedCard(GameObject confirmedCard, CardEffect cardEffect)
+    IEnumerator UseConfirmedCards(List<GameObject> selectedCards)
     {
-        yield return new WaitForSeconds(2f);
-
-        if (selectedEnemy != null)
+        // Move all selected cards to the confirmed card position
+        foreach (GameObject card in selectedCards)
         {
-            cardEffect.ApplyEffect(selectedEnemy.gameObject);
+            card.transform.position = confirmedCardPosition.position;
+            card.GetComponent<Collider2D>().enabled = false;
+            HideOtherCards();
         }
-        else if (selectedPlayer != null)
-        {
-            Player player = selectedPlayer.GetComponent<Player>();
-            player.UpdateCost(player.currentCost - cardEffect.cost);
 
-            if (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense)
+        // Wait a brief moment to ensure all cards are positioned correctly
+        yield return new WaitForSeconds(0.5f);
+
+        // Use each confirmed card
+        foreach (GameObject card in selectedCards)
+        {
+            CardEffect cardEffect = card.GetComponent<CardEffect>();
+
+            // Check if the card targets an enemy
+            if (selectedEnemy != null && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
-                cardEffect.ApplyEffect(selectedPlayer.gameObject);
+                Enemy enemy = selectedEnemy.GetComponent<Enemy>();
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    buttonManager.ShowConfirmButton(false);
+                    selectedEnemy.ShowReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(card, cardEffect));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
+            }
+            // Check if the card targets a player for healing or defense
+            else if (selectedPlayer != null && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
+            {
+                Player playerTarget = selectedPlayer.GetComponent<Player>();
+                if (playerTarget != null && playerTarget.HasEnoughCost(cardEffect.cost))
+                {
+                    buttonManager.ShowConfirmButton(false);
+                    selectedPlayer.ShowReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(card, cardEffect));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
             }
             else
             {
-                Debug.Log("Invalid card effect for player target.");
+                Debug.LogWarning("No valid target selected or invalid card effect type.");
             }
         }
 
-        confirmedCard.SetActive(false);
-        yield return new WaitForSeconds(2f);
-
+        // Handle enemy attacks after all cards are used
         foreach (GameObject enemy in enemySpawner.GetEnemyInstances())
         {
             EnemyAttack(enemy);
@@ -137,7 +125,30 @@ public class ConfirmHandler : MonoBehaviour
         }
 
         StartNextRound();
+    }
+
+    IEnumerator UseConfirmedCard(GameObject confirmedCard, CardEffect cardEffect)
+    {
+        yield return new WaitForSeconds(2f);  // Delay to simulate card effect processing time
+
+        if (selectedEnemy != null && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+        {
+            cardEffect.ApplyEffect(selectedEnemy.gameObject);
+        }
+        else if (selectedPlayer != null && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
+        {
+            Player playerTarget = selectedPlayer.GetComponent<Player>();
+            if (playerTarget != null)
+            {
+                playerTarget.UpdateCost(playerTarget.currentCost - cardEffect.cost);
+                cardEffect.ApplyEffect(selectedPlayer.gameObject);
+            }
+        }
+
+        // Handle post-effect logic
+        confirmedCard.SetActive(false);
         ReplaceCardInHand(confirmedCard);
+        yield return new WaitForSeconds(2f);
     }
 
 
@@ -169,24 +180,33 @@ public class ConfirmHandler : MonoBehaviour
         selectedEnemy = null;
         ShowAllCards();
         RoundManager.Instance.StartNextRound();
+        CardClickHandler.selectedCards.Clear();
     }
 
-    void HideOtherCards()
+    public void HideOtherCards()
     {
+        // Find all cards in the scene with the "Card" tag
         GameObject[] allCards = GameObject.FindGameObjectsWithTag("Card");
+
+        // Iterate through all cards and hide those not in selectedCards
         foreach (GameObject card in allCards)
         {
-            if (card != CardClickHandler.selectedCard)
+            if (!CardClickHandler.selectedCards.Contains(card))
             {
-                card.SetActive(false);
+                HideCard(card);
             }
         }
     }
 
+    private void HideCard(GameObject card)
+    {
+        // Implement logic to hide the card, e.g., set inactive, move out of view, etc.
+        card.SetActive(false);
+    }
+
     void ShowAllCards()
     {
-        GameObject[] allCards = GameObject.FindGameObjectsWithTag("Card");
-        foreach (GameObject card in allCards)
+        foreach (GameObject card in deckManager.hand)
         {
             card.SetActive(true);
         }
@@ -213,16 +233,45 @@ public class ConfirmHandler : MonoBehaviour
                 if (availableCards.Count > 0)
                 {
                     int randomIndex = Random.Range(0, availableCards.Count);
-                    GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.handPositions[cardIndex].position, Quaternion.identity);
-                    var cardClickHandler = newCard.GetComponent<CardClickHandler>();
-                    cardClickHandler.buttonManager = ButtonManager.Instance;
-                    deckManager.hand.Insert(cardIndex, newCard);
-                }
-            }
+                    GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.canvasTransform);
 
-            foreach (GameObject card in deckManager.hand)
-            {
-                card.SetActive(true);
+                    // Set the card's RectTransform properties to match the corresponding hand position
+                    RectTransform cardRectTransform = newCard.GetComponent<RectTransform>();
+                    RectTransform handPositionRectTransform = deckManager.handPositions[cardIndex] as RectTransform;
+
+                    // Copy RectTransform properties
+                    cardRectTransform.anchorMin = handPositionRectTransform.anchorMin;
+                    cardRectTransform.anchorMax = handPositionRectTransform.anchorMax;
+                    cardRectTransform.pivot = handPositionRectTransform.pivot;
+                    cardRectTransform.anchoredPosition = handPositionRectTransform.anchoredPosition;
+                    cardRectTransform.sizeDelta = handPositionRectTransform.sizeDelta;
+
+                    // Ensure the card has a Graphic component with Raycast Target enabled
+                    Image image = newCard.GetComponent<Image>();
+                    if (image != null)
+                    {
+                        image.raycastTarget = true;
+                    }
+
+                    // Ensure the card has a BoxCollider2D and adjust its size
+                    BoxCollider2D boxCollider = newCard.GetComponent<BoxCollider2D>();
+                    if (boxCollider == null)
+                    {
+                        boxCollider = newCard.AddComponent<BoxCollider2D>();
+                    }
+                    boxCollider.size = cardRectTransform.sizeDelta;
+
+                    // Get the CardClickHandler component if it exists and set its properties
+                    var cardClickHandler = newCard.GetComponent<CardClickHandler>();
+                    if (cardClickHandler != null)
+                    {
+                        cardClickHandler.deckManager = deckManager;
+                        cardClickHandler.buttonManager = ButtonManager.Instance;
+                    }
+                    
+                    deckManager.hand.Insert(cardIndex, newCard);
+                    HideOtherCards();
+                }
             }
         }
     }

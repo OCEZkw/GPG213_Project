@@ -49,9 +49,10 @@ public class Player : MonoBehaviour
         }
     }
 
+
     void OnMouseDown()
     {
-        if (CardClickHandler.selectedCard != null)
+        if (CardClickHandler.selectedCards.Count > 0)
         {
             Player[] players = FindObjectsOfType<Player>();
             foreach (Player player in players)
@@ -94,7 +95,7 @@ public class Player : MonoBehaviour
     public void ConfirmAction()
     {
         // Check if a card is selected and player is selected
-        if (CardClickHandler.selectedCard != null && isSelected)
+        if (CardClickHandler.selectedCards.Count > 0 && isSelected)
         {
             // Call ConfirmCard function from ConfirmHandler
             ConfirmHandler.Instance.ConfirmCard();
