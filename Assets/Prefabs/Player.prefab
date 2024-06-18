@@ -186,12 +186,12 @@ MonoBehaviour:
   defense: 20
   magicDefense: 20
   healthSlider: {fileID: 0}
-  currentCost: 3
+  currentCost: 4
   damageTextPrefab: {fileID: 6735584358987700647, guid: fc91a597c69bd284f8b8c324bb508e15, type: 3}
   healthText: {fileID: 1702989528304329869}
   healText: {fileID: 3414473885102282219}
   reticle: {fileID: 2885949079630325}
-  defenseTextPrefab: {fileID: 939297345729354921, guid: 79fd32ac25e13224b98a6308e76935c8, type: 3}
+  defenseTextPrefab: {fileID: 30256063107556423, guid: aea977b9100ee9845a8647832a2c1484, type: 3}
   defenseTextOffset: {x: 15, y: 10, z: 0}
   damageTextOffset: {x: 1, y: 1.5, z: 0}
   healTextOffset: {x: 0, y: 2, z: 0}

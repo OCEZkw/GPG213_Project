@@ -16,8 +16,6 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI healText;
     public GameObject reticle;
-    public GameObject defenseTextPrefab;
-    public Vector3 defenseTextOffset = new Vector3(0, 2, 0);
 
     public Vector3 damageTextOffset = new Vector3(0, 2, 0);
     public Vector3 healTextOffset = new Vector3(0, 2, 0);
@@ -26,6 +24,7 @@ public class Player : MonoBehaviour
 
     private bool isSelected = false;
     [SerializeField] private ButtonManager buttonManager;
+
 
     void Start()
     {
@@ -47,6 +46,7 @@ public class Player : MonoBehaviour
         {
             healText.gameObject.SetActive(false);
         }
+
     }
 
 
@@ -202,31 +202,13 @@ public class Player : MonoBehaviour
     public void IncreasePhysicalDefense(int amount)
     {
         defense += amount;
-
-        // Show defense text
-        ShowDefenseText($"Increased Players Physical Defense");
+        NotificationManager.Instance.ShowNotification("Increased Player's Physical Defense");
     }
 
     public void IncreaseMagicalDefense(int amount)
     {
         magicDefense += amount;
-
-        // Show defense text
-        ShowDefenseText($"Increased Players Magical Defense");
-    }
-
-    void ShowDefenseText(string message)
-    {
-        if (defenseTextPrefab != null)
-        {
-            GameObject defenseTextInstance = Instantiate(defenseTextPrefab, transform.position + defenseTextOffset, Quaternion.identity, transform);
-            TextMeshPro defenseText = defenseTextInstance.GetComponent<TextMeshPro>();
-            if (defenseText != null)
-            {
-                defenseText.text = message;
-                StartCoroutine(DestroyDefenseTextAfterDelay(defenseTextInstance));
-            }
-        }
+        NotificationManager.Instance.ShowNotification("Increased Player's Magical Defense");
     }
 
     IEnumerator DestroyDefenseTextAfterDelay(GameObject defenseTextInstance)

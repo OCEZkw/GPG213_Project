@@ -41,12 +41,7 @@ public class CardClickHandler : MonoBehaviour
                 notEnoughCostIndicator.SetActive(true);
             }
 
-            // Disable the collider to prevent selection
-            Collider2D collider = GetComponent<Collider2D>();
-            if (collider != null)
-            {
-                collider.enabled = false;
-            }
+            UpdateCostAndEnable();
         }
     }
 
@@ -122,6 +117,7 @@ public class CardClickHandler : MonoBehaviour
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(true); // Disable player collider for other card types
         }
+        CheckNonSelectedCards();
     }
 
     public void Deselect()
@@ -158,6 +154,7 @@ public class CardClickHandler : MonoBehaviour
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
+        CheckNonSelectedCards();
     }
 
     private void ShowAllReticles(bool show)
@@ -244,6 +241,47 @@ public class CardClickHandler : MonoBehaviour
             if (collider != null)
             {
                 collider.enabled = true;
+            }
+        }
+    }
+
+    private void CheckNonSelectedCards()
+    {
+        int totalSelectedCost = 0;
+
+        foreach (var card in selectedCards)
+        {
+            CardEffect effect = card.GetComponent<CardEffect>();
+            if (effect != null)
+            {
+                totalSelectedCost += effect.cost;
+            }
+        }
+
+        int remainingCost = roundManager.playerCost - totalSelectedCost;
+
+        foreach (var card in deckManager.hand)
+        {
+            if (!selectedCards.Contains(card))
+            {
+                CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
+                if (cardClickHandler != null)
+                {
+                    CardEffect effect = card.GetComponent<CardEffect>();
+                    if (effect != null)
+                    {
+                        if (remainingCost < effect.cost)
+                        {
+                            cardClickHandler.notEnoughCostIndicator.SetActive(true);
+                            card.GetComponent<Collider2D>().enabled = false;
+                        }
+                        else
+                        {
+                            cardClickHandler.notEnoughCostIndicator.SetActive(false);
+                            card.GetComponent<Collider2D>().enabled = true;
+                        }
+                    }
+                }
             }
         }
     }
