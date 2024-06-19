@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     private bool isSelected = false;
     [SerializeField] private ButtonManager buttonManager;
 
+    public EnemyType enemyType;
 
     public enum DamageType
     {
@@ -42,6 +43,7 @@ public class Enemy : MonoBehaviour
         }
 
         reticle.SetActive(false);
+        enemyType = EnemyType.Fire;
     }
 
     void OnMouseDown()

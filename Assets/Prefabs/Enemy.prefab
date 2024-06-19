@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5158012844052437709}
@@ -76,8 +76,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 21300000, guid: 61060c19667d4cb459914105db835a8b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97fc9fa39ba2f74c8006dd03e1b1d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 150
   currentHealth: 0
   defense: 40
   magicDefense: 40
@@ -109,6 +109,7 @@ MonoBehaviour:
   reticle: {fileID: 8311896794162698830}
   damageTextPrefab: {fileID: 6735584358987700647, guid: fc91a597c69bd284f8b8c324bb508e15, type: 3}
   buttonManager: {fileID: 0}
+  enemyType: 0
   enemyDamageType: 0
 --- !u!61 &6412463970114718845
 BoxCollider2D:
@@ -146,7 +147,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 2}
+    oldSize: {x: 0.96, y: 1.28}
     newSize: {x: 1, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -163,6 +164,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3849229824631811791}
     m_Modifications:
+    - target: {fileID: 3878261278644729738, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5622749377818726829, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -229,7 +234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5622749377818726829, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.5
+      value: 0.605
       objectReference: {fileID: 0}
     - target: {fileID: 5622749377818726829, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -286,7 +291,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2425456878541028978, guid: aa56ec26688539d4eb6009ae5729c56e, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3173314932962406262, guid: aa56ec26688539d4eb6009ae5729c56e, type: 3}
       propertyPath: m_Name

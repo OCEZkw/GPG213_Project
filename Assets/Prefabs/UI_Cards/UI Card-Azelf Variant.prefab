@@ -17,6 +17,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 972680782465958701, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: cardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 972680782465958701, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: effectType
       value: 2
       objectReference: {fileID: 0}
