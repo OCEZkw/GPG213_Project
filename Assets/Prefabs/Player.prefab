@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3ca5e2d57ad42ab4db1302da23562dfe, type: 2}
+  m_sharedMaterial: {fileID: -5096556991079727517, guid: 3ca5e2d57ad42ab4db1302da23562dfe, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -191,8 +191,6 @@ MonoBehaviour:
   healthText: {fileID: 1702989528304329869}
   healText: {fileID: 3414473885102282219}
   reticle: {fileID: 2885949079630325}
-  defenseTextPrefab: {fileID: 30256063107556423, guid: aea977b9100ee9845a8647832a2c1484, type: 3}
-  defenseTextOffset: {x: 15, y: 10, z: 0}
   damageTextOffset: {x: 1, y: 1.5, z: 0}
   healTextOffset: {x: 0, y: 2, z: 0}
   buttonManager: {fileID: 0}
@@ -258,6 +256,10 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 3ca5e2d57ad42ab4db1302da23562dfe, type: 2}
+    - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_fontStyle
       value: 1
       objectReference: {fileID: 0}
@@ -266,8 +268,16 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -5096556991079727517, guid: 3ca5e2d57ad42ab4db1302da23562dfe, type: 2}
+    - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_VerticalAlignment
       value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4382429833252248466, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_Pivot.x
