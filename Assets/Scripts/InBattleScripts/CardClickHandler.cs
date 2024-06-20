@@ -155,6 +155,7 @@ public class CardClickHandler : MonoBehaviour
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
         CheckNonSelectedCards();
+        
     }
 
     private void ShowAllReticles(bool show)

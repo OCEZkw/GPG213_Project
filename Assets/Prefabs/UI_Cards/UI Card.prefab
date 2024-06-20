@@ -206,6 +206,7 @@ MonoBehaviour:
   buttonManager: {fileID: 0}
   roundManager: {fileID: 0}
   player: {fileID: 0}
+  enemy: {fileID: 5364560917298217708, guid: f444428959af34047bb5073fe0d53663, type: 3}
   deckManager: {fileID: 0}
   notEnoughCostIndicator: {fileID: 4724041116977637491}
 --- !u!114 &972680782465958701
@@ -223,6 +224,7 @@ MonoBehaviour:
   effectType: 0
   effectValue: 0
   cost: 0
+  cardType: 0
 --- !u!61 &140934031692007068
 BoxCollider2D:
   m_ObjectHideFlags: 0

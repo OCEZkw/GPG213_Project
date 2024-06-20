@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     public EnemyType enemyType;
 
+
     public enum DamageType
     {
         Physical,
@@ -33,6 +34,7 @@ public class Enemy : MonoBehaviour
         buttonManager = FindObjectOfType<ButtonManager>();
         healthSlider = GetComponentInChildren<Slider>();
         currentHealth = maxHealth;
+
         defense = 20;
         magicDefense = 20;
 
@@ -61,6 +63,8 @@ public class Enemy : MonoBehaviour
 
             isSelected = true;
             ShowReticle(false);
+
+
             if (buttonManager != null)
             {
                 Debug.Log("ButtonManager found. Calling ShowSelectTargetButton(false).");
@@ -76,10 +80,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     public void Deselect()
     {
+        Debug.Log("Deselect called");
         isSelected = false;
         ShowReticle(false);
+
     }
 
     public void ShowReticle(bool show)
