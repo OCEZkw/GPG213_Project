@@ -51,8 +51,6 @@ public class CardClickHandler : MonoBehaviour
         {
             // Deselect the card and move it back to the original position
             Deselect();
-            selectedPlayer = null;
-            selectedEnemy = null;
         }
         else
         {
@@ -126,6 +124,7 @@ public class CardClickHandler : MonoBehaviour
         transform.position = originalPosition;
         selectedCards.Remove(gameObject);
 
+
         // Check if any card is still selected
         if (selectedCards.Count == 0)
         {
@@ -155,7 +154,12 @@ public class CardClickHandler : MonoBehaviour
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
         CheckNonSelectedCards();
-        
+
+        if (selectedCards.Count < 1)
+        {
+            selectedPlayer = null;
+            selectedEnemy = null;
+        }
     }
 
     private void ShowAllReticles(bool show)

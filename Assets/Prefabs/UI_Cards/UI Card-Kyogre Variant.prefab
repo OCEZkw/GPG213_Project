@@ -108,6 +108,12 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 448b4ee9845694a4db81901d4b61d4f4, type: 3}
+    - target: {fileID: 5367675043886317128, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: m_text
+      value: 'Cost
+
+        4'
+      objectReference: {fileID: 0}
     - target: {fileID: 5595300505267787118, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: m_Name
       value: UI Card-Kyogre Variant

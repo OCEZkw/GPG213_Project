@@ -108,6 +108,12 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 0c8f826af9668384cb6d49ec0cb71b95, type: 3}
+    - target: {fileID: 5367675043886317128, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: m_text
+      value: 'Cost
+
+        3'
+      objectReference: {fileID: 0}
     - target: {fileID: 5595300505267787118, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: m_Name
       value: UI Card-Mewtwo Variant

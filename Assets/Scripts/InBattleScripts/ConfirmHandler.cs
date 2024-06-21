@@ -74,7 +74,7 @@ public class ConfirmHandler : MonoBehaviour
         }
 
         // Wait a brief moment to ensure all cards are positioned correctly
-        yield return new WaitForSeconds(0.5f);
+       // yield return new WaitForSeconds(0.5f);
 
         // Use each confirmed card
         foreach (GameObject card in selectedCards)
@@ -89,6 +89,7 @@ public class ConfirmHandler : MonoBehaviour
                 {
                     buttonManager.ShowConfirmButton(false);
                     selectedEnemy.ShowReticle(false);
+                    selectedEnemy.ShowSelectedReticle(false);
                     yield return StartCoroutine(UseConfirmedCard(card, cardEffect));
                 }
                 else
@@ -177,7 +178,8 @@ public class ConfirmHandler : MonoBehaviour
 
     void StartNextRound()
     {
-        selectedEnemy = null;
+        CardClickHandler.selectedEnemy = null;
+        CardClickHandler.selectedPlayer = null;
         ShowAllCards();
         RoundManager.Instance.StartNextRound();
         CardClickHandler.selectedCards.Clear();

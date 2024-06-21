@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     public int attackDamage;
     public Slider healthSlider;
     public GameObject reticle;
+    public GameObject selectedReticle;
     public GameObject damageTextPrefab;
 
     private bool isSelected = false;
@@ -45,7 +46,7 @@ public class Enemy : MonoBehaviour
         }
 
         reticle.SetActive(false);
-        enemyType = EnemyType.Fire;
+        selectedReticle.SetActive(false);
     }
 
     void OnMouseDown()
@@ -63,6 +64,7 @@ public class Enemy : MonoBehaviour
 
             isSelected = true;
             ShowReticle(false);
+            ShowSelectedReticle(true);
 
 
             if (buttonManager != null)
@@ -92,6 +94,11 @@ public class Enemy : MonoBehaviour
     public void ShowReticle(bool show)
     {
         reticle.SetActive(show);
+    }
+
+    public void ShowSelectedReticle(bool show)
+    {
+        selectedReticle.SetActive(show);
     }
 
     public void TakeDamage(int damage)
