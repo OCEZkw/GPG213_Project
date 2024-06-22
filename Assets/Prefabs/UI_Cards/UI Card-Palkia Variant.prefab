@@ -112,6 +112,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI Card-Palkia Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6683818350866777314, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 200
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

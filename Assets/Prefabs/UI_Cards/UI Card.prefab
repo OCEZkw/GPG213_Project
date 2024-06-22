@@ -317,9 +317,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2825914417541556291}
+  - {fileID: 2973167438671008645}
   - {fileID: 751241945368542660}
   - {fileID: 8499111115659458210}
-  - {fileID: 2973167438671008645}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -360,6 +360,7 @@ MonoBehaviour:
   effectValue: 0
   cost: 0
   cardType: 0
+  strengthText: {fileID: 1552645089560972796}
 --- !u!61 &140934031692007068
 BoxCollider2D:
   m_ObjectHideFlags: 0
