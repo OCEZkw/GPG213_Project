@@ -3776,10 +3776,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestImage
       objectReference: {fileID: 0}
-    - target: {fileID: 8343389169715661367, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
-      propertyPath: itemDescription
-      value: Darkrai does 400 magic damage
-      objectReference: {fileID: 0}
     - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8929,10 +8925,6 @@ PrefabInstance:
       propertyPath: ItemDescriptionNameText
       value: 
       objectReference: {fileID: 325515909}
-    - target: {fileID: 8355223724681131573, guid: bca016d14721d674081169d61502f208, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 7.2246704
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
