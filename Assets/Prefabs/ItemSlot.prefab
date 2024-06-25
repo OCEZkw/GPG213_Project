@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 7.2246704}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4265344523064893511
@@ -186,9 +186,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardName: 
-  cardSprite: {fileID: 0}
+  cardSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   isFull: 0
+  itemDescription: 
+  emptySprite: {fileID: 0}
   cardImage: {fileID: 8181966515401161089}
+  itemDescriptionImage: {fileID: 0}
+  ItemDescriptionNameText: {fileID: 0}
+  ItemDescriptionText: {fileID: 0}
   selectedShader: {fileID: 630642782543739963}
   thisItemSelected: 0
 --- !u!1 &6666530107413060246

@@ -90,3 +90,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Darkrai
   sprite: {fileID: 21300000, guid: 05e11df459865ca47998cab39de1327c, type: 3}
+  itemDescription: Darkrai does 400 magic damage

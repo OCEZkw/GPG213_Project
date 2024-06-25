@@ -11,9 +11,16 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
     public string cardName;
     public Sprite cardSprite;
     public bool isFull;
+    public string itemDescription;
+    public Sprite emptySprite;
 
     //===ITEM SLOT===//
     [SerializeField] private Image cardImage;
+
+    //===ITEM DESCRIPTION SLOT===//
+    public Image itemDescriptionImage;
+    public TMP_Text ItemDescriptionNameText;
+    public TMP_Text ItemDescriptionText;
 
 
     public GameObject selectedShader;
@@ -27,10 +34,11 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
     }
 
-    public void AddItem(string cardName, Sprite cardSprite)
+    public void AddItem(string cardName, Sprite cardSprite, string itemDescription)
     {
         this.cardName = cardName;
         this.cardSprite = cardSprite;
+        this.itemDescription = itemDescription;
         isFull = true;
 
         cardImage.sprite = cardSprite;
@@ -49,6 +57,13 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
         inventoryManager.DeselectAllSlots();
         selectedShader.SetActive(true);
         thisItemSelected = true;
+        ItemDescriptionNameText.text = cardName;
+        ItemDescriptionText.text = itemDescription;
+        itemDescriptionImage.sprite = cardSprite;
+        if(itemDescriptionImage.sprite == null)
+        { 
+            itemDescriptionImage.sprite = emptySprite;
+        } 
     }
 
 

@@ -20,13 +20,13 @@ public class InventoryManager : MonoBehaviour
         
     }
 
-    public void AddItem(string cardName, Sprite cardSprite)
+    public void AddItem(string cardName, Sprite cardSprite, string itemDescription)
     {
         for (int i = 0; i < cardSlot.Length; i++)
         {
             if(cardSlot[i].isFull == false)
             {
-                cardSlot[i].AddItem(cardName, cardSprite);
+                cardSlot[i].AddItem(cardName, cardSprite, itemDescription);
                 return;
             }
         }
