@@ -10,6 +10,7 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
     //===ITEM DATA===//
     public string cardName;
     public Sprite cardSprite;
+    public int quantity;
     public bool isFull;
     public string itemDescription;
     public Sprite emptySprite;
@@ -34,9 +35,10 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
     }
 
-    public void AddItem(string cardName, Sprite cardSprite, string itemDescription)
+    public void AddItem(string cardName, int quantity, Sprite cardSprite, string itemDescription)
     {
         this.cardName = cardName;
+        this.quantity = quantity;
         this.cardSprite = cardSprite;
         this.itemDescription = itemDescription;
         isFull = true;
@@ -54,19 +56,39 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
 
     public void OnLeftClick()
     {
-        inventoryManager.DeselectAllSlots();
-        selectedShader.SetActive(true);
-        thisItemSelected = true;
-        ItemDescriptionNameText.text = cardName;
-        ItemDescriptionText.text = itemDescription;
-        itemDescriptionImage.sprite = cardSprite;
-        if(itemDescriptionImage.sprite == null)
-        { 
-            itemDescriptionImage.sprite = emptySprite;
-        } 
+        if (thisItemSelected)
+        {
+            inventoryManager.PlaceCardOnSelectedDeckSlot(cardName, cardSprite);
+            inventoryManager.HideInventoryMenu();
+            this.quantity -= 1;
+            if(this.quantity <= 0)
+            {
+                EmptySlot();
+            }
+        }
+        else
+        {
+            inventoryManager.DeselectAllSlots();
+            selectedShader.SetActive(true);
+            thisItemSelected = true;
+            ItemDescriptionNameText.text = cardName;
+            ItemDescriptionText.text = itemDescription;
+            itemDescriptionImage.sprite = cardSprite;
+            if (itemDescriptionImage.sprite == null)
+            {
+                itemDescriptionImage.sprite = emptySprite;
+            }
+        }
     }
 
+    private void EmptySlot()
+    {
+        cardImage.sprite = emptySprite;
 
+        ItemDescriptionNameText.text = " ";
+        ItemDescriptionText.text = " ";
+        itemDescriptionImage.sprite = emptySprite;
+    }
     // Update is called once per frame
     void Update()
     {

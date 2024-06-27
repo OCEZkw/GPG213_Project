@@ -74,7 +74,7 @@ public class ConfirmHandler : MonoBehaviour
         }
 
         // Wait a brief moment to ensure all cards are positioned correctly
-       // yield return new WaitForSeconds(0.5f);
+        // yield return new WaitForSeconds(0.5f);
 
         // Use each confirmed card
         foreach (GameObject card in selectedCards)
@@ -270,7 +270,7 @@ public class ConfirmHandler : MonoBehaviour
                         cardClickHandler.deckManager = deckManager;
                         cardClickHandler.buttonManager = ButtonManager.Instance;
                     }
-                    
+
                     deckManager.hand.Insert(cardIndex, newCard);
                     HideOtherCards();
                 }

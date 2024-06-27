@@ -183,10 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da360e1627fdd547b9d9ca041357406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  playerStats: {fileID: 0}
   currentHealth: 0
-  defense: 20
-  magicDefense: 20
   healthSlider: {fileID: 0}
   currentCost: 3
   damageTextPrefab: {fileID: 6735584358987700647, guid: fc91a597c69bd284f8b8c324bb508e15, type: 3}

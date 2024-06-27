@@ -5,6 +5,7 @@ using UnityEngine;
 public class Card1 : MonoBehaviour
 {
     [SerializeField] private string cardName;
+    [SerializeField] private int quantity;
     [SerializeField] private Sprite sprite;
     [TextArea][SerializeField] private string itemDescription;
     private InventoryManager inventoryManager;
@@ -14,6 +15,6 @@ public class Card1 : MonoBehaviour
     void Start()
     {
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
-        inventoryManager.AddItem(cardName, sprite, itemDescription);
+        inventoryManager.AddItem(cardName, quantity, sprite, itemDescription);
     }
 }

@@ -6,9 +6,10 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public PlayerStats playerStats;
-
+    public int maxHealth = 100;
     public int currentHealth;
+    public int defense = 20;
+    public int magicDefense = 20;
     public Slider healthSlider;
     public int currentCost;
     public GameObject damageTextPrefab;
@@ -24,17 +25,16 @@ public class Player : MonoBehaviour
     private bool isSelected = false;
     [SerializeField] private ButtonManager buttonManager;
 
-
     void Start()
     {
         buttonManager = FindObjectOfType<ButtonManager>();
         healthSlider = GetComponentInChildren<Slider>();
         healthText = healthSlider.GetComponentInChildren<TextMeshProUGUI>();  // Assuming TextMeshProUGUI is a child of the Slider
-        currentHealth = playerStats.maxHealth;
+        currentHealth = maxHealth;
 
         if (healthSlider != null)
         {
-            healthSlider.maxValue = playerStats.maxHealth;
+            healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
         UpdateHealthText();
@@ -45,9 +45,7 @@ public class Player : MonoBehaviour
         {
             healText.gameObject.SetActive(false);
         }
-
     }
-
 
     void OnMouseDown()
     {
@@ -106,7 +104,6 @@ public class Player : MonoBehaviour
         return RoundManager.Instance.playerCost >= cost;
     }
 
-
     public void UpdateCost(int newCost)
     {
         currentCost = newCost;
@@ -122,7 +119,7 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + playerStats.defense));
+        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
         currentHealth -= actualDamage;
         if (currentHealth < 0)
         {
@@ -138,7 +135,7 @@ public class Player : MonoBehaviour
 
     public void TakeMagicDamage(int magicDamage)
     {
-        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + playerStats.magicDefense));
+        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
         currentHealth -= actualMagicDamage;
         if (currentHealth < 0)
         {
@@ -155,9 +152,9 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth += amount;
-        if (currentHealth > playerStats.maxHealth)
+        if (currentHealth > maxHealth)
         {
-            currentHealth = playerStats.maxHealth;
+            currentHealth = maxHealth;
         }
         UpdateHealthSlider();
 
@@ -197,16 +194,15 @@ public class Player : MonoBehaviour
         }
     }
 
-
     public void IncreasePhysicalDefense(int amount)
     {
-        playerStats.defense += amount;
+        defense += amount;
         NotificationManager.Instance.ShowNotification("Increased Player's Physical Defense");
     }
 
     public void IncreaseMagicalDefense(int amount)
     {
-        playerStats.magicDefense += amount;
+        magicDefense += amount;
         NotificationManager.Instance.ShowNotification("Increased Player's Magical Defense");
     }
 

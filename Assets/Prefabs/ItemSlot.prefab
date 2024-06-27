@@ -86,7 +86,6 @@ GameObject:
   - component: {fileID: 2732972640070066776}
   - component: {fileID: 8442120389360175011}
   - component: {fileID: 4649687568142435935}
-  - component: {fileID: 8200517403418992356}
   - component: {fileID: 6199201895269252114}
   m_Layer: 5
   m_Name: ItemSlot
@@ -155,24 +154,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8200517403418992356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4595158760325120082}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05b7d6babd05fae45aeaf8a8717e30fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  card:
-    id: 1
-    name: Azelf
-    sprite: {fileID: 21300000, guid: 07d6125746a6f6d43b81f2c9dcd7a7c4, type: 3}
-  cardImage: {fileID: 1394949012008079979, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
-  cardName: {fileID: 0}
 --- !u!114 &6199201895269252114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,6 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: 
   cardSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  quantity: 0
   isFull: 0
   itemDescription: 
   emptySprite: {fileID: 0}
