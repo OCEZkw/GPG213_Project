@@ -2061,6 +2061,7 @@ GameObject:
   - component: {fileID: 1280359863}
   - component: {fileID: 1280359865}
   - component: {fileID: 1280359866}
+  - component: {fileID: 1280359867}
   m_Layer: 0
   m_Name: DeckManager
   m_TagString: Untagged
@@ -2209,6 +2210,30 @@ MonoBehaviour:
   roundText: {fileID: 552469358}
   costText: {fileID: 1109539624}
   player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
+--- !u!114 &1280359867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280359851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e287806010395364a99d81b66797e6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waves:
+  - numberOfEnemies: 1
+    spawnInterval: 0
+  - numberOfEnemies: 3
+    spawnInterval: 0
+  - numberOfEnemies: 1
+    spawnInterval: 0
+  spawnPoints:
+  - {fileID: 1337436759}
+  - {fileID: 1713498180}
+  - {fileID: 1940966203}
+  enemyPrefab: {fileID: 7520179415146543301, guid: f444428959af34047bb5073fe0d53663, type: 3}
 --- !u!1 &1293491915
 GameObject:
   m_ObjectHideFlags: 0
