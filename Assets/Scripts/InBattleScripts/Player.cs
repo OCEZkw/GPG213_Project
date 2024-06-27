@@ -6,10 +6,9 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public int maxHealth = 100;
+    public PlayerStats playerStats;
+
     public int currentHealth;
-    public int defense = 20;
-    public int magicDefense = 20;
     public Slider healthSlider;
     public int currentCost;
     public GameObject damageTextPrefab;
@@ -31,11 +30,11 @@ public class Player : MonoBehaviour
         buttonManager = FindObjectOfType<ButtonManager>();
         healthSlider = GetComponentInChildren<Slider>();
         healthText = healthSlider.GetComponentInChildren<TextMeshProUGUI>();  // Assuming TextMeshProUGUI is a child of the Slider
-        currentHealth = maxHealth;
+        currentHealth = playerStats.maxHealth;
 
         if (healthSlider != null)
         {
-            healthSlider.maxValue = maxHealth;
+            healthSlider.maxValue = playerStats.maxHealth;
             healthSlider.value = currentHealth;
         }
         UpdateHealthText();
@@ -123,7 +122,7 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
+        int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + playerStats.defense));
         currentHealth -= actualDamage;
         if (currentHealth < 0)
         {
@@ -139,7 +138,7 @@ public class Player : MonoBehaviour
 
     public void TakeMagicDamage(int magicDamage)
     {
-        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
+        int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + playerStats.magicDefense));
         currentHealth -= actualMagicDamage;
         if (currentHealth < 0)
         {
@@ -156,9 +155,9 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth += amount;
-        if (currentHealth > maxHealth)
+        if (currentHealth > playerStats.maxHealth)
         {
-            currentHealth = maxHealth;
+            currentHealth = playerStats.maxHealth;
         }
         UpdateHealthSlider();
 
@@ -201,13 +200,13 @@ public class Player : MonoBehaviour
 
     public void IncreasePhysicalDefense(int amount)
     {
-        defense += amount;
+        playerStats.defense += amount;
         NotificationManager.Instance.ShowNotification("Increased Player's Physical Defense");
     }
 
     public void IncreaseMagicalDefense(int amount)
     {
-        magicDefense += amount;
+        playerStats.magicDefense += amount;
         NotificationManager.Instance.ShowNotification("Increased Player's Magical Defense");
     }
 
