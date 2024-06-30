@@ -70,5 +70,8 @@ public class DeckSlot : MonoBehaviour, IPointerClickHandler
         }
 
         isFull = true; // Assuming this flag is set to true to indicate the slot is filled
+
+        // Check if all deck slots are filled
+        inventoryManager.CheckAllDeckSlotsFilled();
     }
 }

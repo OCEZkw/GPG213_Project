@@ -2223,7 +2223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - numberOfEnemies: 1
+  - numberOfEnemies: 2
     spawnInterval: 0
   - numberOfEnemies: 3
     spawnInterval: 0

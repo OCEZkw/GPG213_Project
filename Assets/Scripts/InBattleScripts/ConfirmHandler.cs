@@ -13,6 +13,8 @@ public class ConfirmHandler : MonoBehaviour
     public PlayerSpawner playerSpawner;
 
     public static Enemy selectedEnemy;
+    public static Enemy selectedEnemy2;
+    public static Enemy selectedEnemy3;
     public static Player selectedPlayer;
 
     private GameObject playerInstance;

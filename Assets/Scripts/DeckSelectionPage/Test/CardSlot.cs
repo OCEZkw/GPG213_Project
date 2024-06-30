@@ -37,9 +37,16 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
 
     public void AddItem(string cardName, int quantity, Sprite cardSprite, string itemDescription)
     {
+        // Update NAME
         this.cardName = cardName;
+
+        // Update QUANTITY
         this.quantity = quantity;
+
+        // Update Image 
         this.cardSprite = cardSprite;
+
+        // Update QUANTITY 
         this.itemDescription = itemDescription;
         isFull = true;
 
@@ -83,11 +90,24 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
 
     private void EmptySlot()
     {
-        cardImage.sprite = emptySprite;
+        Debug.Log("EmptySlot called");
 
-        ItemDescriptionNameText.text = " ";
-        ItemDescriptionText.text = " ";
+        // Clear all card-related data
+        cardName = "";
+        cardSprite = null;
+        quantity = 0;
+        isFull = false;
+        itemDescription = "";
+
+        // Update the UI to reflect the empty state
+        cardImage.sprite = emptySprite;
+        ItemDescriptionNameText.text = "";
+        ItemDescriptionText.text = "";
         itemDescriptionImage.sprite = emptySprite;
+
+        // Hide the selected shader and reset selection state
+        selectedShader.SetActive(false);
+        thisItemSelected = false;
     }
     // Update is called once per frame
     void Update()

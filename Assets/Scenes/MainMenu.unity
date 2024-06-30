@@ -273,8 +273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 8
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &65228668 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2732972640070066776, guid: bca016d14721d674081169d61502f208, type: 3}
@@ -656,8 +654,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 2
-  deckSelectionManager: {fileID: 0}
 --- !u!1001 &140266153
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1318,8 +1314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 3
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &309928184 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2732972640070066776, guid: bca016d14721d674081169d61502f208, type: 3}
@@ -1933,8 +1927,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 9
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &376571960 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2732972640070066776, guid: bca016d14721d674081169d61502f208, type: 3}
@@ -2198,8 +2190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 4
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &440689773 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2732972640070066776, guid: bca016d14721d674081169d61502f208, type: 3}
@@ -3192,8 +3182,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 6
-  deckSelectionManager: {fileID: 0}
 --- !u!1 &590220158
 GameObject:
   m_ObjectHideFlags: 0
@@ -3443,6 +3431,7 @@ Transform:
   - {fileID: 181981477}
   - {fileID: 665479230}
   - {fileID: 355624147}
+  - {fileID: 712089952}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &613843231
@@ -4310,6 +4299,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bca016d14721d674081169d61502f208, type: 3}
+--- !u!224 &712089952 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+  m_PrefabInstance: {fileID: 1762860392}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &750096803
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5682,9 +5676,9 @@ RectTransform:
   - {fileID: 1261539174}
   - {fileID: 954024317}
   - {fileID: 202586203}
+  - {fileID: 858025655}
   - {fileID: 1908819933}
   - {fileID: 1898078440}
-  - {fileID: 858025655}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5758,7 +5752,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e09b1b30abc966a4d97b708cafe4e288, type: 2}
   - {fileID: 11400000, guid: ac36247dd992ef44082be6578a74cbe2, type: 2}
   - {fileID: 11400000, guid: 2f92e9eacdf7d96479f9b73da27e801d, type: 2}
-  playerStats: {fileID: 954024320}
+  playerStats: {fileID: 1555686277}
 --- !u!1 &954024316
 GameObject:
   m_ObjectHideFlags: 0
@@ -5770,7 +5764,6 @@ GameObject:
   - component: {fileID: 954024317}
   - component: {fileID: 954024319}
   - component: {fileID: 954024318}
-  - component: {fileID: 954024320}
   m_Layer: 5
   m_Name: Player
   m_TagString: Untagged
@@ -5835,30 +5828,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 954024316}
   m_CullTransparentMesh: 1
---- !u!114 &954024320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 954024316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1decccf7cb50744ab941bcb3dc3b643, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  attackDamage: 20
-  magicDamage: 20
-  defense: 20
-  magicDefense: 20
-  healingAmount: 10
-  maxHealthText: {fileID: 2069949167}
-  attackDamageText: {fileID: 1452287093}
-  magicDamageText: {fileID: 1738621927}
-  defenseText: {fileID: 1062168701}
-  magicDefenseText: {fileID: 1636793894}
-  healingAmountText: {fileID: 514961083}
 --- !u!224 &956856030 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
@@ -7064,8 +7033,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 10
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &1183688036 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2732972640070066776, guid: bca016d14721d674081169d61502f208, type: 3}
@@ -7840,8 +7807,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 7
-  deckSelectionManager: {fileID: 0}
 --- !u!224 &1369249522 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2478425625096911894, guid: 71bac35713440e14cbeb528dff35bf15, type: 3}
@@ -8766,6 +8731,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1555686276}
   - component: {fileID: 1555686275}
+  - component: {fileID: 1555686277}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8785,6 +8751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 929124ee45a1576499247af2360c7de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelLoadButton: {fileID: 858025656}
 --- !u!4 &1555686276
 Transform:
   m_ObjectHideFlags: 0
@@ -8800,6 +8767,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1555686277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555686274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1decccf7cb50744ab941bcb3dc3b643, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  attackDamage: 20
+  magicDamage: 20
+  defense: 20
+  magicDefense: 20
+  healingAmount: 10
+  maxHealthText: {fileID: 2069949167}
+  attackDamageText: {fileID: 1452287093}
+  magicDamageText: {fileID: 1738621927}
+  defenseText: {fileID: 1062168701}
+  magicDefenseText: {fileID: 1636793894}
+  healingAmountText: {fileID: 514961083}
 --- !u!1001 &1579363668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9730,6 +9721,123 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1756845918}
   m_CullTransparentMesh: 1
+--- !u!1001 &1762860392
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 596715258}
+    m_Modifications:
+    - target: {fileID: 1394949012008079979, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b6b5df6a149efe942ad9c940c0924727, type: 3}
+    - target: {fileID: 4868499581503517692, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_Name
+      value: TestImage (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343389169715661367, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b6b5df6a149efe942ad9c940c0924727, type: 3}
+    - target: {fileID: 8343389169715661367, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: cardName
+      value: Yveltal
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343389169715661367, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: quantity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343389169715661367, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: itemDescription
+      value: Dark type card that deals 84 damage to 1 enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 247.20544
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 44.49164
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8630292093519601788, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7540b24e8dc7303428d3c79fbda03884, type: 3}
 --- !u!224 &1808204697 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2478425625096911894, guid: 71bac35713440e14cbeb528dff35bf15, type: 3}
@@ -11340,8 +11448,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395299ae11706a34cadc9deebac91a33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxIndex: 5
-  deckSelectionManager: {fileID: 0}
 --- !u!1001 &2145278496
 PrefabInstance:
   m_ObjectHideFlags: 0

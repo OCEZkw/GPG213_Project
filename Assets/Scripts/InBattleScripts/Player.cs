@@ -6,10 +6,10 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public int maxHealth = 100;
+    public int maxHealth;
     public int currentHealth;
-    public int defense = 20;
-    public int magicDefense = 20;
+    public int defense;
+    public int magicDefense;
     public Slider healthSlider;
     public int currentCost;
     public GameObject damageTextPrefab;
@@ -27,6 +27,13 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        PlayerStats playerStats = PlayerStats.Instance;
+        if (playerStats != null)
+        {
+            maxHealth = playerStats.maxHealth;
+            defense = playerStats.defense;
+            magicDefense = playerStats.magicDefense;
+        }
         buttonManager = FindObjectOfType<ButtonManager>();
         healthSlider = GetComponentInChildren<Slider>();
         healthText = healthSlider.GetComponentInChildren<TextMeshProUGUI>();  // Assuming TextMeshProUGUI is a child of the Slider
@@ -40,7 +47,6 @@ public class Player : MonoBehaviour
         UpdateHealthText();
         currentCost = RoundManager.Instance.playerCost;
         reticle.SetActive(false);
-
         if (healText != null)
         {
             healText.gameObject.SetActive(false);

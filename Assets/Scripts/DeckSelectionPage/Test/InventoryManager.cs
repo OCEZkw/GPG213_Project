@@ -15,6 +15,9 @@ public class InventoryManager : MonoBehaviour
 
     private DeckSlot selectedDeckSlot;
 
+    // Reference to the UIManager to enable the button
+    private UIManager uiManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +25,9 @@ public class InventoryManager : MonoBehaviour
         {
             playerStats = FindObjectOfType<PlayerStats>();
         }
+        // Find the UIManager instance
+        uiManager = FindObjectOfType<UIManager>();
+
     }
 
     // Update is called once per frame
@@ -111,4 +117,17 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    // Method to check if all deck slots are filled
+    public void CheckAllDeckSlotsFilled()
+    {
+        foreach (DeckSlot slot in deckSlot)
+        {
+            if (!slot.isFull)
+            {
+                return;
+            }
+        }
+        // If all slots are filled, enable the button
+        uiManager.EnableLevelLoadButton(true);
+    }
 }

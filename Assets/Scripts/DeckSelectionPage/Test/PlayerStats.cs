@@ -6,6 +6,8 @@ using TMPro;
 [System.Serializable]
 public class PlayerStats : MonoBehaviour
 {
+    public static PlayerStats Instance; // Singleton instance
+
     public int maxHealth = 1000;
     public int attackDamage = 50;
     public int magicDamage = 50;
@@ -20,6 +22,18 @@ public class PlayerStats : MonoBehaviour
     public TextMeshProUGUI magicDefenseText;
     public TextMeshProUGUI healingAmountText;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Make this object persistent
+        }
+        else
+        {
+            Destroy(gameObject); // Ensure only one instance exists
+        }
+    }
 
     void Start()
     {
