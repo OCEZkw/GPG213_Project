@@ -13,8 +13,6 @@ public class ConfirmHandler : MonoBehaviour
     public PlayerSpawner playerSpawner;
 
     public static Enemy selectedEnemy;
-    public static Enemy selectedEnemy2;
-    public static Enemy selectedEnemy3;
     public static Player selectedPlayer;
 
     private GameObject playerInstance;
@@ -54,7 +52,7 @@ public class ConfirmHandler : MonoBehaviour
     public void ConfirmCard()
     {
         Debug.Log("ConfirmCard Function");
-        List<GameObject> selectedCards = CardClickHandler.selectedCards;
+        List<GameObject> selectedCards = NewCardClick.selectedCards;
         if (selectedCards.Count > 0)
         {
             StartCoroutine(UseConfirmedCards(selectedCards));
@@ -67,32 +65,35 @@ public class ConfirmHandler : MonoBehaviour
 
     IEnumerator UseConfirmedCards(List<GameObject> selectedCards)
     {
+        Debug.Log("StartedIEnumerator");
         // Move all selected cards to the confirmed card position
-        foreach (GameObject card in selectedCards)
+        foreach (GameObject cardObject in selectedCards)
         {
-            card.transform.position = confirmedCardPosition.position;
-            card.GetComponent<Collider2D>().enabled = false;
+            cardObject.transform.position = confirmedCardPosition.position;
+            cardObject.GetComponent<Collider2D>().enabled = false;
             HideOtherCards();
         }
 
         // Wait a brief moment to ensure all cards are positioned correctly
-        // yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
 
         // Use each confirmed card
-        foreach (GameObject card in selectedCards)
+        foreach (GameObject cardObject in selectedCards)
         {
-            CardEffect cardEffect = card.GetComponent<CardEffect>();
+            NewCardClick cardClick = cardObject.GetComponent<NewCardClick>();
+            CardEffect cardEffect = cardObject.GetComponent<CardEffect>();
 
             // Check if the card targets an enemy
-            if (selectedEnemy != null && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            if (cardClick.GetSelectedEnemy() != null &&
+                (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
-                Enemy enemy = selectedEnemy.GetComponent<Enemy>();
+                Enemy enemyTarget = cardClick.GetSelectedEnemy().GetComponent<Enemy>(); // Get the Enemy component
                 if (player.HasEnoughCost(cardEffect.cost))
                 {
                     buttonManager.ShowConfirmButton(false);
-                    selectedEnemy.ShowReticle(false);
-                    selectedEnemy.ShowSelectedReticle(false);
-                    yield return StartCoroutine(UseConfirmedCard(card, cardEffect));
+                    enemyTarget.ShowReticle(false);
+                    enemyTarget.ShowSelectedReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, enemyTarget.gameObject)); // Pass the GameObject of the enemy
                 }
                 else
                 {
@@ -100,14 +101,15 @@ public class ConfirmHandler : MonoBehaviour
                 }
             }
             // Check if the card targets a player for healing or defense
-            else if (selectedPlayer != null && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
+            else if (cardClick.GetSelectedPlayer() != null &&
+                     (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
             {
-                Player playerTarget = selectedPlayer.GetComponent<Player>();
+                Player playerTarget = cardClick.GetSelectedPlayer().GetComponent<Player>(); // Get the Player component
                 if (playerTarget != null && playerTarget.HasEnoughCost(cardEffect.cost))
                 {
                     buttonManager.ShowConfirmButton(false);
-                    selectedPlayer.ShowReticle(false);
-                    yield return StartCoroutine(UseConfirmedCard(card, cardEffect));
+                    playerTarget.ShowReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, playerTarget.gameObject)); // Pass the GameObject of the player
                 }
                 else
                 {
@@ -121,58 +123,74 @@ public class ConfirmHandler : MonoBehaviour
         }
 
         // Handle enemy attacks after all cards are used
-        foreach (GameObject enemy in enemySpawner.GetEnemyInstances())
+        foreach (GameObject enemyObject in enemySpawner.GetEnemyInstances())
         {
-            EnemyAttack(enemy);
-            yield return new WaitForSeconds(2f);
+            if (enemyObject != null)
+            {
+                Enemy enemy = enemyObject.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    EnemyAttack(enemy); // Pass the Enemy object directly
+                    yield return new WaitForSeconds(2f);
+                }
+            }
         }
 
         StartNextRound();
     }
 
-    IEnumerator UseConfirmedCard(GameObject confirmedCard, CardEffect cardEffect)
+    IEnumerator UseConfirmedCard(GameObject cardObject, CardEffect cardEffect, GameObject target)
     {
         yield return new WaitForSeconds(2f);  // Delay to simulate card effect processing time
 
-        if (selectedEnemy != null && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+        if (target != null)
         {
-            cardEffect.ApplyEffect(selectedEnemy.gameObject);
-        }
-        else if (selectedPlayer != null && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
-        {
-            Player playerTarget = selectedPlayer.GetComponent<Player>();
-            if (playerTarget != null)
+            if (target.CompareTag("Enemy") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
-                playerTarget.UpdateCost(playerTarget.currentCost - cardEffect.cost);
-                cardEffect.ApplyEffect(selectedPlayer.gameObject);
+                Enemy enemy = target.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    cardEffect.ApplyEffect(enemy.gameObject);
+                }
+            }
+            else if (target.CompareTag("Player") && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
+            {
+                Player player = target.GetComponent<Player>();
+                if (player != null)
+                {
+                    player.UpdateCost(player.currentCost - cardEffect.cost);
+                    cardEffect.ApplyEffect(player.gameObject);
+                }
             }
         }
 
         // Handle post-effect logic
-        confirmedCard.SetActive(false);
-        ReplaceCardInHand(confirmedCard);
+        cardObject.SetActive(false);
+        ReplaceCardInHand(cardObject);
         yield return new WaitForSeconds(2f);
     }
 
 
-    void EnemyAttack(GameObject enemyInstance)
+
+    void EnemyAttack(Enemy enemy)
     {
-        if (enemyInstance != null && playerInstance != null)
+        if (enemy != null && playerInstance != null)
         {
-            Enemy enemy = enemyInstance.GetComponent<Enemy>();
             Player player = playerInstance.GetComponent<Player>();
-            if (enemy != null && player != null)
+
+            if (player != null)
             {
                 int damage = enemy.CalculateDamage();
+
                 if (enemy.enemyDamageType == Enemy.DamageType.Physical)
                 {
                     player.TakeDamage(damage);
-                    Debug.Log("Enemy attacked player for " + damage + " physical damage.");
+                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} physical damage.");
                 }
                 else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
                 {
                     player.TakeMagicDamage(damage);
-                    Debug.Log("Enemy attacked player for " + damage + " magical damage.");
+                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} magical damage.");
                 }
             }
         }
@@ -180,11 +198,9 @@ public class ConfirmHandler : MonoBehaviour
 
     void StartNextRound()
     {
-        CardClickHandler.selectedEnemy = null;
-        CardClickHandler.selectedPlayer = null;
         ShowAllCards();
         RoundManager.Instance.StartNextRound();
-        CardClickHandler.selectedCards.Clear();
+        NewCardClick.selectedCards.Clear();
     }
 
     public void HideOtherCards()

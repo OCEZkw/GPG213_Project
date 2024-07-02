@@ -21,6 +21,8 @@ public class WaveManager : MonoBehaviour
     private float nextSpawnTime;
     private EnemySpawner enemySpawner;
 
+    private int currentEnemyCode = 0;
+
     void Start()
     {
         enemySpawner = GetComponent<EnemySpawner>();
@@ -59,7 +61,20 @@ public class WaveManager : MonoBehaviour
             {
                 Transform spawnPoint = spawnPoints[spawnIndex];
                 GameObject enemyInstance = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+
+                // Generate a unique enemy code (you can use a counter or random number generator)
+                int uniqueCode = GenerateUniqueEnemyCode();
+
+                // Access the Enemy script and set the enemyCode
+                Enemy enemy = enemyInstance.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.enemyCode = uniqueCode;
+                }
+
+                // Add the enemy instance to your management systems
                 enemySpawner.AddEnemyInstance(enemyInstance);
+
                 enemiesRemainingToSpawn--;
             }
             else
@@ -67,6 +82,12 @@ public class WaveManager : MonoBehaviour
                 Debug.LogWarning("Not enough spawn points for the remaining enemies.");
             }
         }
+    }
+
+    int GenerateUniqueEnemyCode()
+    {
+        // Example: You can use a simple counter for generating unique codes
+        return ++currentEnemyCode;
     }
 
     public void OnEnemyDefeated()

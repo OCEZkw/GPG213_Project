@@ -16,11 +16,11 @@ public class Enemy : MonoBehaviour
     public GameObject selectedReticle;
     public GameObject damageTextPrefab;
 
-    private bool isSelected = false;
     [SerializeField] private ButtonManager buttonManager;
 
     public EnemyType enemyType;
 
+    public int enemyCode;
 
     public enum DamageType
     {
@@ -51,44 +51,19 @@ public class Enemy : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (CardClickHandler.selectedCards.Count > 0)
+        NewCardClick[] cards = FindObjectsOfType<NewCardClick>();
+        foreach (NewCardClick card in cards)
         {
-            Enemy[] enemies = FindObjectsOfType<Enemy>();
-            foreach (Enemy enemy in enemies)
+            if (card != null && card.isWaitingForTarget)
             {
-                if (enemy != this)
-                {
-                    enemy.Deselect();
-                }
+                card.SelectEnemy(this);
+                break;
             }
-
-            isSelected = true;
-            ShowReticle(false);
-            ShowSelectedReticle(true);
-
-
-            if (buttonManager != null)
-            {
-                Debug.Log("ButtonManager found. Calling ShowSelectTargetButton(false).");
-                buttonManager.ShowSelectTargetButton(false);
-                buttonManager.ShowConfirmButton(true);
-            }
-            else
-            {
-                Debug.LogWarning("ButtonManager is null. Unable to call ShowSelectTargetButton.");
-            }
-            ConfirmHandler.selectedEnemy = this;
-            CardClickHandler.selectedEnemy = this;
         }
     }
-
-
-    public void Deselect()
+    public int GetEnemyCode()
     {
-        Debug.Log("Deselect called");
-        isSelected = false;
-        ShowReticle(false);
-
+        return enemyCode;
     }
 
     public void ShowReticle(bool show)

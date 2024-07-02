@@ -34,6 +34,9 @@ public class DeckManager : MonoBehaviour
 
     void DrawHand()
     {
+        Debug.Log("Drawing hand...");
+        Debug.Log("Deck count: " + deck.Count);
+
         // Shuffle the deck
         Shuffle(deck);
 
@@ -42,6 +45,12 @@ public class DeckManager : MonoBehaviour
         {
             // Instantiate the card prefab and parent it to the canvas
             GameObject card = Instantiate(deck[i], canvasTransform);
+
+            if (card == null)
+            {
+                Debug.LogError("Failed to instantiate card prefab from deck!");
+                continue;
+            }
 
             // Set the card's RectTransform properties to match the corresponding hand position
             RectTransform cardRectTransform = card.GetComponent<RectTransform>();
@@ -78,6 +87,8 @@ public class DeckManager : MonoBehaviour
 
             hand.Add(card);
         }
+
+        Debug.Log("Hand count: " + hand.Count);
     }
 
     void Shuffle(List<GameObject> list)

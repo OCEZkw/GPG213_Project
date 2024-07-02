@@ -294,9 +294,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1772524485836529119}
-  - component: {fileID: 255017421927645535}
   - component: {fileID: 972680782465958701}
   - component: {fileID: 140934031692007068}
+  - component: {fileID: 5632031028669512513}
   m_Layer: 5
   m_Name: UI Card
   m_TagString: Card
@@ -327,23 +327,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 250, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &255017421927645535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5595300505267787118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 852db94555ed4f14f88153b40bc8076b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonManager: {fileID: 0}
-  roundManager: {fileID: 0}
-  player: {fileID: 0}
-  deckManager: {fileID: 0}
-  notEnoughCostIndicator: {fileID: 4724041116977637491}
 --- !u!114 &972680782465958701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,6 +389,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5632031028669512513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595300505267787118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47d8dfa39e30d349b412bbb8a440080, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWaitingForTarget: 0
+  buttonManager: {fileID: 0}
+  roundManager: {fileID: 0}
+  player: {fileID: 0}
+  deckManager: {fileID: 0}
+  notEnoughCostIndicator: {fileID: 4724041116977637491}
 --- !u!1 &5804703931333982971
 GameObject:
   m_ObjectHideFlags: 0

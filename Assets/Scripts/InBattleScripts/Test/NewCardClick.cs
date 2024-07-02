@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
-public class CardClickHandler : MonoBehaviour
+public class NewCardClick : MonoBehaviour
 {
     private bool isSelected = false;
-    private bool isWaitingForTarget = false;
+    public bool isWaitingForTarget = false;
     private Vector3 originalPosition;
     private float moveDistance = 1f;  // Distance to move the card upwards when selected
 
@@ -17,14 +15,13 @@ public class CardClickHandler : MonoBehaviour
     private CardEffect cardEffect;       // Reference to the CardEffect
     public Player player;
 
-    public static Enemy selectedEnemy;
-    public static Player selectedPlayer;
-
     public DeckManager deckManager;
 
     public GameObject notEnoughCostIndicator;  // The UI element to indicate not enough cost
 
-    public static int selectedEnemyCode;
+    private Enemy selectedEnemy;
+    private Player selectedPlayer;
+    private int selectedEnemyCode;
 
     void Start()
     {
@@ -35,6 +32,7 @@ public class CardClickHandler : MonoBehaviour
         cardEffect = GetComponent<CardEffect>();           // Initialize cardEffect
         player = FindObjectOfType<Player>();
         notEnoughCostIndicator.SetActive(false);
+
         // Check if the player has enough cost to use this card
         if (cardEffect != null && !player.HasEnoughCost(cardEffect.cost))
         {
@@ -50,7 +48,56 @@ public class CardClickHandler : MonoBehaviour
 
     void Update()
     {
-        WaitingToSelectTarget();
+
+    }
+
+    // Method to handle selecting an enemy
+    public void SelectEnemy(Enemy enemy)
+    {
+        if (isWaitingForTarget)
+        {
+            selectedEnemy = enemy;
+            selectedEnemyCode = enemy.enemyCode; // Store the enemy code
+            // Optionally, you can show some indication that this enemy is selected
+            enemy.ShowSelectedReticle(true);
+            // Optionally, update UI or perform other actions related to selecting an enemy
+            Debug.Log($"Selected Enemy Code: {selectedEnemyCode}");
+
+            buttonManager.ShowConfirmButton(true);
+            buttonManager.ShowSelectTargetButton(false);
+            isWaitingForTarget = false;
+        }
+    }
+
+    public void SelectPlayer(Player player)
+    {
+        if (isWaitingForTarget)
+        {
+            selectedPlayer = player;
+            // Optionally, you can show some indication that this player is selected
+            // Update UI or perform other actions related to selecting a player
+            player.ShowReticle(false);
+            buttonManager.ShowConfirmButton(true);
+            buttonManager.ShowSelectTargetButton(false);
+            isWaitingForTarget = false;
+        }
+    }
+
+    // Method to get selected enemy
+    public Enemy GetSelectedEnemy()
+    {
+        return selectedEnemy;
+    }
+
+    public Player GetSelectedPlayer()
+    {
+        return selectedPlayer;
+    }
+
+    // Method to get selected enemy code
+    public int GetSelectedEnemyCode()
+    {
+        return selectedEnemyCode;
     }
 
     void OnMouseDown()
@@ -62,34 +109,44 @@ public class CardClickHandler : MonoBehaviour
         }
         else
         {
-            // If another card is selected, deselect it unless an enemy or player is selected
-            if (selectedCards.Count > 0 && selectedEnemy == null && selectedPlayer == null)
+            // Check if there is a card waiting for a target
+            bool anyCardWaitingForTarget = false;
+            foreach (GameObject card in selectedCards)
             {
-                // Create a list to hold cards to be deselected
-                List<GameObject> cardsToDeselect = new List<GameObject>();
+                if (card != null)
+                {
+                    NewCardClick newCardClick = card.GetComponent<NewCardClick>();
+                    if (newCardClick != null && newCardClick.isWaitingForTarget)
+                    {
+                        anyCardWaitingForTarget = true;
+                        break;
+                    }
+                }
+            }
 
-                // Collect cards to be deselected
+            if (anyCardWaitingForTarget)
+            {
+                // Deselect all cards waiting for a target before selecting the new card
+                List<GameObject> cardsToDeselect = new List<GameObject>();
                 foreach (GameObject card in selectedCards)
                 {
-                    if (card != null) // Check if card is not null
+                    if (card != null)
                     {
-                        CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
-                        if (cardClickHandler != null)
+                        NewCardClick newCardClick = card.GetComponent<NewCardClick>();
+                        if (newCardClick != null)
                         {
                             cardsToDeselect.Add(card);
                         }
                     }
                 }
-
-                // Deselect collected cards
                 foreach (GameObject card in cardsToDeselect)
                 {
-                    if (card != null) // Check if card is not null
+                    if (card != null)
                     {
-                        CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
-                        if (cardClickHandler != null)
+                        NewCardClick newCardClick = card.GetComponent<NewCardClick>();
+                        if (newCardClick != null)
                         {
-                            cardClickHandler.Deselect();
+                            newCardClick.Deselect();
                         }
                     }
                 }
@@ -127,34 +184,12 @@ public class CardClickHandler : MonoBehaviour
         CheckNonSelectedCards();
     }
 
-    public void WaitingToSelectTarget()
-    {
-        if (isWaitingForTarget && Input.GetMouseButtonDown(0))
-        {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
-            {
-                Enemy enemy = hit.collider.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    Debug.Log("Raycast hit");
-                    // Enemy clicked, select it
-                    selectedEnemy = enemy;
-                    buttonManager.ShowConfirmButton(true); // Enable the confirm button
-                    isWaitingForTarget = false; // Exit waiting for target state
-                    selectedEnemyCode = enemy.enemyCode;
-                    Debug.Log($"Enemy selected: {enemy.enemyCode}");
-                }
-            }
-        }
-    }
-
     public void Deselect()
     {
         isSelected = false;
+        isWaitingForTarget = false;
         transform.position = originalPosition;
         selectedCards.Remove(gameObject);
-
 
         // Check if any card is still selected
         if (selectedCards.Count == 0)
@@ -185,12 +220,6 @@ public class CardClickHandler : MonoBehaviour
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
         CheckNonSelectedCards();
-
-        if (selectedCards.Count < 1)
-        {
-            selectedPlayer = null;
-            selectedEnemy = null;
-        }
     }
 
     private void ShowAllReticles(bool show)
@@ -300,7 +329,7 @@ public class CardClickHandler : MonoBehaviour
         {
             if (!selectedCards.Contains(card))
             {
-                CardClickHandler cardClickHandler = card.GetComponent<CardClickHandler>();
+                NewCardClick cardClickHandler = card.GetComponent<NewCardClick>();
                 if (cardClickHandler != null)
                 {
                     CardEffect effect = card.GetComponent<CardEffect>();
@@ -309,12 +338,12 @@ public class CardClickHandler : MonoBehaviour
                         if (remainingCost < effect.cost)
                         {
                             cardClickHandler.notEnoughCostIndicator.SetActive(true);
-                            card.GetComponent<Collider2D>().enabled = false;
+                            cardClickHandler.GetComponent<Collider2D>().enabled = false;
                         }
                         else
                         {
                             cardClickHandler.notEnoughCostIndicator.SetActive(false);
-                            card.GetComponent<Collider2D>().enabled = true;
+                            cardClickHandler.GetComponent<Collider2D>().enabled = true;
                         }
                     }
                 }
@@ -322,4 +351,3 @@ public class CardClickHandler : MonoBehaviour
         }
     }
 }
-

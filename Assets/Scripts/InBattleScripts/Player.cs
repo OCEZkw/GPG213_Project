@@ -55,32 +55,14 @@ public class Player : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (CardClickHandler.selectedCards.Count > 0)
+        NewCardClick[] cards = FindObjectsOfType<NewCardClick>();
+        foreach (NewCardClick card in cards)
         {
-            Player[] players = FindObjectsOfType<Player>();
-            foreach (Player player in players)
+            if (card != null && card.isWaitingForTarget)
             {
-                if (player != this)
-                {
-                    player.Deselect();
-                }
+                card.SelectPlayer(this);
+                break;
             }
-
-            isSelected = true;
-            ShowReticle(false);
-
-            if (buttonManager != null)
-            {
-                buttonManager.ShowSelectTargetButton(false);
-                buttonManager.ShowConfirmButton(true);
-            }
-            else
-            {
-                Debug.LogWarning("ButtonManager is null. Unable to show Confirm Button.");
-            }
-
-            ConfirmHandler.selectedPlayer = this; // Corrected to use the class name
-            CardClickHandler.selectedPlayer = this;
         }
     }
 
@@ -98,12 +80,13 @@ public class Player : MonoBehaviour
     public void ConfirmAction()
     {
         // Check if a card is selected and player is selected
-        if (CardClickHandler.selectedCards.Count > 0 && isSelected)
+        if (NewCardClick.selectedCards.Count > 0 && isSelected)
         {
             // Call ConfirmCard function from ConfirmHandler
             ConfirmHandler.Instance.ConfirmCard();
         }
     }
+
 
     public bool HasEnoughCost(int cost)
     {
