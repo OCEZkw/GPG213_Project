@@ -66,6 +66,14 @@ public class CardEffect : MonoBehaviour
                 ApplyEffectToPlayer(player);
             }
         }
+        else if (target.CompareTag("BossPart"))
+        {
+            BossPart bossPart = target.GetComponent<BossPart>();
+            if (bossPart != null)
+            {
+                ApplyEffectToBossPart(bossPart);
+            }
+        }
         else
         {
             Enemy enemy = target.GetComponent<Enemy>();
@@ -103,6 +111,21 @@ public class CardEffect : MonoBehaviour
                 break;
             case CardEffectType.MagicDefense:
                 enemy.IncreaseMagicDefense(effectValue);
+                break;
+        }
+    }
+
+    private void ApplyEffectToBossPart(BossPart bossPart)
+    {
+        int modifiedEffectValue = ModifyEffectByTyping(effectValue, cardType, bossPart.bossPartType);
+
+        switch (effectType)
+        {
+            case CardEffectType.AttackDamage:
+                bossPart.TakeDamage(modifiedEffectValue, false);
+                break;
+            case CardEffectType.MagicAttackDamage:
+                bossPart.TakeDamage(modifiedEffectValue, true);
                 break;
         }
     }

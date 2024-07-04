@@ -23,6 +23,8 @@ public class NewCardClick : MonoBehaviour
     private Player selectedPlayer;
     private int selectedEnemyCode;
 
+    private BossPart selectedBossPart;
+
     void Start()
     {
         originalPosition = transform.position;
@@ -69,6 +71,25 @@ public class NewCardClick : MonoBehaviour
         }
     }
 
+    // Method to handle selecting a boss part
+    public void SelectBossPart(BossPart bossPart)
+    {
+        if (isWaitingForTarget)
+        {
+            selectedBossPart = bossPart;
+            selectedEnemyCode = bossPart.enemyCode; // Store the boss part code
+            bossPart.ShowReticle(true);
+            // Optionally, you can show some indication that this boss part is selected
+            bossPart.ShowSelectedReticle(true);
+            // Optionally, update UI or perform other actions related to selecting a boss part
+            Debug.Log($"Selected Boss Part Code: {selectedEnemyCode}");
+
+            buttonManager.ShowConfirmButton(true);
+            buttonManager.ShowSelectTargetButton(false);
+            isWaitingForTarget = false;
+        }
+    }
+
     public void SelectPlayer(Player player)
     {
         if (isWaitingForTarget)
@@ -87,6 +108,11 @@ public class NewCardClick : MonoBehaviour
     public Enemy GetSelectedEnemy()
     {
         return selectedEnemy;
+    }
+
+    public BossPart GetSelectedBossPart()
+    {
+        return selectedBossPart;
     }
 
     public Player GetSelectedPlayer()
@@ -178,9 +204,11 @@ public class NewCardClick : MonoBehaviour
         else
         {
             ShowAllReticles(true);
+            ShowAllBossPartReticles(true);
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(true); // Disable player collider for other card types
         }
+
         CheckNonSelectedCards();
     }
 
@@ -216,9 +244,11 @@ public class NewCardClick : MonoBehaviour
         else
         {
             ShowAllReticles(false);
+            ShowAllBossPartReticles(false);
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
+
         CheckNonSelectedCards();
     }
 
@@ -228,6 +258,15 @@ public class NewCardClick : MonoBehaviour
         foreach (Enemy enemy in enemies)
         {
             enemy.ShowReticle(show);
+        }
+    }
+
+    private void ShowAllBossPartReticles(bool show)
+    {
+        BossPart[] bossParts = FindObjectsOfType<BossPart>();
+        foreach (BossPart bossPart in bossParts)
+        {
+            bossPart.ShowReticle(show);
         }
     }
 

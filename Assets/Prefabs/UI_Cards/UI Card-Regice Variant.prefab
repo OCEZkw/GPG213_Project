@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 972680782465958701, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: effectValue
-      value: 45
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1772524485836529119, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: m_Pivot.x

@@ -9,6 +9,8 @@ public class WaveManager : MonoBehaviour
     {
         public int numberOfEnemies;
         public float spawnInterval;
+        public bool isBossWave; // Add a flag to indicate a boss wave
+        public GameObject bossPrefab;
     }
 
     public List<Wave> waves; // List of waves
@@ -42,15 +44,27 @@ public class WaveManager : MonoBehaviour
     {
         if (currentWaveIndex < waves.Count)
         {
-            enemiesRemainingToSpawn = waves[currentWaveIndex].numberOfEnemies;
-            enemiesRemainingAlive = enemiesRemainingToSpawn;
-            nextSpawnTime = Time.time;
+            if (waves[currentWaveIndex].isBossWave)
+            {
+                // Spawn boss only if it's a boss wave
+                Debug.Log("Spawning boss for wave " + currentWaveIndex);
+                SpawnBoss(waves[currentWaveIndex].bossPrefab);
+                enemiesRemainingAlive = 1; // Set enemiesRemainingAlive for boss wave
+            }
+            else
+            {
+                enemiesRemainingToSpawn = waves[currentWaveIndex].numberOfEnemies;
+                enemiesRemainingAlive = enemiesRemainingToSpawn;
+                nextSpawnTime = Time.time;
+            }
         }
         else
         {
             Debug.Log("All waves completed!");
         }
     }
+
+
 
     void SpawnEnemy()
     {
@@ -81,6 +95,39 @@ public class WaveManager : MonoBehaviour
             {
                 Debug.LogWarning("Not enough spawn points for the remaining enemies.");
             }
+        }
+    }
+
+    void SpawnBoss(GameObject bossPrefab)
+    {
+        if (spawnPoints.Length > 0)
+        {
+            Transform spawnPoint = spawnPoints[0]; // Use the first spawn point for the boss
+            GameObject bossInstance = Instantiate(bossPrefab, spawnPoint.position, Quaternion.identity);
+
+            // Get the WizardBossEnemy component from the instantiated bossInstance
+            WizardBossEnemy boss = bossInstance.GetComponent<WizardBossEnemy>();
+            if (boss != null)
+            {
+                // Get the BossPart components from the instantiated boss instance
+                BossPart[] bossParts = bossInstance.GetComponentsInChildren<BossPart>();
+
+                if (bossParts.Length < 3)
+                {
+                    Debug.LogError("Not enough BossPart components found on the WizardBossEnemy prefab.");
+                    return;
+                }
+
+                // Initialize and assign unique codes to each part
+                int staffCode = GenerateUniqueEnemyCode();
+                int headCode = GenerateUniqueEnemyCode();
+                int leftHandCode = GenerateUniqueEnemyCode();
+
+                // Assign codes to each part
+                boss.AssignUniqueCodes(bossParts[0], bossParts[1], bossParts[2], staffCode, headCode, leftHandCode);
+            }
+
+            enemiesRemainingAlive = 1; // Assume the boss is the only enemy in the wave
         }
     }
 

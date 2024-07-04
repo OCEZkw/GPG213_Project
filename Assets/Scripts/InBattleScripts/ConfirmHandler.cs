@@ -65,51 +65,56 @@ public class ConfirmHandler : MonoBehaviour
 
     IEnumerator UseConfirmedCards(List<GameObject> selectedCards)
     {
-        Debug.Log("StartedIEnumerator");
-        // Move all selected cards to the confirmed card position
         foreach (GameObject cardObject in selectedCards)
         {
             cardObject.transform.position = confirmedCardPosition.position;
             cardObject.GetComponent<Collider2D>().enabled = false;
             HideOtherCards();
-        }
 
-        // Wait a brief moment to ensure all cards are positioned correctly
-        yield return new WaitForSeconds(0.5f);
-
-        // Use each confirmed card
-        foreach (GameObject cardObject in selectedCards)
-        {
             NewCardClick cardClick = cardObject.GetComponent<NewCardClick>();
             CardEffect cardEffect = cardObject.GetComponent<CardEffect>();
 
-            // Check if the card targets an enemy
             if (cardClick.GetSelectedEnemy() != null &&
                 (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
-                Enemy enemyTarget = cardClick.GetSelectedEnemy().GetComponent<Enemy>(); // Get the Enemy component
+                Enemy enemyTarget = cardClick.GetSelectedEnemy().GetComponent<Enemy>();
                 if (player.HasEnoughCost(cardEffect.cost))
                 {
                     buttonManager.ShowConfirmButton(false);
                     enemyTarget.ShowReticle(false);
                     enemyTarget.ShowSelectedReticle(false);
-                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, enemyTarget.gameObject)); // Pass the GameObject of the enemy
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, enemyTarget.gameObject));
                 }
                 else
                 {
                     Debug.Log("Not enough resources to use this card.");
                 }
             }
-            // Check if the card targets a player for healing or defense
+            else if (cardClick.GetSelectedBossPart() != null &&
+                     (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            {
+                BossPart bossPartTarget = cardClick.GetSelectedBossPart().GetComponent<BossPart>();
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    buttonManager.ShowConfirmButton(false);
+                    bossPartTarget.ShowReticle(false);
+                    bossPartTarget.ShowSelectedReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, bossPartTarget.gameObject));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
+            }
             else if (cardClick.GetSelectedPlayer() != null &&
                      (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
             {
-                Player playerTarget = cardClick.GetSelectedPlayer().GetComponent<Player>(); // Get the Player component
+                Player playerTarget = cardClick.GetSelectedPlayer().GetComponent<Player>();
                 if (playerTarget != null && playerTarget.HasEnoughCost(cardEffect.cost))
                 {
                     buttonManager.ShowConfirmButton(false);
                     playerTarget.ShowReticle(false);
-                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, playerTarget.gameObject)); // Pass the GameObject of the player
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, playerTarget.gameObject));
                 }
                 else
                 {
@@ -122,17 +127,30 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
-        // Handle enemy attacks after all cards are used
+        yield return new WaitForSeconds(1f); // Delay before enemy actions
+
         foreach (GameObject enemyObject in enemySpawner.GetEnemyInstances())
         {
-            if (enemyObject != null)
+            Enemy enemy = enemyObject.GetComponent<Enemy>();
+            if (enemy != null && enemy.gameObject.activeSelf)
             {
-                Enemy enemy = enemyObject.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    EnemyAttack(enemy); // Pass the Enemy object directly
-                    yield return new WaitForSeconds(2f);
-                }
+                EnemyAttack(enemy);
+                yield return new WaitForSeconds(2f); // Delay between enemy attacks
+            }
+        }
+
+        // Retrieve player instance if needed (ensure it's updated)
+        playerInstance = playerSpawner.GetPlayerInstance();
+        WizardBossEnemy wizardBoss = FindObjectOfType<WizardBossEnemy>();
+        if (wizardBoss != null)
+        {
+            // Ensure playerInstance is a Player component
+            wizardBoss.BossAttackAfterPlayerActions(playerInstance.GetComponent<Player>());
+
+            // Wait for the boss to finish attacking
+            while (wizardBoss.IsBossAttacking) // Adjust condition based on your boss logic
+            {
+                yield return null; // Wait until boss finishes attacking
             }
         }
 
@@ -141,7 +159,7 @@ public class ConfirmHandler : MonoBehaviour
 
     IEnumerator UseConfirmedCard(GameObject cardObject, CardEffect cardEffect, GameObject target)
     {
-        yield return new WaitForSeconds(2f);  // Delay to simulate card effect processing time
+        yield return new WaitForSeconds(2f); // Delay before card effect applies
 
         if (target != null)
         {
@@ -151,6 +169,14 @@ public class ConfirmHandler : MonoBehaviour
                 if (enemy != null)
                 {
                     cardEffect.ApplyEffect(enemy.gameObject);
+                }
+            }
+            else if (target.CompareTag("BossPart") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            {
+                BossPart bossPart = target.GetComponent<BossPart>();
+                if (bossPart != null)
+                {
+                    cardEffect.ApplyEffect(bossPart.gameObject);
                 }
             }
             else if (target.CompareTag("Player") && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
@@ -164,10 +190,9 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
-        // Handle post-effect logic
         cardObject.SetActive(false);
         ReplaceCardInHand(cardObject);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f); // Delay after card effect applies
     }
 
 

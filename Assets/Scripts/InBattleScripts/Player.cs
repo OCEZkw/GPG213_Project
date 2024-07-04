@@ -114,11 +114,14 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
-        ShowDamageText(actualDamage, "PHYSICAL");
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
             Die();
+        }
+        else
+        {
+            ShowDamageText(actualDamage, "PHYSICAL");
         }
     }
 
@@ -130,11 +133,14 @@ public class Player : MonoBehaviour
         {
             currentHealth = 0;
         }
-        ShowDamageText(actualMagicDamage, "MAGICAL");
         UpdateHealthSlider();
         if (currentHealth == 0)
         {
             Die();
+        }
+        else
+        {
+            ShowDamageText(actualMagicDamage, "MAGICAL");
         }
     }
 
