@@ -120,6 +120,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI Card-Azelf Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 7302719882171998186, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: m_text
+      value: H
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946707188984104649, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
