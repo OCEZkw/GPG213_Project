@@ -47,7 +47,7 @@ public class PlayerStats : MonoBehaviour
         magicDamageText.text = "Magic Damage: " + magicDamage.ToString();
         defenseText.text = "Defense: " + defense.ToString();
         magicDefenseText.text = "Magic Defense: " + magicDefense.ToString();
-        healingAmountText.text = "Healing Amount: " + healingAmount.ToString();
+        healingAmountText.text = "Healing Power: " + healingAmount.ToString();
     }
 
     public void ChangeStat(StatToChange stat, int amount)

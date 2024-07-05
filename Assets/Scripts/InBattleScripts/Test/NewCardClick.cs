@@ -78,7 +78,7 @@ public class NewCardClick : MonoBehaviour
         {
             selectedBossPart = bossPart;
             selectedEnemyCode = bossPart.enemyCode; // Store the boss part code
-            bossPart.ShowReticle(true);
+            ShowAllBossPartReticles(false);
             // Optionally, you can show some indication that this boss part is selected
             bossPart.ShowSelectedReticle(true);
             // Optionally, update UI or perform other actions related to selecting a boss part
@@ -204,7 +204,9 @@ public class NewCardClick : MonoBehaviour
         else
         {
             ShowAllReticles(true);
+            ShowSelectedReticles(false);
             ShowAllBossPartReticles(true);
+            ShowBossSelectedReticle(false);
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(true); // Disable player collider for other card types
         }
@@ -244,7 +246,9 @@ public class NewCardClick : MonoBehaviour
         else
         {
             ShowAllReticles(false);
+            ShowSelectedReticles(false);
             ShowAllBossPartReticles(false);
+            ShowBossSelectedReticle(false);
             DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
             DisablePlayerCollider(false); // Enable player collider for other card types
         }
@@ -252,6 +256,9 @@ public class NewCardClick : MonoBehaviour
         CheckNonSelectedCards();
     }
 
+
+
+    //========Enemy Reticle======//
     private void ShowAllReticles(bool show)
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
@@ -260,7 +267,18 @@ public class NewCardClick : MonoBehaviour
             enemy.ShowReticle(show);
         }
     }
+    private void ShowSelectedReticles(bool show)
+    {
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.ShowSelectedReticle(show);
+        }
+    }
 
+
+
+    //========Boss Reticle========//
     private void ShowAllBossPartReticles(bool show)
     {
         BossPart[] bossParts = FindObjectsOfType<BossPart>();
@@ -270,6 +288,18 @@ public class NewCardClick : MonoBehaviour
         }
     }
 
+    private void ShowBossSelectedReticle(bool show)
+    {
+        BossPart[] bossParts = FindObjectsOfType<BossPart>();
+        foreach (BossPart bossPart in bossParts)
+        {
+            bossPart.ShowSelectedReticle(show);
+        }
+    }
+
+
+
+    //========Player Reticle========//
     private void ShowPlayerReticle(bool show)
     {
         if (player != null)
@@ -277,6 +307,8 @@ public class NewCardClick : MonoBehaviour
             player.ShowReticle(show); // Assuming the player has a ShowReticle method
         }
     }
+
+
 
     private void UpdateCostUI()
     {

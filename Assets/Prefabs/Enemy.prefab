@@ -105,7 +105,7 @@ MonoBehaviour:
   currentHealth: 0
   defense: 50
   magicDefense: 50
-  attackDamage: 200
+  attackDamage: 1000
   healthSlider: {fileID: 2267409602215981154}
   reticle: {fileID: 6294737531065078796}
   selectedReticle: {fileID: 951369109776486657}

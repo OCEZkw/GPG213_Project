@@ -184,7 +184,7 @@ public class ConfirmHandler : MonoBehaviour
                 Player player = target.GetComponent<Player>();
                 if (player != null)
                 {
-                    player.UpdateCost(player.currentCost - cardEffect.cost);
+                   // player.UpdateCost(player.currentCost - cardEffect.cost);
                     cardEffect.ApplyEffect(player.gameObject);
                 }
             }
@@ -192,7 +192,7 @@ public class ConfirmHandler : MonoBehaviour
 
         cardObject.SetActive(false);
         ReplaceCardInHand(cardObject);
-        yield return new WaitForSeconds(2f); // Delay after card effect applies
+        yield return new WaitForSeconds(1f); // Delay after card effect applies
     }
 
 
@@ -236,7 +236,7 @@ public class ConfirmHandler : MonoBehaviour
         // Iterate through all cards and hide those not in selectedCards
         foreach (GameObject card in allCards)
         {
-            if (!CardClickHandler.selectedCards.Contains(card))
+            if (!NewCardClick.selectedCards.Contains(card))
             {
                 HideCard(card);
             }

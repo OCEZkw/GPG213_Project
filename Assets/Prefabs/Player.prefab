@@ -183,11 +183,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da360e1627fdd547b9d9ca041357406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStats: {fileID: 0}
+  maxHealth: 0
   currentHealth: 0
+  defense: 0
+  magicDefense: 0
   healthSlider: {fileID: 0}
   currentCost: 3
-  damageTextPrefab: {fileID: 6735584358987700647, guid: fc91a597c69bd284f8b8c324bb508e15, type: 3}
+  damageTextPrefab: {fileID: 6735584358987700647, guid: 2f9c1e9e439f5b340a4f7ae3e14b52e5, type: 3}
   healthText: {fileID: 1702989528304329869}
   healText: {fileID: 3414473885102282219}
   reticle: {fileID: 2885949079630325}
