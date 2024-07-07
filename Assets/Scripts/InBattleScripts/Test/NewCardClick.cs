@@ -66,7 +66,8 @@ public class NewCardClick : MonoBehaviour
             Debug.Log($"Selected Enemy Code: {selectedEnemyCode}");
 
             buttonManager.ShowConfirmButton(true);
-            buttonManager.ShowSelectTargetButton(false);
+            NotificationManager.Instance.ShowTargetSelectionNotification(false);
+            //   buttonManager.ShowSelectTargetButton(false);
             isWaitingForTarget = false;
         }
     }
@@ -85,7 +86,8 @@ public class NewCardClick : MonoBehaviour
             Debug.Log($"Selected Boss Part Code: {selectedEnemyCode}");
 
             buttonManager.ShowConfirmButton(true);
-            buttonManager.ShowSelectTargetButton(false);
+            NotificationManager.Instance.ShowTargetSelectionNotification(false);
+            //  buttonManager.ShowSelectTargetButton(false);
             isWaitingForTarget = false;
         }
     }
@@ -99,7 +101,8 @@ public class NewCardClick : MonoBehaviour
             // Update UI or perform other actions related to selecting a player
             player.ShowReticle(false);
             buttonManager.ShowConfirmButton(true);
-            buttonManager.ShowSelectTargetButton(false);
+            NotificationManager.Instance.ShowTargetSelectionNotification(false);
+            //   buttonManager.ShowSelectTargetButton(false);
             isWaitingForTarget = false;
         }
     }
@@ -188,8 +191,10 @@ public class NewCardClick : MonoBehaviour
         isSelected = true;
         isWaitingForTarget = true;
         transform.position = new Vector3(originalPosition.x, originalPosition.y + moveDistance, originalPosition.z);
-        buttonManager.ShowSelectTargetButton(true);
+      //  buttonManager.ShowSelectTargetButton(true);
+      
         selectedCards.Add(gameObject);
+        NotificationManager.Instance.ShowTargetSelectionNotification(true);
 
         // Update the cost UI
         UpdateCostUI();
@@ -224,7 +229,8 @@ public class NewCardClick : MonoBehaviour
         // Check if any card is still selected
         if (selectedCards.Count == 0)
         {
-            buttonManager.ShowSelectTargetButton(false);
+            // buttonManager.ShowSelectTargetButton(false);
+            NotificationManager.Instance.ShowTargetSelectionNotification(false);
             buttonManager.ShowConfirmButton(false);
 
             // Reset cost UI

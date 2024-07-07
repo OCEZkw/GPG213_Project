@@ -105,7 +105,7 @@ public class CardClickHandler : MonoBehaviour
         isSelected = true;
         isWaitingForTarget = true;
         transform.position = new Vector3(originalPosition.x, originalPosition.y + moveDistance, originalPosition.z);
-        buttonManager.ShowSelectTargetButton(true);
+      //  buttonManager.ShowSelectTargetButton(true);
         selectedCards.Add(gameObject);
 
         // Update the cost UI
@@ -159,7 +159,7 @@ public class CardClickHandler : MonoBehaviour
         // Check if any card is still selected
         if (selectedCards.Count == 0)
         {
-            buttonManager.ShowSelectTargetButton(false);
+        //    buttonManager.ShowSelectTargetButton(false);
             buttonManager.ShowConfirmButton(false);
 
             // Reset cost UI

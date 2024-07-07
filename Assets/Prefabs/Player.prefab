@@ -390,6 +390,10 @@ PrefabInstance:
       value: HealthTexts
       objectReference: {fileID: 0}
     - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
+      propertyPath: m_text
+      value: 12300
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002566350971240812, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_fontSize
       value: 70
       objectReference: {fileID: 0}
@@ -551,7 +555,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4382429833252248466, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 35
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4382429833252248466, guid: 0833cb7963e735a4ba2740bdeed4e436, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -779,7 +783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6247043090439089217, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_Color.b
-      value: 0.0015420914
+      value: 0.7647176
       objectReference: {fileID: 0}
     - target: {fileID: 6247043090439089217, guid: 71fb4e7e3202fe847904dc9403720224, type: 3}
       propertyPath: m_Color.g

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class DeckSlot : MonoBehaviour, IPointerClickHandler
+public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public bool isFull;
     public Image cardImage;
@@ -22,6 +22,16 @@ public class DeckSlot : MonoBehaviour, IPointerClickHandler
     }
 
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnHoverEnter();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnHoverExit();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
@@ -30,16 +40,29 @@ public class DeckSlot : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void OnLeftClick()
+    private void OnHoverEnter()
+    {
+        inventoryManager.DeselectAllSlots();
+        selectedShader.SetActive(true);
+        thisItemSelected = true;
+        inventoryManager.SetSelectedDeckSlot(this);
+    }
+
+    private void OnHoverExit()
+    {
+
+        // Optionally, you can deselect the slot when the mouse exits
+        selectedShader.SetActive(false);
+        thisItemSelected = false;
+        inventoryManager.SetSelectedDeckSlot(null);
+    }
+
+    private void OnLeftClick()
     {
         if (thisItemSelected)
         {
             inventoryManager.ShowInventoryMenu();
         }
-        inventoryManager.DeselectAllSlots();
-        selectedShader.SetActive(true);
-        thisItemSelected = true;
-        inventoryManager.SetSelectedDeckSlot(this);
     }
 
     public void SetCard(string cardName, Sprite cardSprite)

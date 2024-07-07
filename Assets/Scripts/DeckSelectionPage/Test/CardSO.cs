@@ -9,6 +9,7 @@ public class CardSO : ScriptableObject
     public StatChange[] statChanges; // Array to hold multiple stat changes
     public Sprite cardSprite;
     public string description;
+    public Rarity rarity;
 
     public void UseCard(PlayerStats playerStats)
     {
@@ -17,6 +18,15 @@ public class CardSO : ScriptableObject
             playerStats.ChangeStat(change.statToChange, change.amountToChangeStat);
         }
     }
+
+    public enum Rarity
+    {
+        Common,
+        Rare,
+        SuperRare,
+        UltraRare,
+        Legendary
+    }
 }
 
 [System.Serializable]
@@ -24,4 +34,7 @@ public class StatChange
 {
     public PlayerStats.StatToChange statToChange;
     public int amountToChangeStat;
+
 }
+
+

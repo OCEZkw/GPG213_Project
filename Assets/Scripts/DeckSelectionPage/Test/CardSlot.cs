@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardSlot : MonoBehaviour, IPointerClickHandler
+public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     //===ITEM DATA===//
     public string cardName;
@@ -53,42 +53,69 @@ public class CardSlot : MonoBehaviour, IPointerClickHandler
         cardImage.sprite = cardSprite;
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnHoverEnter();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnHoverExit();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(eventData.button == PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             OnLeftClick();
         }
     }
 
-    public void OnLeftClick()
+    private void OnHoverEnter()
     {
-        if (thisItemSelected)
+        inventoryManager.DeselectAllSlots();
+        selectedShader.SetActive(true);
+        thisItemSelected = true;
+        UpdateItemDescription();
+    }
+
+    private void OnHoverExit()
+    {
+        // Optionally, you can deselect the slot when the mouse exits
+        selectedShader.SetActive(false);
+        thisItemSelected = false;
+        ClearItemDescription();
+    }
+
+    private void OnLeftClick()
+    {
+        if (thisItemSelected && isFull)
         {
             inventoryManager.PlaceCardOnSelectedDeckSlot(cardName, cardSprite);
             inventoryManager.HideInventoryMenu();
             this.quantity -= 1;
-            if(this.quantity <= 0)
+            if (this.quantity <= 0)
             {
                 EmptySlot();
             }
         }
-        else
-        {
-            inventoryManager.DeselectAllSlots();
-            selectedShader.SetActive(true);
-            thisItemSelected = true;
-            ItemDescriptionNameText.text = cardName;
-            ItemDescriptionText.text = itemDescription;
-            itemDescriptionImage.sprite = cardSprite;
-            if (itemDescriptionImage.sprite == null)
-            {
-                itemDescriptionImage.sprite = emptySprite;
-            }
-        }
     }
 
-    private void EmptySlot()
+    private void UpdateItemDescription()
+    {
+        ItemDescriptionNameText.text = cardName;
+        ItemDescriptionText.text = itemDescription;
+        itemDescriptionImage.sprite = cardSprite ?? emptySprite;
+    }
+
+    private void ClearItemDescription()
+    {
+        ItemDescriptionNameText.text = "";
+        ItemDescriptionText.text = "";
+        itemDescriptionImage.sprite = emptySprite;
+    }
+
+    public void EmptySlot()
     {
         Debug.Log("EmptySlot called");
 
