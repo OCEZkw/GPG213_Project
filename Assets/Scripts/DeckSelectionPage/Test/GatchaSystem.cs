@@ -29,16 +29,18 @@ public class GachaSystem : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        // Find the InventoryManager in the scene
+        inventoryManager = FindObjectOfType<InventoryManager>();
+        if (inventoryManager == null)
+        {
+            Debug.LogError("InventoryManager not found in the scene!");
+        }
     }
 
     private void Start()
     {
-        // Find the InventoryManager component on the Canvas
-        inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
-        if (inventoryManager == null)
-        {
-            Debug.LogError("InventoryManager not found on Canvas!");
-        }
+
     }
 
     public CardSO SummonSingleCard() // Changed return type from Card to CardSO
