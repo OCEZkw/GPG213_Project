@@ -15,6 +15,6 @@ public class Card1 : MonoBehaviour
     void Start()
     {
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
-        inventoryManager.AddItem(cardName, quantity, sprite, itemDescription);
+        inventoryManager.AddItem(cardName, sprite, itemDescription);
     }
 }

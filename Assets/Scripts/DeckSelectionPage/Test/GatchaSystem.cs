@@ -5,8 +5,7 @@ using UnityEngine;
 public class GachaSystem : MonoBehaviour
 {
     public static GachaSystem Instance { get; private set; }
-
-    private InventoryManager inventoryManager;
+    private Inventory inventory;
 
     [System.Serializable]
     public class RarityRate
@@ -15,8 +14,9 @@ public class GachaSystem : MonoBehaviour
         public float rate;
     }
 
-    public List<CardSO> allCards = new List<CardSO>(); // Changed from Card to CardSO
+    public List<CardSO> allCards = new List<CardSO>();
     public List<RarityRate> rarityRates = new List<RarityRate>();
+    private List<CardSO> summonedCards = new List<CardSO>();
 
     private void Awake()
     {
@@ -29,25 +29,24 @@ public class GachaSystem : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        // Find the InventoryManager in the scene
-        inventoryManager = FindObjectOfType<InventoryManager>();
-        if (inventoryManager == null)
-        {
-            Debug.LogError("InventoryManager not found in the scene!");
-        }
     }
 
     private void Start()
     {
-
+        if (inventory == null)
+        {
+            inventory = FindObjectOfType<Inventory>();
+            if (inventory == null)
+            {
+                Debug.LogError("Inventory not found. Please assign it in the Inspector.");
+            }
+        }
     }
 
-    public CardSO SummonSingleCard() // Changed return type from Card to CardSO
+    public CardSO SummonSingleCard()
     {
         float randomValue = Random.value;
         float cumulativeRate = 0f;
-
         foreach (RarityRate rate in rarityRates)
         {
             cumulativeRate += rate.rate;
@@ -56,22 +55,22 @@ public class GachaSystem : MonoBehaviour
                 return GetRandomCardOfRarity(rate.rarity);
             }
         }
-
         // Fallback to common if something goes wrong
         return GetRandomCardOfRarity(CardSO.Rarity.Common);
     }
 
-    public List<CardSO> SummonMultipleCards(int count) // Changed return type from Card to CardSO
+    public List<CardSO> SummonMultipleCards(int count)
     {
-        List<CardSO> summonedCards = new List<CardSO>();
+        List<CardSO> newSummonedCards = new List<CardSO>();
         for (int i = 0; i < count; i++)
         {
-            summonedCards.Add(SummonSingleCard());
+            newSummonedCards.Add(SummonSingleCard());
         }
+        summonedCards = newSummonedCards;
         return summonedCards;
     }
 
-    private CardSO GetRandomCardOfRarity(CardSO.Rarity rarity) // Changed return type from Card to CardSO
+    private CardSO GetRandomCardOfRarity(CardSO.Rarity rarity)
     {
         List<CardSO> cardsOfRarity = allCards.FindAll(card => card.rarity == rarity);
         if (cardsOfRarity.Count > 0)
@@ -83,14 +82,28 @@ public class GachaSystem : MonoBehaviour
 
     public void AddCardToInventory(CardSO card)
     {
-        if (inventoryManager != null)
+        if (inventory != null)
         {
-            inventoryManager.AddItem(card.cardName, 1, card.cardSprite, card.description);
+            inventory.AddItem(card.cardName, card.cardSprite, card.description);
             Debug.Log($"Added card to inventory: {card.cardName}, Rarity: {card.rarity}");
         }
         else
         {
-            Debug.LogError("Cannot add card to inventory: InventoryManager is not set!");
+            Debug.LogError("Cannot add card to inventory: Inventory is not set!");
         }
+    }
+
+    public void AddSummonedCardsToInventory()
+    {
+        foreach (CardSO card in summonedCards)
+        {
+            AddCardToInventory(card);
+        }
+        summonedCards.Clear();
+    }
+
+    public List<CardSO> GetSummonedCards()
+    {
+        return summonedCards;
     }
 }

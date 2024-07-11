@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: e8df8bad89ae81946bc316fd4b8a07e4
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: e856faf24afc1c440adfefca892f974c
+  - enabled: 1
+    path: Assets/Scenes/SummonShop.unity
+    guid: 198c536d94f78094586912f1d02adf91
+  - enabled: 1
+    path: Assets/Scenes/CardSummon.unity
+    guid: 3efe23c06f28ca947a3ac66d64ac9982
+  - enabled: 1
     path: Assets/Scenes/DeckSelecting.unity
     guid: 16fdef05f0c10064c9fa2af7b532900f
   - enabled: 1

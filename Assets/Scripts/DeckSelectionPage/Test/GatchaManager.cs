@@ -3,22 +3,55 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.VFX;
+using UnityEngine.SceneManagement;
 
 public class GachaManager : MonoBehaviour
 {
-    public Button singleSummonButton;
-    public Button multiSummonButton;
-    public Transform summonResultParent;
-    public GameObject summonResultPrefab;
-    public GameObject summonEffectPrefab;
-    public float summonEffectDuration = 2f;
+    public static GachaManager Instance { get; private set; }
+
+    private Button singleSummonButton;
+    private Button multiSummonButton;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
         Debug.Log("GachaManager Start method called");
-        singleSummonButton.onClick.AddListener(SingleSummon);
-        multiSummonButton.onClick.AddListener(MultiSummon);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        FindAndSetupButtons();
+    }
+
+    private void FindAndSetupButtons()
+    {
+        singleSummonButton = GameObject.Find("SingleSummonButton")?.GetComponent<Button>();
+        multiSummonButton = GameObject.Find("MultiSummonButton")?.GetComponent<Button>();
+
+        if (singleSummonButton != null)
+        {
+            singleSummonButton.onClick.RemoveAllListeners();
+            singleSummonButton.onClick.AddListener(SingleSummon);
+        }
+
+        if (multiSummonButton != null)
+        {
+            multiSummonButton.onClick.RemoveAllListeners();
+            multiSummonButton.onClick.AddListener(MultiSummon);
+        }
     }
 
     private void SingleSummon()
@@ -26,8 +59,7 @@ public class GachaManager : MonoBehaviour
         if (GachaSystem.Instance != null)
         {
             CardSO summonedCard = GachaSystem.Instance.SummonSingleCard();
-            StartCoroutine(DisplaySummonedCardWithEffect(summonedCard));
-            GachaSystem.Instance.AddCardToInventory(summonedCard);
+            LoadCardSummonScene(new List<CardSO> { summonedCard });
         }
         else
         {
@@ -40,7 +72,7 @@ public class GachaManager : MonoBehaviour
         if (GachaSystem.Instance != null)
         {
             List<CardSO> summonedCards = GachaSystem.Instance.SummonMultipleCards(10);
-            StartCoroutine(DisplayMultipleSummonedCardsWithEffect(summonedCards));
+            LoadCardSummonScene(summonedCards);
         }
         else
         {
@@ -48,50 +80,14 @@ public class GachaManager : MonoBehaviour
         }
     }
 
-    private IEnumerator DisplaySummonedCardWithEffect(CardSO card)
+    private void LoadCardSummonScene(List<CardSO> cards)
     {
-        yield return StartCoroutine(PlaySummonEffect());
-        DisplaySummonedCard(card);
+        CardSummonSceneManager.summonedCards = cards;
+        SceneManager.LoadScene("CardSummon");
     }
 
-    private IEnumerator DisplayMultipleSummonedCardsWithEffect(List<CardSO> cards)
+    private void OnDestroy()
     {
-        foreach (CardSO card in cards)
-        {
-            yield return StartCoroutine(DisplaySummonedCardWithEffect(card));
-            GachaSystem.Instance.AddCardToInventory(card);
-        }
-    }
-
-    private IEnumerator PlaySummonEffect()
-    {
-        GameObject effectObject = Instantiate(summonEffectPrefab, summonResultParent);
-        Debug.Log("Effect instantiated at: " + effectObject.transform.position);
-
-        VisualEffect visualEffect = effectObject.GetComponent<VisualEffect>();
-        if (visualEffect != null)
-        {
-            visualEffect.Play();
-
-            yield return new WaitForSeconds(summonEffectDuration);
-
-            visualEffect.Stop();
-        }
-        else
-        {
-            Debug.LogWarning("No VisualEffect component found on the summon effect prefab.");
-            yield return new WaitForSeconds(summonEffectDuration);
-        }
-
-        Destroy(effectObject);
-    }
-
-    private void DisplaySummonedCard(CardSO card)
-    {
-        GameObject resultObject = Instantiate(summonResultPrefab, summonResultParent);
-        Image cardImage = resultObject.GetComponent<Image>();
-        Text cardNameText = resultObject.GetComponentInChildren<Text>();
-        if (cardImage != null) cardImage.sprite = card.cardSprite;
-        if (cardNameText != null) cardNameText.text = card.cardName;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

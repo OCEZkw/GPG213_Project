@@ -71,7 +71,7 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (currentCardSO != null)
         {
             inventoryManager.RemoveCardEffect(currentCardSO);
-            inventoryManager.AddItem(currentCardSO.cardName, 1, currentCardSO.cardSprite, currentCardSO.description);
+            inventoryManager.AddItem(currentCardSO.cardName, currentCardSO.cardSprite, currentCardSO.description);
         }
 
         // Find the new card's CardSO

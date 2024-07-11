@@ -18,6 +18,8 @@ public class InventoryManager : MonoBehaviour
     // Reference to the UIManager to enable the button
     private UIManager uiManager;
 
+    public Inventory inventory;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,9 +27,19 @@ public class InventoryManager : MonoBehaviour
         {
             playerStats = FindObjectOfType<PlayerStats>();
         }
-        // Find the UIManager instance
         uiManager = FindObjectOfType<UIManager>();
 
+        // Find the Inventory instance
+        inventory = Inventory.Instance;
+        if (inventory == null)
+        {
+            Debug.LogError("Inventory instance not found!");
+        }
+        else
+        {
+            // Initial update of card slots
+            UpdateCardSlots();
+        }
     }
 
     // Update is called once per frame
@@ -47,17 +59,46 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddItem(string cardName, int quantity, Sprite cardSprite, string itemDescription)
+    public void UpdateCardSlots()
     {
-        for (int i = 0; i < cardSlot.Length; i++)
+        if (inventory != null)
         {
-            if(cardSlot[i].isFull == false)
+            for (int i = 0; i < cardSlot.Length; i++)
             {
-                cardSlot[i].AddItem(cardName, quantity, cardSprite, itemDescription);
-                return;
+                if (i < inventory.items.Count)
+                {
+                    cardSlot[i].UpdateSlot(inventory.items[i], i);  // Pass the index
+                }
+                else
+                {
+                    cardSlot[i].EmptySlot();
+                }
             }
         }
+        else
+        {
+            Debug.LogError("Cannot update card slots: Inventory is null");
+        }
     }
+
+    public void OnInventoryChanged()
+    {
+        UpdateCardSlots();
+    }
+
+    public void AddItem(string cardName, Sprite cardSprite, string itemDescription)
+    {
+        if (Inventory.Instance != null)
+        {
+            Inventory.Instance.AddItem(cardName, cardSprite, itemDescription);
+            UpdateCardSlots();
+        }
+        else
+        {
+            Debug.LogError("Cannot add item: Inventory instance is null");
+        }
+    }
+
 
     public void DeselectAllSlots()
     {
