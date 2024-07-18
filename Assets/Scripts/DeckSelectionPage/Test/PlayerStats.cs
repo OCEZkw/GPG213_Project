@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class PlayerStats : MonoBehaviour
 {
-    public static PlayerStats Instance; // Singleton instance
+    public static PlayerStats Instance;
 
     public int maxHealth = 1000;
     public int attackDamage = 50;
@@ -15,39 +16,20 @@ public class PlayerStats : MonoBehaviour
     public int magicDefense = 50;
     public int healingAmount = 50;
 
-    public TextMeshProUGUI maxHealthText;
-    public TextMeshProUGUI attackDamageText;
-    public TextMeshProUGUI magicDamageText;
-    public TextMeshProUGUI defenseText;
-    public TextMeshProUGUI magicDefenseText;
-    public TextMeshProUGUI healingAmountText;
+    public delegate void StatChangedDelegate();
+    public event StatChangedDelegate OnStatsChanged;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Make this object persistent
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Ensure only one instance exists
+            Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-        UpdateStatTexts();
-    }
-
-    public void UpdateStatTexts()
-    {
-        maxHealthText.text = "Max Health: " + maxHealth.ToString();
-        attackDamageText.text = "Attack Damage: " + attackDamage.ToString();
-        magicDamageText.text = "Magic Damage: " + magicDamage.ToString();
-        defenseText.text = "Defense: " + defense.ToString();
-        magicDefenseText.text = "Magic Defense: " + magicDefense.ToString();
-        healingAmountText.text = "Healing Power: " + healingAmount.ToString();
     }
 
     public void ChangeStat(StatToChange stat, int amount)
@@ -73,12 +55,12 @@ public class PlayerStats : MonoBehaviour
                 healingAmount += amount;
                 break;
         }
-        UpdateStatTexts();
+        OnStatsChanged?.Invoke();
     }
+
     public void ReverseStatChange(StatToChange stat, int amount)
     {
         ChangeStat(stat, -amount);
-        UpdateStatTexts();
     }
 
     public enum StatToChange

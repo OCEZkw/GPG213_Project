@@ -192,6 +192,6 @@ public class BossPart : MonoBehaviour
     public void IncreaseMagicDamage(int amount)
     {
         magicDamage += amount;
-        NotificationManager.Instance.ShowNotification("Increased Staff's Magic Damage");
+        NotificationManager.Instance.ShowNotification("Wizard Increased Its Staff's Magic Damage");
     }
 }

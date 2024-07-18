@@ -23,9 +23,16 @@ public class WizardBossEnemy : MonoBehaviour
     private bool isBossAttacking = false;
     public bool IsBossAttacking { get { return isBossAttacking; } }
 
+    private WaveManager waveManager;
+
     void Start()
     {
         InitializeBossParts(); // Ensure parts are initialized first
+        waveManager = FindObjectOfType<WaveManager>();
+        if (waveManager == null)
+        {
+            Debug.LogError("WaveManager not found in the scene!");
+        }
     }
 
     public void AssignUniqueCodes(BossPart staffPart, BossPart headPart, BossPart leftHandPart, int staffCode, int headCode, int leftHandCode)
@@ -87,7 +94,21 @@ public class WizardBossEnemy : MonoBehaviour
     void Die()
     {
         Debug.Log("Wizard Boss died!");
+
+        // Notify WaveManager
+        if (waveManager != null)
+        {
+            waveManager.OnEnemyDefeated();
+        }
+        else
+        {
+            Debug.LogError("WaveManager is null when trying to notify of boss death!");
+        }
+
         // Implement additional logic for boss death, like rewards or ending the game.
+        // For example, you might want to disable the boss object instead of destroying it immediately
+        gameObject.SetActive(false);
+
     }
 
     // Method to handle boss attacking after player actions

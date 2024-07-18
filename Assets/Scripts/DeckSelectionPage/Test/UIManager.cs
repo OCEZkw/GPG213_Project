@@ -20,16 +20,4 @@ public class UIManager : MonoBehaviour
     {
         levelLoadButton.interactable = enable;
     }
-    public void LoadDeckSelectScene()
-    {
-        SceneManager.LoadScene("DeckSelecting");
-    }
-    public void LoadSummonMenu()
-    {
-        SceneManager.LoadScene("SummonShop");
-    }
-    public void LoadMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
 }

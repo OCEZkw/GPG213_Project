@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 170334923}
   - component: {fileID: 170334922}
   m_Layer: 5
-  m_Name: LevelLoadButton
+  m_Name: BackButton
   m_TagString: LevelSelectButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,7 +207,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 927993255}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: LoadScenes, Assembly-CSharp
         m_MethodName: LoadMainMenu
         m_Mode: 1
         m_Arguments:
@@ -656,10 +656,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 927993250}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 929124ee45a1576499247af2360c7de3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a80ddf4154925f4bb279d5ccda7db72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLoadButton: {fileID: 0}
 --- !u!1 &991475372
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,8 +802,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Back
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a840542569d66d242b562783c9f7b231, type: 2}
+  m_sharedMaterial: {fileID: -635387830920066734, guid: a840542569d66d242b562783c9f7b231, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -828,8 +827,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1089,8 +1088,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Summon x10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a840542569d66d242b562783c9f7b231, type: 2}
+  m_sharedMaterial: {fileID: -635387830920066734, guid: a840542569d66d242b562783c9f7b231, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1114,8 +1113,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1586,8 +1585,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Summon x1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a840542569d66d242b562783c9f7b231, type: 2}
+  m_sharedMaterial: {fileID: -635387830920066734, guid: a840542569d66d242b562783c9f7b231, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1611,8 +1610,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

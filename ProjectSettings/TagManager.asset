@@ -9,11 +9,12 @@ TagManager:
   - BossPart
   - LevelLoadButton
   - LevelSelectButton
+  - Interactable
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - Enemies

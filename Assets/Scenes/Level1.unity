@@ -2622,7 +2622,7 @@ MonoBehaviour:
     bossPrefab: {fileID: 2344797886425520206, guid: 498525694086e9145954a537ee24037c, type: 3}
   - numberOfEnemies: 3
     spawnInterval: 0
-    isBossWave: 1
+    isBossWave: 0
     bossPrefab: {fileID: 2344797886425520206, guid: 498525694086e9145954a537ee24037c, type: 3}
   - numberOfEnemies: 1
     spawnInterval: 0
@@ -2633,6 +2633,7 @@ MonoBehaviour:
   - {fileID: 1713498180}
   - {fileID: 1940966203}
   enemyPrefab: {fileID: 7520179415146543301, guid: f444428959af34047bb5073fe0d53663, type: 3}
+  mainMenuSceneName: MainMenu
 --- !u!1 &1293491915
 GameObject:
   m_ObjectHideFlags: 0

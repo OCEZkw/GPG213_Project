@@ -11,7 +11,7 @@ public class InventoryManager : MonoBehaviour
     public DeckSlot[] deckSlot;
 
     public CardSO[] cardSOs;
-    public PlayerStats playerStats;
+    private PlayerStats playerStats;
 
     private DeckSlot selectedDeckSlot;
 
@@ -23,10 +23,13 @@ public class InventoryManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Use the PlayerStats instance
+        playerStats = PlayerStats.Instance;
         if (playerStats == null)
         {
-            playerStats = FindObjectOfType<PlayerStats>();
+            Debug.LogError("PlayerStats instance not found!");
         }
+
         uiManager = FindObjectOfType<UIManager>();
 
         // Find the Inventory instance

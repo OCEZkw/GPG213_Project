@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WaveManager : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class WaveManager : MonoBehaviour
     private EnemySpawner enemySpawner;
 
     private int currentEnemyCode = 0;
+
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     void Start()
     {
@@ -143,8 +146,15 @@ public class WaveManager : MonoBehaviour
 
         if (enemiesRemainingAlive <= 0)
         {
-            currentWaveIndex++;
-            StartCoroutine(StartNextWaveWithDelay(3f));
+            if (currentWaveIndex + 1 < waves.Count)
+            {
+                currentWaveIndex++;
+                StartCoroutine(StartNextWaveWithDelay(1f));
+            }
+            else
+            {
+                StartCoroutine(ReturnToMainMenuWithDelay(3f));
+            }
         }
     }
 
@@ -152,5 +162,12 @@ public class WaveManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         StartNextWave();
+    }
+
+    IEnumerator ReturnToMainMenuWithDelay(float delay)
+    {
+        Debug.Log("All waves completed! Returning to main menu...");
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }

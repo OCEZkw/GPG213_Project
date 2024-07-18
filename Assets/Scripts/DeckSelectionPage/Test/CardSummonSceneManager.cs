@@ -289,6 +289,6 @@ public class CardSummonSceneManager : MonoBehaviour
 
     private void ReturnToCardSummonSelectScene()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("SummonShop");
     }
 }
