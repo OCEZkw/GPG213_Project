@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TutorialManager : MonoBehaviour
+public class TutorialManager1 : MonoBehaviour
 {
     public GameObject[] popUps;
     private int popUpIndex;
-    
 
     // Start is called before the first frame update
     void Start()

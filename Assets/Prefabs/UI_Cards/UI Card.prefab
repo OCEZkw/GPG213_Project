@@ -541,7 +541,6 @@ MonoBehaviour:
   buttonManager: {fileID: 0}
   roundManager: {fileID: 0}
   player: {fileID: 0}
-  deckManager: {fileID: 0}
   notEnoughCostIndicator: {fileID: 4724041116977637491}
 --- !u!1 &5804703931333982971
 GameObject:

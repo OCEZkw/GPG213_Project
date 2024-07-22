@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DeckManager : MonoBehaviour, IDeckManager
+public class TutorialDeckManager : MonoBehaviour, IDeckManager
 {
-    public List<GameObject> allCards;  // All possible cards
+    public List<GameObject> tutorialDeck;  // Predefined cards for the tutorial
     public Transform[] handPositions;  // Positions where the cards will be displayed
-    public List<GameObject> deck = new List<GameObject>();  // Player's selected deck
     public List<GameObject> hand = new List<GameObject>();  // Cards currently in hand
     public Transform confirmedCardPosition;  // Position for the confirmed card
     public ConfirmHandler confirmHandler;  // Reference to the ConfirmHandler
@@ -18,31 +17,31 @@ public class DeckManager : MonoBehaviour, IDeckManager
     }
     void Start()
     {
-        confirmHandler.deckManager = this;  // Assign this deck manager to the confirm handler
+        if (confirmHandler != null)
+        {
+            //confirmHandler.deckManager = this;  // Assign this deck manager to the confirm handler
+        }
         InitializeDeck();
         DrawHand();
     }
     void InitializeDeck()
     {
-        // Shuffle allCards
-        Shuffle(allCards);
-        // Take the first 10 cards for the deck
-        for (int i = 0; i < Mathf.Min(10, allCards.Count); i++)
+        if (tutorialDeck == null || tutorialDeck.Count == 0)
         {
-            deck.Add(allCards[i]);
+            Debug.LogError("Tutorial deck is not set!");
+            return;
         }
+        Debug.Log("Tutorial deck initialized with " + tutorialDeck.Count + " cards.");
     }
     void DrawHand()
     {
-        Debug.Log("Drawing hand...");
-        Debug.Log("Deck count: " + deck.Count);
-        // Shuffle the deck
-        Shuffle(deck);
-        // Take the first 5 cards for the hand
-        for (int i = 0; i < Mathf.Min(5, deck.Count); i++)
+        Debug.Log("Drawing tutorial hand...");
+        Debug.Log("Deck count: " + tutorialDeck.Count);
+        // Take the first 5 cards (or fewer if the deck is smaller) for the hand
+        for (int i = 0; i < Mathf.Min(5, tutorialDeck.Count); i++)
         {
             // Instantiate the card prefab and parent it to the canvas
-            GameObject card = Instantiate(deck[i], canvasTransform);
+            GameObject card = Instantiate(tutorialDeck[i], canvasTransform);
             if (card == null)
             {
                 Debug.LogError("Failed to instantiate card prefab from deck!");
@@ -70,24 +69,17 @@ public class DeckManager : MonoBehaviour, IDeckManager
                 boxCollider = card.AddComponent<BoxCollider2D>();
             }
             boxCollider.size = cardRectTransform.sizeDelta;
-            // Get the CardClickHandler component if it exists and add the card to the hand list
+            // Get the CardClickHandler component if it exists and set the deck manager
             var cardClickHandler = card.GetComponent<CardClickHandler>();
             if (cardClickHandler != null)
             {
-                cardClickHandler.deckManager = this;
+                // cardClickHandler.deckManager = this;
             }
             hand.Add(card);
         }
-        Debug.Log("Hand count: " + hand.Count);
+        Debug.Log("Tutorial hand count: " + hand.Count);
     }
-    void Shuffle(List<GameObject> list)
-    {
-        for (int i = 0; i < list.Count; i++)
-        {
-            int randomIndex = Random.Range(i, list.Count);
-            GameObject temp = list[randomIndex];
-            list[randomIndex] = list[i];
-            list[i] = temp;
-        }
-    }
+    // Add any additional methods you need for tutorial-specific functionality
+    // For example, you might want to add methods to highlight specific cards,
+    // force the player to select a certain card, etc.
 }

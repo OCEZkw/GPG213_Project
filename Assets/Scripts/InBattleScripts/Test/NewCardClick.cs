@@ -15,7 +15,7 @@ public class NewCardClick : MonoBehaviour
     private CardEffect cardEffect;       // Reference to the CardEffect
     public Player player;
 
-    public DeckManager deckManager;
+    public IDeckManager deckManager;
 
     public GameObject notEnoughCostIndicator;  // The UI element to indicate not enough cost
 
@@ -30,7 +30,11 @@ public class NewCardClick : MonoBehaviour
         originalPosition = transform.position;
         buttonManager = FindObjectOfType<ButtonManager>(); // Initialize buttonManager
         roundManager = FindObjectOfType<RoundManager>();   // Initialize roundManager
-        deckManager = FindObjectOfType<DeckManager>();
+        deckManager = FindObjectOfType<DeckManager>() as IDeckManager;
+        if (deckManager == null)
+        {
+            deckManager = FindObjectOfType<TutorialDeckManager>() as IDeckManager;
+        }
         cardEffect = GetComponent<CardEffect>();           // Initialize cardEffect
         player = FindObjectOfType<Player>();
         notEnoughCostIndicator.SetActive(false);
@@ -191,8 +195,8 @@ public class NewCardClick : MonoBehaviour
         isSelected = true;
         isWaitingForTarget = true;
         transform.position = new Vector3(originalPosition.x, originalPosition.y + moveDistance, originalPosition.z);
-      //  buttonManager.ShowSelectTargetButton(true);
-      
+        //  buttonManager.ShowSelectTargetButton(true);
+
         selectedCards.Add(gameObject);
         NotificationManager.Instance.ShowTargetSelectionNotification(true);
 
@@ -402,8 +406,21 @@ public class NewCardClick : MonoBehaviour
 
         int remainingCost = roundManager.playerCost - totalSelectedCost;
 
-        foreach (var card in deckManager.hand)
+        var hand = deckManager.GetHand();
+        if (hand == null)
         {
+            Debug.LogError("Hand is null in CheckNonSelectedCards");
+            return;
+        }
+
+        foreach (var card in hand)
+        {
+            if (card == null)
+            {
+                Debug.LogWarning("Null card found in hand");
+                continue;
+            }
+
             if (!selectedCards.Contains(card))
             {
                 NewCardClick cardClickHandler = card.GetComponent<NewCardClick>();
@@ -412,15 +429,28 @@ public class NewCardClick : MonoBehaviour
                     CardEffect effect = card.GetComponent<CardEffect>();
                     if (effect != null)
                     {
+                        if (cardClickHandler.notEnoughCostIndicator == null)
+                        {
+                            Debug.LogWarning("notEnoughCostIndicator is null for a card");
+                            continue;
+                        }
+
+                        Collider2D collider = card.GetComponent<Collider2D>();
+                        if (collider == null)
+                        {
+                            Debug.LogWarning("Collider2D is null for a card");
+                            continue;
+                        }
+
                         if (remainingCost < effect.cost)
                         {
                             cardClickHandler.notEnoughCostIndicator.SetActive(true);
-                            cardClickHandler.GetComponent<Collider2D>().enabled = false;
+                            collider.enabled = false;
                         }
                         else
                         {
                             cardClickHandler.notEnoughCostIndicator.SetActive(false);
-                            cardClickHandler.GetComponent<Collider2D>().enabled = true;
+                            collider.enabled = true;
                         }
                     }
                 }

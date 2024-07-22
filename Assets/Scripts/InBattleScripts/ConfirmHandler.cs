@@ -184,7 +184,7 @@ public class ConfirmHandler : MonoBehaviour
                 Player player = target.GetComponent<Player>();
                 if (player != null)
                 {
-                   // player.UpdateCost(player.currentCost - cardEffect.cost);
+                    // player.UpdateCost(player.currentCost - cardEffect.cost);
                     cardEffect.ApplyEffect(player.gameObject);
                 }
             }

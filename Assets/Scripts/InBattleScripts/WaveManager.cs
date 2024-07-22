@@ -20,7 +20,7 @@ public class WaveManager : MonoBehaviour
 
     private int currentWaveIndex = 0;
     private int enemiesRemainingToSpawn;
-    private int enemiesRemainingAlive;
+    public int enemiesRemainingAlive;
     private float nextSpawnTime;
     private EnemySpawner enemySpawner;
 
