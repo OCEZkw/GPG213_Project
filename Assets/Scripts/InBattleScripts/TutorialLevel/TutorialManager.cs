@@ -119,7 +119,7 @@ public class TutorialManager : MonoBehaviour
     {
         isTutorialActive = false;
         darkOverlay.gameObject.SetActive(false);
-        ShowTextBubble("Tutorial complete! Good luck!");
+        textBubbleObject.SetActive(false);
         ResumeGame();
     }
 
