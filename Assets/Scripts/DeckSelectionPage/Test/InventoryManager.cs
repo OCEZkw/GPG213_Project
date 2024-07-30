@@ -144,9 +144,10 @@ public class InventoryManager : MonoBehaviour
 
     public void RemoveCardEffect(CardSO cardSO)
     {
-        if (cardSO != null && cardSO.statChanges != null)
+        if (cardSO != null)
         {
-            foreach (StatChange change in cardSO.statChanges)
+            List<CardSO.StatChange> currentChanges = cardSO.GetCurrentStatChanges();
+            foreach (CardSO.StatChange change in currentChanges)
             {
                 playerStats.ReverseStatChange(change.statToChange, change.amountToChangeStat);
             }

@@ -86,7 +86,7 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             inventoryManager.PlaceCardOnSelectedDeckSlot(cardName, cardSprite);
             inventoryManager.HideInventoryMenu();
-            inventoryManager.inventory.RemoveItem(slotIndex);
+            inventoryManager.inventory.RemoveItem(cardName);  // Changed this line
             inventoryManager.UpdateCardSlots();
         }
     }

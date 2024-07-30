@@ -9,6 +9,8 @@ public class Inventory : MonoBehaviour
 
     public event System.Action OnInventoryChanged;
 
+    public CardSO[] cardSOs;
+
 
     private void Awake()
     {
@@ -23,6 +25,26 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void UpdateItem(string cardName, int newLevel, int newExperience, string newDescription = null)
+    {
+        InventoryItem itemToUpdate = items.Find(item => item.cardName == cardName);
+        if (itemToUpdate != null)
+        {
+            itemToUpdate.level = newLevel;
+            itemToUpdate.experience = newExperience;
+            if (newDescription != null)
+            {
+                itemToUpdate.description = newDescription;
+            }
+            UpdateHierarchy();
+            OnInventoryChanged?.Invoke();
+        }
+        else
+        {
+            Debug.LogWarning($"Card {cardName} not found in inventory during update attempt.");
+        }
+    }
+
 
     [System.Serializable]
     public class InventoryItem
@@ -30,33 +52,34 @@ public class Inventory : MonoBehaviour
         public string cardName;
         public Sprite cardSprite;
         public string description;
-
-        public InventoryItem(string name, Sprite sprite, string desc)
+        public int level;
+        public int experience;
+        public InventoryItem(string name, Sprite sprite, string desc, int lvl = 1, int exp = 0)
         {
             cardName = name;
             cardSprite = sprite;
             description = desc;
+            level = lvl;
+            experience = exp;
         }
     }
 
     public List<InventoryItem> items = new List<InventoryItem>();
 
-    public void AddItem(string cardName, Sprite cardSprite, string itemDescription)
+    public void AddItem(string cardName, Sprite cardSprite, string itemDescription, int level = 1, int experience = 0)
     {
-        items.Add(new InventoryItem(cardName, cardSprite, itemDescription));
+        items.Add(new InventoryItem(cardName, cardSprite, itemDescription, level, experience));
         UpdateHierarchy();
-        // Trigger the event when an item is added
         OnInventoryChanged?.Invoke();
     }
 
-
-    public void RemoveItem(int index)
+    public void RemoveItem(string cardName)
     {
-        if (index >= 0 && index < items.Count)
+        int index = items.FindIndex(item => item.cardName == cardName);
+        if (index != -1)
         {
             items.RemoveAt(index);
             UpdateHierarchy();
-            // Trigger the event when an item is removed
             OnInventoryChanged?.Invoke();
         }
     }

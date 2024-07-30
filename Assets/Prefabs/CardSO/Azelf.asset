@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Azelf
   m_EditorClassIdentifier: 
   cardName: Azelf
-  statChanges:
-  - statToChange: 0
-    amountToChangeStat: 527
-  - statToChange: 5
-    amountToChangeStat: 100
-  - statToChange: 3
-    amountToChangeStat: 20
+  baseStatChanges: []
   cardSprite: {fileID: 21300000, guid: 07d6125746a6f6d43b81f2c9dcd7a7c4, type: 3}
   description: Azelf Heals you for 30
+  rarity: 0
+  level: 1
+  maxLevel: 30
+  experience: 0
+  experienceToNextLevel: 100
+  experienceScalingFactor: 1.5
+  levelUpBonuses: []

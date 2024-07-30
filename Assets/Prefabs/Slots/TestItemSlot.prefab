@@ -86,10 +86,10 @@ GameObject:
   - component: {fileID: 2732972640070066776}
   - component: {fileID: 8442120389360175011}
   - component: {fileID: 4649687568142435935}
-  - component: {fileID: 6199201895269252114}
-  - component: {fileID: 214615320715637938}
+  - component: {fileID: -9203115978737337634}
+  - component: {fileID: 363099060452719318}
   m_Layer: 5
-  m_Name: ItemSlot
+  m_Name: TestItemSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6199201895269252114
+--- !u!114 &-9203115978737337634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,23 +164,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4595158760325120082}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edb898c3c25d49f40a3d4b90389c3730, type: 3}
+  m_Script: {fileID: 11500000, guid: f92fb4a07e39cad4291c357aa9a4c2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: 
-  cardSprite: {fileID: 0}
-  quantity: 0
-  isFull: 0
-  itemDescription: 
-  emptySprite: {fileID: 0}
   cardImage: {fileID: 8181966515401161089}
-  slotIndex: 0
-  itemDescriptionImage: {fileID: 0}
-  ItemDescriptionNameText: {fileID: 0}
-  ItemDescriptionText: {fileID: 0}
-  selectedShader: {fileID: 630642782543739963}
-  thisItemSelected: 0
---- !u!114 &214615320715637938
+  cardNameText: {fileID: 0}
+  cardLevelText: {fileID: 0}
+--- !u!114 &363099060452719318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -189,18 +179,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4595158760325120082}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5620637ddb4f6040b977e85c255ff3d, type: 3}
+  m_Script: {fileID: 11500000, guid: fa8d4167b0a8e3448b80568d42f2ca41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: 
-  cardSprite: {fileID: 0}
-  itemDescription: 
-  emptySprite: {fileID: 0}
-  cardImage: {fileID: 0}
-  itemDescriptionImage: {fileID: 0}
-  ItemDescriptionNameText: {fileID: 0}
-  ItemDescriptionText: {fileID: 0}
-  selectedShader: {fileID: 0}
 --- !u!1 &6666530107413060246
 GameObject:
   m_ObjectHideFlags: 0
