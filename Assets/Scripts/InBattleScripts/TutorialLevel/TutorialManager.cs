@@ -43,19 +43,31 @@ public class TutorialManager : MonoBehaviour
         switch (currentStep)
         {
             case 0:
-                HighlightEnemy();
-                break;
-            case 1:
-                HighlightCard();
-                PauseGame();
-                break;
-            case 2:
                 Cost();
                 break;
-            case 3:
+            case 1:
                 Cost2();
+                
+                break;
+            case 2:
+                CardCost();
+                break;
+            case 3:
+                TypingChart();
                 break;
             case 4:
+                CardType();
+                break;
+            case 5:
+                EnemyType();
+                break;
+            case 6:
+                HighlightCard();
+                break;
+            case 7:
+                HighlightEnemy();
+                break;
+            case 8:
                 EndTutorial();
                 break;
             default:
@@ -114,6 +126,28 @@ public class TutorialManager : MonoBehaviour
     {
         ShowTextBubble("The mana cost increases by 1 each turn. You should always keep this in mind when planning on how to use your cards");
     }
+
+    void CardCost()
+    {
+        ShowTextBubble("Here shows the mana cost to play each card. As long as you have enough mana cost you can play as many cards as you want");
+    }
+
+    void TypingChart()
+    {
+        ShowTextBubble("This is the element chart each element has their strengths and weaknesses. Each enemy and card have their own element");
+    }
+
+    void CardType()
+    {
+        ShowTextBubble("Here shows the cards element and the type of effect it does");
+    }
+
+    void EnemyType()
+    {
+        ShowTextBubble("Enemy element is displayed here");
+    }
+
+
 
     void EndTutorial()
     {
