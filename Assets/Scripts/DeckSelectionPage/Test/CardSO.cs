@@ -57,7 +57,7 @@ public class CardSO : ScriptableObject
             if (bonus != null)
             {
                 float multiplier = 1 + (bonus.bonusPerLevel * (level - 1));
-                currentChange.amountToChangeStat = Mathf.RoundToInt(currentChange.amountToChangeStat * multiplier);
+                currentChange.amountToChangeStat = Mathf.RoundToInt(currentChange.amountToChangeStat + multiplier);
             }
 
             currentChanges.Add(currentChange);

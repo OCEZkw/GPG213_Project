@@ -15,6 +15,11 @@ public class TutorialDeckManager : MonoBehaviour, IDeckManager
     {
         return hand;
     }
+
+    public GameObject frontObject;  // The object that should be in front of the cards
+    public GameObject backObject;   // The object that should be behind the cards
+
+
     void Start()
     {
         if (confirmHandler != null)
@@ -37,6 +42,22 @@ public class TutorialDeckManager : MonoBehaviour, IDeckManager
     {
         Debug.Log("Drawing tutorial hand...");
         Debug.Log("Deck count: " + tutorialDeck.Count);
+
+        // Find the sibling indices of the front and back objects
+        int frontIndex = frontObject.transform.GetSiblingIndex();
+        int backIndex = backObject.transform.GetSiblingIndex();
+
+        // Ensure frontIndex is always greater than backIndex
+        if (frontIndex < backIndex)
+        {
+            int temp = frontIndex;
+            frontIndex = backIndex;
+            backIndex = temp;
+        }
+
+        // Calculate the starting index for the cards
+        int cardIndex = backIndex + 1;
+
         // Take the first 5 cards (or fewer if the deck is smaller) for the hand
         for (int i = 0; i < Mathf.Min(5, tutorialDeck.Count); i++)
         {
@@ -47,6 +68,12 @@ public class TutorialDeckManager : MonoBehaviour, IDeckManager
                 Debug.LogError("Failed to instantiate card prefab from deck!");
                 continue;
             }
+
+            // Set the card's sibling index to be between the front and back objects
+            card.transform.SetSiblingIndex(cardIndex);
+            // Increase the card index for the next card
+            cardIndex++;
+
             // Set the card's RectTransform properties to match the corresponding hand position
             RectTransform cardRectTransform = card.GetComponent<RectTransform>();
             RectTransform handPositionRectTransform = handPositions[i] as RectTransform;

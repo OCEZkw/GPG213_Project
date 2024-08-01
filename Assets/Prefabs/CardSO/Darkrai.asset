@@ -13,10 +13,27 @@ MonoBehaviour:
   m_Name: Darkrai
   m_EditorClassIdentifier: 
   cardName: Darkrai
-  statChanges:
+  baseStatChanges:
   - statToChange: 0
-    amountToChangeStat: 527
-  - statToChange: 1
-    amountToChangeStat: 127
+    amountToChangeStat: 560
+  - statToChange: 2
+    amountToChangeStat: 64
+  - statToChange: 3
+    amountToChangeStat: 40
+  - statToChange: 4
+    amountToChangeStat: 40
   cardSprite: {fileID: 21300000, guid: 05e11df459865ca47998cab39de1327c, type: 3}
   description: Darkrai does 400 magic damage
+  rarity: 0
+  level: 1
+  maxLevel: 10
+  experience: 0
+  experienceToNextLevel: 100
+  experienceScalingFactor: 1.5
+  levelUpBonuses:
+  - statToChange: 0
+    bonusPerLevel: 120
+  - statToChange: 3
+    bonusPerLevel: 4
+  - statToChange: 4
+    bonusPerLevel: 4

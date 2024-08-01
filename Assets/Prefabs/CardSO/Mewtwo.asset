@@ -13,10 +13,29 @@ MonoBehaviour:
   m_Name: Mewtwo
   m_EditorClassIdentifier: 
   cardName: Mewtwo
-  statChanges:
+  baseStatChanges:
   - statToChange: 0
-    amountToChangeStat: 527
+    amountToChangeStat: 560
   - statToChange: 2
-    amountToChangeStat: 232
+    amountToChangeStat: 64
+  - statToChange: 3
+    amountToChangeStat: 40
+  - statToChange: 4
+    amountToChangeStat: 40
   cardSprite: {fileID: 21300000, guid: 0c8f826af9668384cb6d49ec0cb71b95, type: 3}
-  description: Dark type card that deals 64 damage to 1 enemy
+  description: 'Mewtwo (Level 2)
+
+    Base description of the card'
+  rarity: 0
+  level: 2
+  maxLevel: 10
+  experience: 0
+  experienceToNextLevel: 150
+  experienceScalingFactor: 1.5
+  levelUpBonuses:
+  - statToChange: 0
+    bonusPerLevel: 120
+  - statToChange: 3
+    bonusPerLevel: 4
+  - statToChange: 4
+    bonusPerLevel: 4

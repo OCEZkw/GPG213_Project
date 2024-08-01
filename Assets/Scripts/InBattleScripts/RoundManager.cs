@@ -56,25 +56,19 @@ public class RoundManager : MonoBehaviour
 
     private void UpdateAllCardColliders()
     {
-        CardClickHandler[] cards = FindObjectsOfType<CardClickHandler>();
+        Debug.Log($"Updating all card colliders. Player cost: {player.currentCost}");
+        NewCardClick[] cards = FindObjectsOfType<NewCardClick>();
         foreach (var card in cards)
         {
             CardEffect cardEffect = card.GetComponent<CardEffect>();
             Collider2D collider = card.GetComponent<Collider2D>();
-            GameObject warning = card.transform.Find("Warning").gameObject;
 
-            if (cardEffect != null && collider != null && warning != null)
+            if (cardEffect != null && collider != null && card.notEnoughCostIndicator != null)
             {
-                if (player.HasEnoughCost(cardEffect.cost))
-                {
-                    collider.enabled = true;
-                    warning.SetActive(false);
-                }
-                else
-                {
-                    collider.enabled = false;
-                    warning.SetActive(true);
-                }
+                bool hasEnoughCost = player.HasEnoughCost(cardEffect.cost);
+                collider.enabled = hasEnoughCost;
+                card.notEnoughCostIndicator.SetActive(!hasEnoughCost);
+                Debug.Log($"Card: {card.name}, Cost: {cardEffect.cost}, Enabled: {collider.enabled}");
             }
         }
     }

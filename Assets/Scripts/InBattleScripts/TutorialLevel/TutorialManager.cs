@@ -19,6 +19,8 @@ public class TutorialManager : MonoBehaviour
     private int currentStep = 0;
     private bool isTutorialActive = false;
 
+    public List<TutorialPanel> tutorialPanels = new List<TutorialPanel>();
+
     void Start()
     {
         // Ensure the text bubble is hidden at the start
@@ -39,6 +41,8 @@ public class TutorialManager : MonoBehaviour
         // Clear previous step
         RemoveHighlight();
         HideTextBubble();
+
+        UpdatePanels();
 
         switch (currentStep)
         {
@@ -83,7 +87,29 @@ public class TutorialManager : MonoBehaviour
         isTutorialActive = true;
         currentStep = 0;
         darkOverlay.gameObject.SetActive(true);
+
+        // Hide all panels at the start
+        foreach (var panel in tutorialPanels)
+        {
+            panel.panel.SetActive(false);
+        }
+
         NextStep();
+    }
+
+    void EndTutorial()
+    {
+        isTutorialActive = false;
+        darkOverlay.gameObject.SetActive(false);
+        textBubbleObject.SetActive(false);
+
+        // Hide all panels at the end
+        foreach (var panel in tutorialPanels)
+        {
+            panel.panel.SetActive(false);
+        }
+
+        ResumeGame();
     }
 
     void HighlightEnemy()
@@ -94,7 +120,7 @@ public class TutorialManager : MonoBehaviour
             if (enemy != null)
             {
                 HighlightWorldObject(enemy.transform);
-                ShowTextBubble("This is an enemy. Defeat it with your cards!");
+                ShowTextBubble("Good job! Now lets select the enemy and defeat it!");
             }
         }
         else
@@ -109,7 +135,7 @@ public class TutorialManager : MonoBehaviour
         {
             GameObject card = tutorialDeckManager.hand[0];
             HighlightUIObject(card.GetComponent<RectTransform>());
-            ShowTextBubble("This is a card. Click on it to select it!");
+            ShowTextBubble("Now lets select a card. Click on it to select it!");
         }
         else
         {
@@ -147,15 +173,6 @@ public class TutorialManager : MonoBehaviour
         ShowTextBubble("Enemy element is displayed here");
     }
 
-
-
-    void EndTutorial()
-    {
-        isTutorialActive = false;
-        darkOverlay.gameObject.SetActive(false);
-        textBubbleObject.SetActive(false);
-        ResumeGame();
-    }
 
     private void HighlightWorldObject(Transform objectToHighlight)
     {
@@ -230,5 +247,20 @@ public class TutorialManager : MonoBehaviour
         if (tutorialDeckManager != null) tutorialDeckManager.enabled = true;
         if (newCardClick != null) newCardClick.enabled = true; ;
         // Add any other systems that need to be resumed
+    }
+
+    void UpdatePanels()
+    {
+        foreach (var panel in tutorialPanels)
+        {
+            if (currentStep == panel.stepToShow)
+            {
+                panel.panel.SetActive(true);
+            }
+            else
+            {
+                panel.panel.SetActive(false);
+            }
+        }
     }
 }

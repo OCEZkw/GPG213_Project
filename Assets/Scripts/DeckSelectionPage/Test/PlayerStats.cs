@@ -66,10 +66,10 @@ public class PlayerStats : MonoBehaviour
     public enum StatToChange
     {
         health,
+        healingAmount,
         attackDamage,
         magicDamage,
         defense,
-        magicDefense,
-        healingAmount
+        magicDefense
     }
 }

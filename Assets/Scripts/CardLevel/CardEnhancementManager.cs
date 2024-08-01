@@ -19,6 +19,9 @@ public class CardEnhancementManager : MonoBehaviour
     private Inventory inventory;
     private LevelingInventory levelingInventory;
 
+    public TextMeshProUGUI[] statChangeTexts = new TextMeshProUGUI[6];
+    private int[] statChanges = new int[6];
+
     void Awake()
     {
         SetupCardSlots();
@@ -57,6 +60,7 @@ public class CardEnhancementManager : MonoBehaviour
 
         enhanceButton.onClick.AddListener(EnhanceCard);
         UpdateCardSlots();
+        UpdateStatChangeTexts();
     }
 
     public void OnSlotSelected(EnhancementCardSlot slot)
@@ -166,6 +170,7 @@ public class CardEnhancementManager : MonoBehaviour
     {
         mainCard = System.Array.Find(inventory.cardSOs, card => card.cardName == item.cardName);
         UpdateCardSlots();
+        UpdateStatChangeTexts();  // Add this line
     }
 
     public void AddEnhancementCard(Inventory.InventoryItem item)
@@ -222,6 +227,7 @@ public class CardEnhancementManager : MonoBehaviour
 
         UpdateCardSlots();
         UpdateMainCardInfo();
+        UpdateStatChangeTexts();
     }
 
     private void UpdateInventoryAfterEnhancement(CardSO enhancedCard, int oldLevel)
@@ -263,5 +269,34 @@ public class CardEnhancementManager : MonoBehaviour
     {
         // This is a simple calculation, you might want to make it more complex
         return 100 * card.level;
+    }
+
+    private void UpdateStatChangeTexts()
+    {
+        // Initialize all stat changes to 0
+        for (int i = 0; i < statChanges.Length; i++)
+        {
+            statChanges[i] = 0;
+        }
+
+        if (mainCard != null)
+        {
+            List<CardSO.StatChange> currentChanges = mainCard.GetCurrentStatChanges();
+
+            foreach (var change in currentChanges)
+            {
+                int statIndex = (int)change.statToChange;
+                if (statIndex >= 0 && statIndex < statChanges.Length)
+                {
+                    statChanges[statIndex] = change.amountToChangeStat;
+                }
+            }
+        }
+
+        // Update the text displays
+        for (int i = 0; i < statChangeTexts.Length; i++)
+        {
+            statChangeTexts[i].text = statChanges[i].ToString();
+        }
     }
 }
