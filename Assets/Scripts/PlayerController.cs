@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     private const string MainMenuSceneName = "MainMenu";
 
+    public Quest1 quest;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();

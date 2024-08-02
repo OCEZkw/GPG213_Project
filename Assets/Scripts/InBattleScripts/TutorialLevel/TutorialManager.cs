@@ -9,7 +9,9 @@ public class TutorialManager : MonoBehaviour
     public Image darkOverlay;
     public GameObject highlightPrefab;
     public GameObject textBubbleObject;
+    public GameObject textBubbleObject2;
     public TextMeshProUGUI textBubbleText;
+    public TextMeshProUGUI textBubbleText2;
     public WaveManager waveManager;
     public TutorialDeckManager tutorialDeckManager;
     public NewCardClick newCardClick;
@@ -25,6 +27,7 @@ public class TutorialManager : MonoBehaviour
     {
         // Ensure the text bubble is hidden at the start
         textBubbleObject.SetActive(false);
+        textBubbleObject2.SetActive(false);
         StartTutorial();
     }
 
@@ -72,6 +75,9 @@ public class TutorialManager : MonoBehaviour
                 HighlightEnemy();
                 break;
             case 8:
+                ConfirmButton();
+                break;
+            case 9:
                 EndTutorial();
                 break;
             default:
@@ -102,6 +108,7 @@ public class TutorialManager : MonoBehaviour
         isTutorialActive = false;
         darkOverlay.gameObject.SetActive(false);
         textBubbleObject.SetActive(false);
+        textBubbleObject2.SetActive(false);
 
         // Hide all panels at the end
         foreach (var panel in tutorialPanels)
@@ -120,7 +127,7 @@ public class TutorialManager : MonoBehaviour
             if (enemy != null)
             {
                 HighlightWorldObject(enemy.transform);
-                ShowTextBubble("Good job! Now lets select the enemy and defeat it!");
+                ShowTextBubble2("Good job! Now lets select the enemy and defeat it!");
             }
         }
         else
@@ -173,6 +180,11 @@ public class TutorialManager : MonoBehaviour
         ShowTextBubble("Enemy element is displayed here");
     }
 
+    void ConfirmButton()
+    {
+        ShowTextBubble2("Great job! Now press confirm to use the cards");
+    }
+
 
     private void HighlightWorldObject(Transform objectToHighlight)
     {
@@ -217,6 +229,12 @@ public class TutorialManager : MonoBehaviour
     {
         textBubbleObject.SetActive(true);
         textBubbleText.text = text;
+    }
+
+    private void ShowTextBubble2(string text)
+    {
+        textBubbleObject2.SetActive(true);
+        textBubbleText2.text = text;
     }
 
     private void HideTextBubble()
