@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     private bool canInteract;
     private InteractableObject interactableObject;
 
+    public GameObject inventoryMenu;
+
     private const string MainMenuSceneName = "MainMenu";
 
     void Start()
@@ -38,6 +40,15 @@ public class PlayerController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == MainMenuSceneName)
         {
             LoadSavedPosition();
+        }
+
+        if (inventoryMenu != null)
+        {
+            inventoryMenu.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("Inventory menu is not assigned in the inspector");
         }
     }
 
@@ -70,6 +81,11 @@ public class PlayerController : MonoBehaviour
         {
             Interact();
         }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventory();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -98,6 +114,17 @@ public class PlayerController : MonoBehaviour
             {
                 interactText.gameObject.SetActive(false);
             }
+        }
+    }
+    private void ToggleInventory()
+    {
+        if (inventoryMenu != null)
+        {
+            inventoryMenu.SetActive(!inventoryMenu.activeSelf);
+        }
+        else
+        {
+            Debug.LogWarning("Inventory menu is not assigned!");
         }
     }
 

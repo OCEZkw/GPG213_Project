@@ -31,6 +31,8 @@ public class CardSummonSceneManager : MonoBehaviour
     public float minSpinSpeed = 20f; // Minimum spin speed before stopping
     public Sprite cardBackSprite;
 
+    public Button skipButton;
+
     private void Start()
     {
         // Ensure VFX are initially disabled
@@ -48,6 +50,15 @@ public class CardSummonSceneManager : MonoBehaviour
         {
             Debug.LogWarning("No summoned cards to display.");
             ReturnToCardSummonSelectScene();
+        }
+
+        if (skipButton != null)
+        {
+            skipButton.onClick.AddListener(SkipAllAnimations);
+        }
+        else
+        {
+            Debug.LogWarning("Skip button not assignd in the inspector");
         }
     }
 
@@ -68,6 +79,12 @@ public class CardSummonSceneManager : MonoBehaviour
 
     private IEnumerator DisplaySummonedCardsWithEffect()
     {
+        if (skipSummon)
+        {
+            DisplayAllCardsImmediately();
+            yield break;
+        }
+
         foreach (CardSO card in summonedCards)
         {
             yield return StartCoroutine(PlaySummonEffectsForCard(card));
@@ -285,6 +302,51 @@ public class CardSummonSceneManager : MonoBehaviour
 
         waitingForInput = true;
         yield return new WaitUntil(() => !waitingForInput);
+    }
+
+    private void SkipAllAnimations()
+    {
+        skipSummon = true;
+        StopAllCoroutines();
+        DisplayAllCardsImmediately();
+    }
+
+    private void DisplayAllCardsImmediately()
+    {
+        if (currentCardObject != null)
+        {
+            Destroy(currentCardObject);
+        }
+
+        foreach (CardSO card in summonedCards)
+        {
+            GameObject cardObject = DisplaySummonedCard(card);
+            cardObject.SetActive(true);
+            Image frontImage = cardObject.transform.Find("CardFront").GetComponent<Image>();
+            Image backImage = cardObject.transform.Find("CardBack").GetComponent<Image>();
+
+            frontImage.color = Color.white;
+            backImage.color = Color.clear;
+            cardObject.transform.rotation = Quaternion.identity;
+            cardObject.transform.localScale = Vector3.one;
+
+            GachaSystem.Instance.AddCardToInventory(card);
+        }
+
+        // Clear the static variable after use
+        summonedCards = null;
+
+        // Reset camera rotation
+        mainCamera.transform.rotation = Quaternion.Euler(startRotation, 0, 0);
+
+        // Return to the CardSummonSelect scene after a short delay
+        StartCoroutine(ReturnToCardSummonSelectWithDelay(1f));
+    }
+
+    private IEnumerator ReturnToCardSummonSelectWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ReturnToCardSummonSelectScene();
     }
 
     private void ReturnToCardSummonSelectScene()
