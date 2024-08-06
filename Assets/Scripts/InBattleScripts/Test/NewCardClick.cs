@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class NewCardClick : MonoBehaviour
 {
     private bool isSelected = false;
     public bool isWaitingForTarget = false;
     private Vector3 originalPosition;
-    private float moveDistance = 1f;  // Distance to move the card upwards when selected
+    public float moveDistance = 10f;  // Distance to move the card upwards when selected
 
     public static List<GameObject> selectedCards = new List<GameObject>();
     public ButtonManager buttonManager;  // Reference to the ButtonManager
@@ -24,6 +25,11 @@ public class NewCardClick : MonoBehaviour
     private int selectedEnemyCode;
 
     private BossPart selectedBossPart;
+
+    private CardFloatEffect cardFloatEffect;
+    private Vector3 originalScale;
+    public float hoverScaleFactor = 1.1f;  // Scale factor when hovering
+    public float hoverDuration = 0.2f;     // Duration of hover animation
 
     void Start()
     {
@@ -50,11 +56,34 @@ public class NewCardClick : MonoBehaviour
 
             UpdateCostAndEnable();
         }
+
+        cardFloatEffect = GetComponent<CardFloatEffect>();
+        if (cardFloatEffect == null)
+        {
+            cardFloatEffect = gameObject.AddComponent<CardFloatEffect>();
+        }
+        originalScale = transform.localScale;
     }
 
     void Update()
     {
 
+    }
+
+    void OnMouseEnter()
+    {
+        if (!isSelected)
+        {
+            transform.DOScale(originalScale * hoverScaleFactor, hoverDuration);
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (!isSelected)
+        {
+            transform.DOScale(originalScale, hoverDuration);
+        }
     }
 
     // Method to handle selecting an enemy
@@ -194,7 +223,9 @@ public class NewCardClick : MonoBehaviour
     {
         isSelected = true;
         isWaitingForTarget = true;
-        transform.position = new Vector3(originalPosition.x, originalPosition.y + moveDistance, originalPosition.z);
+        cardFloatEffect.SetSelected(true);
+        // Scale up the card when selected
+        transform.DOScale(originalScale * hoverScaleFactor, hoverDuration);
         //  buttonManager.ShowSelectTargetButton(true);
 
         selectedCards.Add(gameObject);
@@ -227,7 +258,9 @@ public class NewCardClick : MonoBehaviour
     {
         isSelected = false;
         isWaitingForTarget = false;
-        transform.position = originalPosition;
+        cardFloatEffect.SetSelected(false);
+        // Scale down the card when deselected
+        transform.DOScale(originalScale, hoverDuration);
         selectedCards.Remove(gameObject);
 
         // Check if any card is still selected
@@ -264,6 +297,12 @@ public class NewCardClick : MonoBehaviour
         }
 
         CheckNonSelectedCards();
+    }
+
+    // Add this new public method
+    public bool IsSelected()
+    {
+        return isSelected;
     }
 
 

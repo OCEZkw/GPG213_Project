@@ -15,11 +15,11 @@ public class QuestGoal
         return (currentAmount >= requiredAmount);
     }
 
-    public void CardSummoned()
+    public void CardSummoned(int amount = 1)
     {
         if (goalType == GoalType.Summon)
         {
-            currentAmount++;
+            currentAmount += amount;
         }
     }
 

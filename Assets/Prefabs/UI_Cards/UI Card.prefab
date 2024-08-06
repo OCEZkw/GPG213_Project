@@ -507,6 +507,7 @@ GameObject:
   - component: {fileID: 972680782465958701}
   - component: {fileID: 140934031692007068}
   - component: {fileID: 5632031028669512513}
+  - component: {fileID: -6981093263253964565}
   m_Layer: 5
   m_Name: UI Card
   m_TagString: Card
@@ -614,10 +615,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isWaitingForTarget: 0
+  moveDistance: 50
   buttonManager: {fileID: 0}
   roundManager: {fileID: 0}
   player: {fileID: 0}
   notEnoughCostIndicator: {fileID: 4724041116977637491}
+  hoverScaleFactor: 1.05
+  hoverDuration: 0.2
+--- !u!114 &-6981093263253964565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595300505267787118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1284885d912e8d64d843b54e30787881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5804703931333982971
 GameObject:
   m_ObjectHideFlags: 0

@@ -52,11 +52,15 @@ public class GachaSystem : MonoBehaviour
             cumulativeRate += rate.rate;
             if (randomValue <= cumulativeRate)
             {
-                return GetRandomCardOfRarity(rate.rarity);
+                CardSO card = GetRandomCardOfRarity(rate.rarity);
+                UpdateQuestProgress(1);
+                return card;
             }
         }
         // Fallback to common if something goes wrong
-        return GetRandomCardOfRarity(CardSO.Rarity.Common);
+        CardSO commonCard = GetRandomCardOfRarity(CardSO.Rarity.Common);
+        UpdateQuestProgress(1);
+        return commonCard;
     }
 
     public List<CardSO> SummonMultipleCards(int count)
@@ -67,6 +71,7 @@ public class GachaSystem : MonoBehaviour
             newSummonedCards.Add(SummonSingleCard());
         }
         summonedCards = newSummonedCards;
+        UpdateQuestProgress(count);
         return summonedCards;
     }
 
@@ -105,5 +110,21 @@ public class GachaSystem : MonoBehaviour
     public List<CardSO> GetSummonedCards()
     {
         return summonedCards;
+    }
+
+
+
+    public void UpdateQuestProgress(int summonCount)
+    {
+        Quest1 currentQuest = GameManager.Instance.LoadQuestData();
+        if (currentQuest != null && currentQuest.isActive)
+        {
+            currentQuest.goal.CardSummoned(summonCount);
+            if (currentQuest.goal.IsReached())
+            {
+                currentQuest.Complete();
+            }
+            GameManager.Instance.SaveQuestData(currentQuest);
+        }
     }
 }

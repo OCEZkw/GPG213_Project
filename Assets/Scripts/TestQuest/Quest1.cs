@@ -10,6 +10,7 @@ public class Quest1
     public string title;
     public string description;
     public int goldReward;
+    public GachaSystem gachaSystem;
 
     public QuestGoal goal;
 

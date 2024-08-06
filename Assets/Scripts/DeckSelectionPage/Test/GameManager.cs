@@ -7,6 +7,29 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public Quest1 currentQuest;
+    public List<Quest1> availableQuests = new List<Quest1>();
+    public List<Quest1> activeQuests = new List<Quest1>();
+
+    public void SaveQuestData(Quest1 quest)
+    {
+        if (!activeQuests.Contains(quest))
+        {
+            activeQuests.Add(quest);
+        }
+        availableQuests.Remove(quest);
+    }
+
+    public List<Quest1> GetAvailableQuests()
+    {
+        return availableQuests;
+    }
+
+    public List<Quest1> GetActiveQuests()
+    {
+        return activeQuests;
+    }
+
     private void Awake()
     {
         if (Instance == null)
@@ -18,6 +41,12 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+
+    public Quest1 LoadQuestData()
+    {
+        return currentQuest;
     }
 
     public void SavePlayerPosition(Vector3 position, string sceneName)

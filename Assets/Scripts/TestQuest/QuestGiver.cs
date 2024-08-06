@@ -6,27 +6,56 @@ using TMPro;
 
 public class QuestGiver : MonoBehaviour
 {
-    public Quest1 quest;
-
-    public PlayerController player;
-
     public GameObject questWindow;
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI goldText;
+    public PlayerController player;
+    public Button acceptButton;
 
-    public void OpenQuestWindow()
+    private static QuestGiver instance;
+    private Quest1 currentQuest;
+
+    private void Awake()
     {
-        questWindow.SetActive(true);
-        titleText.text = quest.title;
-        descriptionText.text = quest.description;
-        goldText.text = quest.goldReward.ToString();
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    public void AcceptQuest()
+    private void Start()
+    {
+        acceptButton.onClick.AddListener(AcceptCurrentQuest);
+    }
+
+    public static void OpenQuestWindow(Quest1 quest)
+    {
+        instance.currentQuest = quest;
+        instance.questWindow.SetActive(true);
+        instance.titleText.text = quest.title;
+        instance.descriptionText.text = quest.description;
+        instance.goldText.text = quest.goldReward.ToString();
+    }
+
+    public void AcceptCurrentQuest()
+    {
+        if (currentQuest != null)
+        {
+            AcceptQuest(currentQuest);
+        }
+    }
+
+    private void AcceptQuest(Quest1 quest)
     {
         questWindow.SetActive(false);
         quest.isActive = true;
+        GameManager.Instance.SaveQuestData(quest);
         player.quest = quest;
+        Debug.Log($"Quest accepted: {quest.title}");
     }
 }

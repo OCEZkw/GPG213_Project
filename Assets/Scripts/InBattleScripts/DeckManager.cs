@@ -48,6 +48,7 @@ public class DeckManager : MonoBehaviour, IDeckManager
                 Debug.LogError("Failed to instantiate card prefab from deck!");
                 continue;
             }
+
             // Set the card's RectTransform properties to match the corresponding hand position
             RectTransform cardRectTransform = card.GetComponent<RectTransform>();
             RectTransform handPositionRectTransform = handPositions[i] as RectTransform;
@@ -75,6 +76,13 @@ public class DeckManager : MonoBehaviour, IDeckManager
             if (cardClickHandler != null)
             {
                 cardClickHandler.deckManager = this;
+            }
+
+            // Ensure the CardFloatEffect is present and active
+            CardFloatEffect floatEffect = card.GetComponent<CardFloatEffect>();
+            if (floatEffect == null)
+            {
+                floatEffect = card.AddComponent<CardFloatEffect>();
             }
             hand.Add(card);
         }

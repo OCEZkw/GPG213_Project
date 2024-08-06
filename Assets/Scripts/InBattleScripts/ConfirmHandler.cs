@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ConfirmHandler : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class ConfirmHandler : MonoBehaviour
     public ButtonManager buttonManager;
     public Player player;
 
+    public float cardFadeOutDuration = 0.5f;
+    public float cardSlideDownDuration = 0.5f;
+    public float cardFadeInDuration = 0.5f;
+    public float cardMoveUpDistance = 100f;
 
     private void Awake()
     {
@@ -67,6 +72,8 @@ public class ConfirmHandler : MonoBehaviour
     {
         foreach (GameObject cardObject in selectedCards)
         {
+            yield return StartCoroutine(AnimateCardConfirmation(cardObject));
+
             cardObject.transform.position = confirmedCardPosition.position;
             cardObject.GetComponent<Collider2D>().enabled = false;
             HideOtherCards();
@@ -190,12 +197,73 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
+        RectTransform cardRect = cardObject.GetComponent<RectTransform>();
+        cardRect.anchoredPosition = new Vector2(5000, 5000); // Move far off-screen
+
         cardObject.SetActive(false);
         ReplaceCardInHand(cardObject);
         yield return new WaitForSeconds(1f); // Delay after card effect applies
     }
 
+    private IEnumerator AnimateCardConfirmation(GameObject cardObject)
+    {
+        RectTransform cardRect = cardObject.GetComponent<RectTransform>();
+        CanvasGroup canvasGroup = cardObject.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = cardObject.AddComponent<CanvasGroup>();
+        }
 
+        // Disable CardFloatEffect
+        CardFloatEffect floatEffect = cardObject.GetComponent<CardFloatEffect>();
+        if (floatEffect != null)
+        {
+            floatEffect.enabled = false;
+            CardFloatManager.Instance.UnregisterCard(floatEffect);
+        }
+
+        // Get the canvas
+        Canvas canvas = cardRect.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("Cannot find canvas for the card.");
+            yield break;
+        }
+
+        // Move up and fade out
+        Vector2 startPos = cardRect.anchoredPosition;
+        Vector2 endPos = startPos + new Vector2(0, cardMoveUpDistance);
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(cardRect.DOAnchorPos(endPos, cardFadeOutDuration));
+        sequence.Join(canvasGroup.DOFade(0, cardFadeOutDuration));
+
+        yield return sequence.WaitForCompletion();
+
+        // Convert world position to screen position
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, confirmedCardPosition.position);
+        Vector2 confirmedAnchoredPosition;
+
+        // Convert screen position to anchored position
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.GetComponent<RectTransform>(),
+            screenPoint,
+            canvas.worldCamera,
+            out confirmedAnchoredPosition
+        );
+
+        // Move to confirmed position
+        cardRect.anchoredPosition = confirmedAnchoredPosition + new Vector2(0, -cardMoveUpDistance);
+
+        // Slide down and fade in
+        sequence = DOTween.Sequence();
+        sequence.Append(cardRect.DOAnchorPos(confirmedAnchoredPosition, cardSlideDownDuration));
+        sequence.Join(canvasGroup.DOFade(1, cardFadeInDuration));
+
+        yield return sequence.WaitForCompletion();
+        // Return the final position of the card
+        yield return confirmedAnchoredPosition;
+    }
 
     void EnemyAttack(Enemy enemy)
     {
