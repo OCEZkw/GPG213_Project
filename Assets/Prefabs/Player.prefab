@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 2159077784965765675}
   - component: {fileID: 3090305894111134127}
   - component: {fileID: 4769555008215475720}
+  - component: {fileID: 486347234703126809}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -196,6 +197,7 @@ MonoBehaviour:
   damageTextOffset: {x: 1, y: 1.5, z: 0}
   healTextOffset: {x: 0, y: 2, z: 0}
   buttonManager: {fileID: 0}
+  playerAnimator: {fileID: 486347234703126809}
 --- !u!61 &3090305894111134127
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -293,6 +295,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &486347234703126809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3179615536509461105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de4bb753284438f46a37ce3b96913668, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeDuration: 0.5
+  shakeStrength: 0.5
+  shakeVibrato: 10
+  shakeRandomness: 20
 --- !u!1 &6903067201018414660
 GameObject:
   m_ObjectHideFlags: 0

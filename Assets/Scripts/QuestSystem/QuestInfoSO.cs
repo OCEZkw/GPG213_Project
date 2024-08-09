@@ -19,6 +19,7 @@ public class QuestInfoSO : ScriptableObject
 
     [Header("Rewards")]
     public int goldReward;
+    public int gemReward;
 
     private void OnValidate()
     {

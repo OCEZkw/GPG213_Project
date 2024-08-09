@@ -53,7 +53,9 @@ public class GachaSystem : MonoBehaviour
             if (randomValue <= cumulativeRate)
             {
                 CardSO card = GetRandomCardOfRarity(rate.rarity);
+                // Update the quest progress
                 UpdateQuestProgress(1);
+                summonedCards.Add(card);
                 return card;
             }
         }
@@ -71,7 +73,6 @@ public class GachaSystem : MonoBehaviour
             newSummonedCards.Add(SummonSingleCard());
         }
         summonedCards = newSummonedCards;
-        UpdateQuestProgress(count);
         return summonedCards;
     }
 
@@ -104,27 +105,51 @@ public class GachaSystem : MonoBehaviour
         {
             AddCardToInventory(card);
         }
+
+        // Update the quest progress
+        UpdateQuestProgress(summonedCards.Count);
+
+        // Add the completed quests to the active quests list in the GameManager
+        foreach (Quest1 quest in GameManager.Instance.availableQuests)
+        {
+            if (quest.goal.IsReached())
+            {
+                GameManager.Instance.activeQuests.Add(quest);
+                GameManager.Instance.availableQuests.Remove(quest);
+                quest.Complete();
+            }
+        }
+
+        // Clear the summoned cards list
         summonedCards.Clear();
     }
-
     public List<CardSO> GetSummonedCards()
     {
         return summonedCards;
     }
 
-
-
-    public void UpdateQuestProgress(int summonCount)
+    public void UpdateQuestProgress(int amount = 1)
     {
-        Quest1 currentQuest = GameManager.Instance.LoadQuestData();
-        if (currentQuest != null && currentQuest.isActive)
+        List<Quest1> completedQuests = new List<Quest1>();
+
+        foreach (Quest1 quest in GameManager.Instance.activeQuests)
         {
-            currentQuest.goal.CardSummoned(summonCount);
-            if (currentQuest.goal.IsReached())
+            if (quest.goal.goalType == GoalType.Summon)
             {
-                currentQuest.Complete();
+                quest.goal.CardSummoned(amount);
+                if (quest.goal.IsReached())
+                {
+                    quest.Complete();
+                    completedQuests.Add(quest);
+                }
             }
-            GameManager.Instance.SaveQuestData(currentQuest);
+        }
+
+        // Now, after the loop, we can safely modify the activeQuests list
+        foreach (Quest1 completedQuest in completedQuests)
+        {
+            GameManager.Instance.CompleteQuest(completedQuest);
         }
     }
+
 }

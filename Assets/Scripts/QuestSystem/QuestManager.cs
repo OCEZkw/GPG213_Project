@@ -5,6 +5,7 @@ using UnityEngine;
 public class QuestManager : MonoBehaviour
 {
     private Dictionary<string, Quest> questMap;
+    private Inventory inventory;
 
     private void Awake()
     {
@@ -28,6 +29,7 @@ public class QuestManager : MonoBehaviour
 
     private void Start()
     {
+        inventory = Inventory.Instance;
         // broadcast the initial state of all quests onstartup
         foreach (Quest quest in questMap.Values)
         {
@@ -49,8 +51,13 @@ public class QuestManager : MonoBehaviour
 
     private void FinishQuest(string id)
     {
-        // TODO - finish the quest
-        Debug.Log("Finish Quest: " + id);
+        Quest quest = GetQuestById(id);
+        if (quest != null)
+        {
+            inventory.AddGold(quest.info.goldReward);
+            // TODO: Add gems reward
+            Debug.Log("Finish Quest: " + id);
+        }
     }
 
     private Dictionary<string, Quest> CreateQuestMap()

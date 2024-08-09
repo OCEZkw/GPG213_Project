@@ -228,6 +228,15 @@ public class CardEnhancementManager : MonoBehaviour
         UpdateCardSlots();
         UpdateMainCardInfo();
         UpdateStatChangeTexts();
+
+        // Update quest progress
+        UpdateEnhanceQuestProgress();
+    }
+
+    private void UpdateEnhanceQuestProgress()
+    {
+        // Assuming you have a QuestManager or GameManager that handles quests
+        GameManager.Instance.UpdateQuestProgress(GoalType.Enhance, 1);
     }
 
     private void UpdateInventoryAfterEnhancement(CardSO enhancedCard, int oldLevel)

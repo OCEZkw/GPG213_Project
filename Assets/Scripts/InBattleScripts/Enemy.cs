@@ -79,12 +79,14 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         int actualDamage = Mathf.Max(damage * 100 / (100 + defense), 0);
+        BackgroundShaker.Instance?.ShakeBackground();
         StartCoroutine(HandleDamage(actualDamage, false));
     }
 
     public void TakeMagicDamage(int magicDamage)
     {
         int actualMagicDamage = Mathf.Max(magicDamage * 100 / (100 + magicDefense), 0);
+        BackgroundShaker.Instance?.ShakeBackground();
         StartCoroutine(HandleDamage(actualMagicDamage, true));
     }
 

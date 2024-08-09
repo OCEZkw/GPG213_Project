@@ -26,6 +26,10 @@ public class ConfirmHandler : MonoBehaviour
     public float cardFadeInDuration = 0.5f;
     public float cardMoveUpDistance = 100f;
 
+    public GameObject deckCardObject; // Reference to the deck card object
+    public GameObject movingCardObject; // Reference to the moving card object
+    public float cardAnimationDuration = 1f; // Duration of the card animation
+
     private void Awake()
     {
         if (Instance == null)
@@ -275,16 +279,31 @@ public class ConfirmHandler : MonoBehaviour
             {
                 int damage = enemy.CalculateDamage();
 
-                if (enemy.enemyDamageType == Enemy.DamageType.Physical)
+                // Get the EnemyAnimator component
+                EnemyAnimator enemyAnimator = enemy.GetComponent<EnemyAnimator>();
+
+                // Play the attack animation if the EnemyAnimator component exists
+                if (enemyAnimator != null)
                 {
-                    player.TakeDamage(damage);
-                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} physical damage.");
+                    enemyAnimator.PlayAttackAnimation();
                 }
-                else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
+
+                // Use DOTween to delay the damage application
+                DOVirtual.DelayedCall(0.5f, () =>
                 {
-                    player.TakeMagicDamage(damage);
-                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} magical damage.");
-                }
+                    if (enemy.enemyDamageType == Enemy.DamageType.Physical)
+                    {
+                        player.TakeDamage(damage);
+                        Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} physical damage.");
+                    }
+                    else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
+                    {
+                        player.TakeMagicDamage(damage);
+                        Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} magical damage.");
+                    }
+
+                    // The player's damage animation will be triggered inside the TakeDamage or TakeMagicDamage methods
+                });
             }
         }
     }

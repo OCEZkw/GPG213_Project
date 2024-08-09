@@ -31,6 +31,7 @@ public class WaveManager : MonoBehaviour
     void Start()
     {
         enemySpawner = GetComponent<EnemySpawner>();
+        InitializeWavesForLevel();
         StartNextWave();
     }
 
@@ -41,6 +42,15 @@ public class WaveManager : MonoBehaviour
             SpawnEnemy();
             nextSpawnTime = Time.time + waves[currentWaveIndex].spawnInterval;
         }
+    }
+
+    void InitializeWavesForLevel()
+    {
+        int selectedLevel = PlayerPrefs.GetInt("SelectedLevel", 0);
+        // Here you would load or set up the waves data for the selected level
+        // For example:
+        // waves = LoadWavesForLevel(selectedLevel);
+        Debug.Log("Initializing waves for level: " + selectedLevel);
     }
 
     public void StartNextWave()

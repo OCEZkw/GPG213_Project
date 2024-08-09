@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     private bool isSelected = false;
     [SerializeField] private ButtonManager buttonManager;
 
+    [SerializeField] private PlayerAnimator playerAnimator;
+
+
     void Start()
     {
         PlayerStats playerStats = PlayerStats.Instance;
@@ -110,38 +113,38 @@ public class Player : MonoBehaviour
     {
         int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
         currentHealth -= actualDamage;
-        if (currentHealth < 0)
+
+        // Play animations and effects before health check
+        ShowDamageText(actualDamage, "PHYSICAL");
+        playerAnimator?.PlayDamageAnimation();
+        BackgroundShaker.Instance?.ShakeBackground();
+
+        if (currentHealth <= 0)
         {
             currentHealth = 0;
-        }
-        UpdateHealthSlider();
-        if (currentHealth == 0)
-        {
             Die();
         }
-        else
-        {
-            ShowDamageText(actualDamage, "PHYSICAL");
-        }
+
+        UpdateHealthSlider();
     }
 
     public void TakeMagicDamage(int magicDamage)
     {
         int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
         currentHealth -= actualMagicDamage;
-        if (currentHealth < 0)
+
+        // Play animations and effects before health check
+        ShowDamageText(actualMagicDamage, "MAGICAL");
+        playerAnimator?.PlayDamageAnimation();
+        BackgroundShaker.Instance?.ShakeBackground();
+
+        if (currentHealth <= 0)
         {
             currentHealth = 0;
-        }
-        UpdateHealthSlider();
-        if (currentHealth == 0)
-        {
             Die();
         }
-        else
-        {
-            ShowDamageText(actualMagicDamage, "MAGICAL");
-        }
+
+        UpdateHealthSlider();
     }
 
     public void Heal(int amount)

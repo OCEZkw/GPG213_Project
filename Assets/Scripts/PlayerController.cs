@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        List<Quest1> activeQuests = GameManager.Instance.activeQuests;
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
@@ -52,7 +53,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogWarning("Inventory menu is not assigned in the inspector");
         }
-        LoadQuestData();
+
     }
 
     void OnDestroy()
@@ -60,14 +61,15 @@ public class PlayerController : MonoBehaviour
         SaveQuestData();
     }
 
-    private void LoadQuestData()
-    {
-        quest = GameManager.Instance.LoadQuestData();
-    }
+
 
     private void SaveQuestData()
     {
-        GameManager.Instance.SaveQuestData(quest);
+        // Save the quest data to the GameManager
+        foreach (Quest1 quest in GameManager.Instance.activeQuests)
+        {
+            GameManager.Instance.SaveQuestData(quest);
+        }
     }
 
     private void LoadSavedPosition()

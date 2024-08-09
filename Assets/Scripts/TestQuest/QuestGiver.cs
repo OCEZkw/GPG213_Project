@@ -57,5 +57,21 @@ public class QuestGiver : MonoBehaviour
         GameManager.Instance.SaveQuestData(quest);
         player.quest = quest;
         Debug.Log($"Quest accepted: {quest.title}");
+
+        // Disable the button on the corresponding QuestPaper
+        DisableQuestPaperButton(quest);
+    }
+
+    private void DisableQuestPaperButton(Quest1 quest)
+    {
+        QuestPaper[] questPapers = FindObjectsOfType<QuestPaper>();
+        foreach (QuestPaper paper in questPapers)
+        {
+            if (paper.quest == quest)
+            {
+                paper.DisableButton();
+                break;
+            }
+        }
     }
 }

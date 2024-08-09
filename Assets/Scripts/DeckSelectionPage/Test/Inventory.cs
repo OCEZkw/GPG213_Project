@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Inventory : MonoBehaviour
 {
@@ -11,6 +12,11 @@ public class Inventory : MonoBehaviour
 
     public CardSO[] cardSOs;
 
+    [field: SerializeField]
+    public int CurrentGold { get; private set; }
+
+    [field: SerializeField]
+    public int CurrentGems { get; private set; }
 
     private void Awake()
     {
@@ -45,6 +51,55 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public int TotalGold
+    {
+        get
+        {
+            return items.Sum(item => item.gold);
+        }
+    }
+
+    public int TotalGems
+    {
+        get
+        {
+            return items.Sum(item => item.gems);
+        }
+    }
+
+    public void AddGold(int amount)
+    {
+        CurrentGold += amount;
+        OnInventoryChanged?.Invoke();
+        Debug.Log($"Added {amount} gold. New total: {CurrentGold}");
+    }
+
+    public void AddGems(int amount)
+    {
+        CurrentGems += amount;
+        OnInventoryChanged?.Invoke();
+        Debug.Log($"Added {amount} gems. New total: {CurrentGems}");
+    }
+
+
+    public void RemoveGold(int amount)
+    {
+        foreach (var item in items)
+        {
+            item.gold = Mathf.Max(item.gold - amount, 0);
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    public void RemoveGems(int amount)
+    {
+        foreach (var item in items)
+        {
+            item.gems = Mathf.Max(item.gems - amount, 0);
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
 
     [System.Serializable]
     public class InventoryItem
@@ -54,13 +109,18 @@ public class Inventory : MonoBehaviour
         public string description;
         public int level;
         public int experience;
-        public InventoryItem(string name, Sprite sprite, string desc, int lvl = 1, int exp = 0)
+        public int gold;
+        public int gems;
+
+        public InventoryItem(string name, Sprite sprite, string desc, int lvl = 1, int exp = 0, int gold = 0, int gems = 0)
         {
             cardName = name;
             cardSprite = sprite;
             description = desc;
             level = lvl;
             experience = exp;
+            this.gold = gold;
+            this.gems = gems;
         }
     }
 
