@@ -10,6 +10,7 @@ TagManager:
   - LevelLoadButton
   - LevelSelectButton
   - Interactable
+  - FlowerEnemy
   layers:
   - Default
   - TransparentFX

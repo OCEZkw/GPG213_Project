@@ -6,37 +6,29 @@ using TMPro;
 public class CardEffect : MonoBehaviour
 {
     public CardEffectType effectType;
-    public int effectValue;
-    public int cost; // Add cost property
+    public int baseEffectValue;
+    public int cost;
     public CardType cardType;
 
     public TextMeshProUGUI strengthText;
 
     private void Awake()
     {
-        // Initialize the TextMeshProUGUI component (assumes it's attached to the same GameObject or can be found in children)
         strengthText = GetComponentInChildren<TextMeshProUGUI>();
-
-        // Update the strength text at the start
         UpdateStrengthText();
     }
 
     private void Start()
     {
-        // If the TextMeshProUGUI component is not directly a child, navigate through the hierarchy to find it
         if (strengthText == null)
         {
-            Transform childTransform = transform.Find("ChildName/GrandChildName"); // Adjust the path as necessary
+            Transform childTransform = transform.Find("ChildName/GrandChildName");
             if (childTransform != null)
             {
                 strengthText = childTransform.GetComponent<TextMeshProUGUI>();
             }
         }
-
-        // Update the strength text if found
         UpdateStrengthText();
-
-        // Ensure the text component's width does not change unexpectedly
         FixTextWidth();
     }
 
@@ -44,26 +36,25 @@ public class CardEffect : MonoBehaviour
     {
         if (strengthText != null)
         {
-            // Ensure Auto Size is disabled
             strengthText.enableAutoSizing = false;
-
-            // Set the RectTransform width to a fixed value
             RectTransform rectTransform = strengthText.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
-                rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150); // Set to your desired width
+                rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
             }
         }
     }
 
     public void ApplyEffect(GameObject target)
     {
+        int effectValue = CalculateEffectValue();
+
         if (effectType == CardEffectType.Healing || effectType == CardEffectType.Defense)
         {
             Player player = target.GetComponent<Player>();
             if (player != null)
             {
-                ApplyEffectToPlayer(player);
+                ApplyEffectToPlayer(player, effectValue);
             }
         }
         else if (target.CompareTag("BossPart"))
@@ -71,7 +62,7 @@ public class CardEffect : MonoBehaviour
             BossPart bossPart = target.GetComponent<BossPart>();
             if (bossPart != null)
             {
-                ApplyEffectToBossPart(bossPart);
+                ApplyEffectToBossPart(bossPart, effectValue);
             }
         }
         else
@@ -79,12 +70,39 @@ public class CardEffect : MonoBehaviour
             Enemy enemy = target.GetComponent<Enemy>();
             if (enemy != null)
             {
-                ApplyEffectToEnemy(enemy);
+                ApplyEffectToEnemy(enemy, effectValue);
             }
         }
     }
 
-    private void ApplyEffectToPlayer(Player player)
+    private int CalculateEffectValue()
+    {
+        PlayerStats playerStats = PlayerStats.Instance;
+        int totalEffectValue = baseEffectValue;
+
+        switch (effectType)
+        {
+            case CardEffectType.AttackDamage:
+                totalEffectValue += playerStats.attackDamage;
+                break;
+            case CardEffectType.MagicAttackDamage:
+                totalEffectValue += playerStats.magicDamage;
+                break;
+            case CardEffectType.Healing:
+                totalEffectValue += playerStats.healingAmount;
+                break;
+            case CardEffectType.Defense:
+                totalEffectValue += playerStats.defense;
+                break;
+            case CardEffectType.MagicDefense:
+                totalEffectValue += playerStats.magicDefense;
+                break;
+        }
+
+        return totalEffectValue;
+    }
+
+    private void ApplyEffectToPlayer(Player player, int effectValue)
     {
         switch (effectType)
         {
@@ -97,7 +115,7 @@ public class CardEffect : MonoBehaviour
         }
     }
 
-    private void ApplyEffectToEnemy(Enemy enemy)
+    private void ApplyEffectToEnemy(Enemy enemy, int effectValue)
     {
         int modifiedEffectValue = ModifyEffectByTyping(effectValue, cardType, enemy.enemyType);
 
@@ -110,12 +128,12 @@ public class CardEffect : MonoBehaviour
                 enemy.TakeMagicDamage(modifiedEffectValue);
                 break;
             case CardEffectType.MagicDefense:
-                enemy.IncreaseMagicDefense(effectValue);
+                enemy.IncreaseMagicDefense(modifiedEffectValue);
                 break;
         }
     }
 
-    private void ApplyEffectToBossPart(BossPart bossPart)
+    private void ApplyEffectToBossPart(BossPart bossPart, int effectValue)
     {
         int modifiedEffectValue = ModifyEffectByTyping(effectValue, cardType, bossPart.bossPartType);
 
@@ -164,14 +182,15 @@ public class CardEffect : MonoBehaviour
     {
         if (strengthText != null)
         {
-            strengthText.text = effectValue.ToString();
+            int totalEffectValue = CalculateEffectValue();
+            strengthText.text = totalEffectValue.ToString();
         }
     }
 
     // Example method to change the effect value and update the text
     public void SetEffectValue(int newValue)
     {
-        effectValue = newValue;
+        baseEffectValue = newValue;
         UpdateStrengthText();
     }
 }

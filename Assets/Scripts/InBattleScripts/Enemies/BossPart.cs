@@ -21,6 +21,7 @@ public class BossPart : MonoBehaviour
     public GameObject damageTextPrefab;
 
     public bool IsDead => currentHealth <= 0;
+    private List<GameObject> activeDamageTexts = new List<GameObject>();
 
     public enum DamageType
     {
@@ -73,7 +74,7 @@ public class BossPart : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage, bool isMagic)
+    public virtual void TakeDamage(int damage, bool isMagic)
     {
         int actualDamage = isMagic ? Mathf.Max(damage * 100 / (100 + magicDefense), 0) : Mathf.Max(damage * 100 / (100 + defense), 0);
         StartCoroutine(HandleDamage(actualDamage, isMagic));
@@ -128,7 +129,7 @@ public class BossPart : MonoBehaviour
         selectedReticle.SetActive(show);
     }
 
-    public void Heal(int amount)
+    public virtual void Heal(int amount)
     {
         currentHealth += amount;
         if (currentHealth > maxHealth)
@@ -148,25 +149,31 @@ public class BossPart : MonoBehaviour
         magicDefense += amount;
     }
 
-    void Die()
+    protected virtual void Die()
     {
         Debug.Log("Boss part died!");
+        // Destroy all active damage texts before disabling the GameObject
+        DestroyAllDamageTexts();
+
         // Add any additional logic for when a boss part dies
         if (healthSlider != null)
         {
-            healthSlider.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
+
+        gameObject.SetActive(false);
     }
 
     void ShowDamageText(int damage, bool isMagic)
     {
         if (damageTextPrefab != null)
         {
-            GameObject damageTextInstance = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, transform);
+            GameObject damageTextInstance = Instantiate(damageTextPrefab, transform.position, Quaternion.identity);
             TextMeshPro damageText = damageTextInstance.GetComponent<TextMeshPro>();
             if (damageText != null)
             {
                 damageText.text = damage.ToString() + (isMagic ? " MAGICAL" : " PHYSICAL");
+                activeDamageTexts.Add(damageTextInstance);
                 StartCoroutine(AnimateDamageText(damageTextInstance));
             }
         }
@@ -179,14 +186,30 @@ public class BossPart : MonoBehaviour
         Vector3 startPos = damageTextInstance.transform.position;
         Vector3 endPos = startPos + new Vector3(0, 1f, 0);
 
-        while (elapsedTime < duration)
+        while (elapsedTime < duration && damageTextInstance != null)
         {
             damageTextInstance.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        Destroy(damageTextInstance);
+        if (damageTextInstance != null)
+        {
+            activeDamageTexts.Remove(damageTextInstance);
+            Destroy(damageTextInstance);
+        }
+    }
+
+    void DestroyAllDamageTexts()
+    {
+        foreach (GameObject damageText in activeDamageTexts)
+        {
+            if (damageText != null)
+            {
+                Destroy(damageText);
+            }
+        }
+        activeDamageTexts.Clear();
     }
 
     public void IncreaseMagicDamage(int amount)

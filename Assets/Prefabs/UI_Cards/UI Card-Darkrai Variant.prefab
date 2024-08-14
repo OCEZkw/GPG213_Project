@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: effectValue
       value: 1230
       objectReference: {fileID: 0}
+    - target: {fileID: 972680782465958701, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
+      propertyPath: baseEffectValue
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 1772524485836529119, guid: 4042f8864a21fef4aa49255f72d50bb0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class NewCardClick : MonoBehaviour
 {
@@ -30,6 +31,10 @@ public class NewCardClick : MonoBehaviour
     private Vector3 originalScale;
     public float hoverScaleFactor = 1.1f;  // Scale factor when hovering
     public float hoverDuration = 0.2f;     // Duration of hover animation
+
+    private bool isLocked = false;
+    public GameObject cardLockedIndicator;
+    private Image cardImage;
 
     void Start()
     {
@@ -63,6 +68,44 @@ public class NewCardClick : MonoBehaviour
             cardFloatEffect = gameObject.AddComponent<CardFloatEffect>();
         }
         originalScale = transform.localScale;
+
+        cardImage = GetComponent<Image>();
+        if (cardImage == null)
+        {
+            cardImage = GetComponentInChildren<Image>();
+        }
+
+        if (cardLockedIndicator != null)
+        {
+            cardLockedIndicator.SetActive(false);
+        }
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+
+        // Update visual feedback to show locked state
+        if (cardLockedIndicator != null)
+        {
+            cardLockedIndicator.SetActive(locked);
+        }
+
+        // Disable the collider to prevent selection
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = !locked;
+        }
+
+        // Darken the card except for the lock object
+        if (cardImage != null)
+        {
+            Color darkColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            cardImage.color = locked ? darkColor : Color.white;
+        }
+
+        Debug.Log($"Card {gameObject.name} {(locked ? "locked" : "unlocked")}");
     }
 
     void Update()
@@ -164,7 +207,12 @@ public class NewCardClick : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (isSelected)
+        if (isLocked)
+        {
+            Debug.Log($"Cannot select locked card: {gameObject.name}");
+            return;
+        }
+        else if (isSelected)
         {
             // Deselect the card and move it back to the original position
             Deselect();

@@ -30,6 +30,8 @@ public class ConfirmHandler : MonoBehaviour
     public GameObject movingCardObject; // Reference to the moving card object
     public float cardAnimationDuration = 1f; // Duration of the card animation
 
+    private List<GameObject> usedCards = new List<GameObject>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -140,6 +142,14 @@ public class ConfirmHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // Delay before enemy actions
 
+        // Perform FlowerEnemy actions
+        FlowerEnemy[] flowerEnemies = FindObjectsOfType<FlowerEnemy>();
+        foreach (FlowerEnemy flowerEnemy in flowerEnemies)
+        {
+            flowerEnemy.PerformAction();
+            yield return new WaitForSeconds(0.5f); // Short delay between flower actions
+        }
+
         foreach (GameObject enemyObject in enemySpawner.GetEnemyInstances())
         {
             Enemy enemy = enemyObject.GetComponent<Enemy>();
@@ -165,6 +175,16 @@ public class ConfirmHandler : MonoBehaviour
             }
         }
 
+        TripartiteBoss tripartiteBoss = FindObjectOfType<TripartiteBoss>();
+        if (tripartiteBoss != null)
+        {
+            tripartiteBoss.BossAttackAfterPlayerActions(playerInstance.GetComponent<Player>());
+
+            while (tripartiteBoss.IsPerformingActions)
+            {
+                yield return null;
+            }
+        }
         StartNextRound();
     }
 
@@ -182,7 +202,7 @@ public class ConfirmHandler : MonoBehaviour
                     cardEffect.ApplyEffect(enemy.gameObject);
                 }
             }
-            else if (target.CompareTag("BossPart") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            else if (target.CompareTag("BossPart") || target.CompareTag("FlowerEnemy") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
                 BossPart bossPart = target.GetComponent<BossPart>();
                 if (bossPart != null)
@@ -205,7 +225,7 @@ public class ConfirmHandler : MonoBehaviour
         cardRect.anchoredPosition = new Vector2(5000, 5000); // Move far off-screen
 
         cardObject.SetActive(false);
-        ReplaceCardInHand(cardObject);
+        usedCards.Add(cardObject);
         yield return new WaitForSeconds(1f); // Delay after card effect applies
     }
 
@@ -311,6 +331,7 @@ public class ConfirmHandler : MonoBehaviour
     void StartNextRound()
     {
         ShowAllCards();
+        ReplaceUsedCards();
         RoundManager.Instance.StartNextRound();
         NewCardClick.selectedCards.Clear();
     }
@@ -344,7 +365,72 @@ public class ConfirmHandler : MonoBehaviour
         }
     }
 
-    void ReplaceCardInHand(GameObject usedCard)
+    void ReplaceUsedCards()
+    {
+        StartCoroutine(ReplaceUsedCardsSimultaneously());
+    }
+
+    IEnumerator ReplaceUsedCardsSimultaneously()
+    {
+        List<GameObject> cardsToReplace = new List<GameObject>(usedCards);
+        usedCards.Clear();
+
+        List<(GameObject, int)> newCards = new List<(GameObject, int)>();
+
+        foreach (GameObject usedCard in cardsToReplace)
+        {
+            int cardIndex = deckManager.hand.IndexOf(usedCard);
+            if (cardIndex != -1)
+            {
+                deckManager.hand[cardIndex] = null; // Temporarily set to null to maintain indices
+                Destroy(usedCard);
+
+                if (deckManager.deck.Count > 0)
+                {
+                    List<GameObject> availableCards = new List<GameObject>(deckManager.allCards);
+
+                    foreach (var card in deckManager.hand)
+                    {
+                        if (card != null)
+                        {
+                            availableCards.RemoveAll(c => c.name == card.name.Replace("(Clone)", ""));
+                        }
+                    }
+
+                    if (availableCards.Count > 0)
+                    {
+                        int randomIndex = Random.Range(0, availableCards.Count);
+                        GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.deckPosition.position, Quaternion.identity, deckManager.canvasTransform);
+                        newCards.Add((newCard, cardIndex));
+                    }
+                }
+            }
+        }
+
+        // Remove null entries from the hand
+        deckManager.hand.RemoveAll(card => card == null);
+
+        // Animate all new cards simultaneously
+        List<Coroutine> animationCoroutines = new List<Coroutine>();
+        foreach ((GameObject newCard, int cardIndex) in newCards)
+        {
+            animationCoroutines.Add(StartCoroutine(AnimateReplacementCard(newCard, cardIndex)));
+        }
+
+        // Wait for all animations to complete
+        foreach (Coroutine coroutine in animationCoroutines)
+        {
+            yield return coroutine;
+        }
+
+        // Add all new cards to the hand at once
+        foreach ((GameObject newCard, int cardIndex) in newCards)
+        {
+            deckManager.hand.Insert(cardIndex, newCard);
+        }
+    }
+
+    IEnumerator ReplaceCardInHandCoroutine(GameObject usedCard)
     {
         int cardIndex = deckManager.hand.IndexOf(usedCard);
         if (cardIndex != -1)
@@ -365,46 +451,82 @@ public class ConfirmHandler : MonoBehaviour
                 if (availableCards.Count > 0)
                 {
                     int randomIndex = Random.Range(0, availableCards.Count);
-                    GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.canvasTransform);
+                    GameObject newCard = Instantiate(availableCards[randomIndex], deckManager.deckPosition.position, Quaternion.identity, deckManager.canvasTransform);
 
-                    // Set the card's RectTransform properties to match the corresponding hand position
-                    RectTransform cardRectTransform = newCard.GetComponent<RectTransform>();
-                    RectTransform handPositionRectTransform = deckManager.handPositions[cardIndex] as RectTransform;
-
-                    // Copy RectTransform properties
-                    cardRectTransform.anchorMin = handPositionRectTransform.anchorMin;
-                    cardRectTransform.anchorMax = handPositionRectTransform.anchorMax;
-                    cardRectTransform.pivot = handPositionRectTransform.pivot;
-                    cardRectTransform.anchoredPosition = handPositionRectTransform.anchoredPosition;
-                    cardRectTransform.sizeDelta = handPositionRectTransform.sizeDelta;
-
-                    // Ensure the card has a Graphic component with Raycast Target enabled
-                    Image image = newCard.GetComponent<Image>();
-                    if (image != null)
-                    {
-                        image.raycastTarget = true;
-                    }
-
-                    // Ensure the card has a BoxCollider2D and adjust its size
-                    BoxCollider2D boxCollider = newCard.GetComponent<BoxCollider2D>();
-                    if (boxCollider == null)
-                    {
-                        boxCollider = newCard.AddComponent<BoxCollider2D>();
-                    }
-                    boxCollider.size = cardRectTransform.sizeDelta;
-
-                    // Get the CardClickHandler component if it exists and set its properties
-                    var cardClickHandler = newCard.GetComponent<CardClickHandler>();
-                    if (cardClickHandler != null)
-                    {
-                        cardClickHandler.deckManager = deckManager;
-                        cardClickHandler.buttonManager = ButtonManager.Instance;
-                    }
-
-                    deckManager.hand.Insert(cardIndex, newCard);
-                    HideOtherCards();
+                    yield return StartCoroutine(AnimateReplacementCard(newCard, cardIndex));
                 }
             }
         }
+    }
+
+    IEnumerator AnimateReplacementCard(GameObject newCard, int cardIndex)
+    {
+        RectTransform cardRect = newCard.GetComponent<RectTransform>();
+        RectTransform handPositionRect = deckManager.handPositions[cardIndex] as RectTransform;
+
+        // Find the card front and back
+        Image cardFront = newCard.transform.Find("CardFront").GetComponent<Image>();
+        Image cardBack = newCard.transform.Find("CardBack").GetComponent<Image>();
+
+        if (cardFront == null || cardBack == null)
+        {
+            Debug.LogError("Card front or back not found in prefab: " + newCard.name);
+            yield break;
+        }
+
+        // Set up initial state
+        cardRect.localScale = Vector3.one;
+        cardFront.gameObject.SetActive(false);
+        cardBack.gameObject.SetActive(true);
+
+        // Move to hand position
+        yield return cardRect.DOAnchorPos(handPositionRect.anchoredPosition, deckManager.drawDuration).SetEase(Ease.OutQuad).WaitForCompletion();
+
+        // Set anchor and pivot before flipping
+        cardRect.anchorMin = handPositionRect.anchorMin;
+        cardRect.anchorMax = handPositionRect.anchorMax;
+        cardRect.pivot = handPositionRect.pivot;
+        cardRect.sizeDelta = handPositionRect.sizeDelta;
+
+        // Flip card
+        yield return cardRect.DORotate(new Vector3(0, 90, 0), deckManager.flipDuration / 2).SetEase(Ease.InOutQuad).OnComplete(() => {
+            cardFront.gameObject.SetActive(true);
+            cardBack.gameObject.SetActive(false);
+        }).WaitForCompletion();
+
+        yield return cardRect.DORotate(Vector3.zero, deckManager.flipDuration / 2).SetEase(Ease.InOutQuad).WaitForCompletion();
+
+        // Setup card components
+        SetupReplacementCard(newCard, cardIndex);
+    }
+
+    void SetupReplacementCard(GameObject card, int handIndex)
+    {
+        // Ensure the card has a BoxCollider2D and adjust its size
+        BoxCollider2D boxCollider = card.GetComponent<BoxCollider2D>();
+        if (boxCollider == null)
+        {
+            boxCollider = card.AddComponent<BoxCollider2D>();
+        }
+        boxCollider.size = card.GetComponent<RectTransform>().sizeDelta;
+
+        // Get the CardClickHandler component if it exists and set its properties
+        var cardClickHandler = card.GetComponent<CardClickHandler>();
+        if (cardClickHandler != null)
+        {
+            cardClickHandler.deckManager = deckManager;
+            cardClickHandler.buttonManager = ButtonManager.Instance;
+        }
+
+        // Ensure the CardFloatEffect is present and active
+        CardFloatEffect floatEffect = card.GetComponent<CardFloatEffect>();
+        if (floatEffect == null)
+        {
+            floatEffect = card.AddComponent<CardFloatEffect>();
+        }
+
+        // Set the correct hand position for the CardFloatEffect
+        RectTransform handPositionRect = deckManager.handPositions[handIndex] as RectTransform;
+        floatEffect.Initialize(handPositionRect.anchoredPosition);
     }
 }

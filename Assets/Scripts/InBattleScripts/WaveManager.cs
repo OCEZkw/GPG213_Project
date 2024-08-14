@@ -118,10 +118,10 @@ public class WaveManager : MonoBehaviour
             Transform spawnPoint = spawnPoints[0]; // Use the first spawn point for the boss
             GameObject bossInstance = Instantiate(bossPrefab, spawnPoint.position, Quaternion.identity);
 
-            // Get the WizardBossEnemy component from the instantiated bossInstance
-            WizardBossEnemy boss = bossInstance.GetComponent<WizardBossEnemy>();
-            if (boss != null)
+            if (bossInstance.TryGetComponent(out WizardBossEnemy wizardBoss))
             {
+                // Get the WizardBossEnemy component from the instantiated bossInstance
+                WizardBossEnemy boss = bossInstance.GetComponent<WizardBossEnemy>();
                 // Get the BossPart components from the instantiated boss instance
                 BossPart[] bossParts = bossInstance.GetComponentsInChildren<BossPart>();
 
@@ -138,6 +138,10 @@ public class WaveManager : MonoBehaviour
 
                 // Assign codes to each part
                 boss.AssignUniqueCodes(bossParts[0], bossParts[1], bossParts[2], staffCode, headCode, leftHandCode);
+            }
+            else if (bossInstance.TryGetComponent(out TripartiteBoss tripartiteBoss))
+            {
+                tripartiteBoss.InitializeBossParts();
             }
 
             enemiesRemainingAlive = 1; // Assume the boss is the only enemy in the wave

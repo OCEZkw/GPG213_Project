@@ -204,6 +204,13 @@ public class Player : MonoBehaviour
         NotificationManager.Instance.ShowNotification("Increased Player's Magical Defense");
     }
 
+    public void DecreaseDefenses(int amount)
+    {
+        // Decrease defense and magic defense
+        defense = Mathf.Max(0, defense - amount);
+        magicDefense = Mathf.Max(0, magicDefense - amount);
+    }
+
     IEnumerator DestroyDefenseTextAfterDelay(GameObject defenseTextInstance)
     {
         yield return new WaitForSeconds(2f); // Wait for 1 second
