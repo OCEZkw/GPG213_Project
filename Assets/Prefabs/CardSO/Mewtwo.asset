@@ -39,3 +39,4 @@ MonoBehaviour:
     bonusPerLevel: 4
   - statToChange: 4
     bonusPerLevel: 4
+  cardPrefab: {fileID: 3546533865912486321, guid: f2113480fbff96e4e9c3446952dd39bc, type: 3}

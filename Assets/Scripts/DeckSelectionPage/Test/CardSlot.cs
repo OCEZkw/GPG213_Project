@@ -25,6 +25,8 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public bool thisItemSelected;
     private InventoryManager inventoryManager;
 
+    public GameObject cardPrefab;
+
     void Start()
     {
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();

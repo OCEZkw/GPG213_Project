@@ -19,6 +19,10 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     void Start()
     {
         inventoryManager = FindObjectOfType<InventoryManager>();
+        if (DeckData.Instance == null)
+        {
+            new GameObject("DeckData").AddComponent<DeckData>();
+        }
     }
 
 
@@ -67,9 +71,10 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetCard(string cardName, Sprite cardSprite)
     {
-        // Remove the stat effect of the currently assigned card if any and add it back to the inventory
+        // Remove the current card from DeckData if any
         if (currentCardSO != null)
         {
+            DeckData.Instance.RemoveCard(currentCardSO);
             inventoryManager.RemoveCardEffect(currentCardSO);
             inventoryManager.AddItem(currentCardSO.cardName, currentCardSO.cardSprite, currentCardSO.description);
         }
@@ -89,12 +94,11 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         cardImage.sprite = cardSprite;
         if (currentCardSO != null)
         {
+            DeckData.Instance.AddCard(currentCardSO);
             inventoryManager.ApplyCardEffect(currentCardSO);
         }
 
-        isFull = true; // Assuming this flag is set to true to indicate the slot is filled
-
-        // Check if all deck slots are filled
+        isFull = true;
         inventoryManager.CheckAllDeckSlotsFilled();
     }
 }

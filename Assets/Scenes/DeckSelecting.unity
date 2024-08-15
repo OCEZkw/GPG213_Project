@@ -4985,7 +4985,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1555686278}
+      - m_Target: {fileID: 927993259}
         m_TargetAssemblyTypeName: DeckSelectManager, Assembly-CSharp
         m_MethodName: StartLevel
         m_Mode: 1
@@ -5478,6 +5478,7 @@ GameObject:
   - component: {fileID: 927993256}
   - component: {fileID: 927993257}
   - component: {fileID: 927993258}
+  - component: {fileID: 927993259}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -5697,6 +5698,21 @@ MonoBehaviour:
   - statType: 4
     textComponent: {fileID: 1636793894}
     prefix: 
+--- !u!114 &927993259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927993250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89f56a19af5c3b04484e7f5402a36300, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelSceneNames:
+  - Level1
+  - Level2
 --- !u!1 &954024316
 GameObject:
   m_ObjectHideFlags: 0
@@ -8941,12 +8957,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1555686274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89f56a19af5c3b04484e7f5402a36300, type: 3}
+  m_Script: {fileID: 11500000, guid: ebe4f2f50d954944092ad3133dd86fce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelSceneNames:
-  - Level1
-  - Level2
+  selectedCards: []
 --- !u!1001 &1579363668
 PrefabInstance:
   m_ObjectHideFlags: 0

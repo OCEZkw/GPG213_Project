@@ -21,6 +21,8 @@ public class DeckManager : MonoBehaviour, IDeckManager
 
     public List<GameObject> lockedCards = new List<GameObject>();
 
+    private List<GameObject> temporaryObjects = new List<GameObject>();
+
     public List<GameObject> GetHand()
     {
         return hand;
@@ -32,16 +34,36 @@ public class DeckManager : MonoBehaviour, IDeckManager
         InitializeDeck();
         DrawHand();
     }
+
     void InitializeDeck()
     {
-        // Shuffle allCards
-        Shuffle(allCards);
-        // Take the first 10 cards for the deck
-        for (int i = 0; i < Mathf.Min(10, allCards.Count); i++)
+        // Clear the existing deck
+        deck.Clear();
+
+        // Get the selected cards from DeckData
+        List<CardSO> selectedCards = DeckData.Instance.selectedCards;
+
+        // Create GameObjects for each selected card and add them to the deck
+        foreach (CardSO cardSO in selectedCards)
         {
-            deck.Add(allCards[i]);
+            GameObject cardObject = cardSO.CreateCardInstance();
+            if (cardObject != null)
+            {
+                // Set the card's parent to this DeckManager or another appropriate transform
+                cardObject.transform.SetParent(transform);
+
+                // Set the initial position (you might want to adjust this)
+                cardObject.transform.position = deckPosition.position;
+
+                // Add the card to the deck
+                deck.Add(cardObject);
+            }
         }
+
+        // Shuffle the deck
+        Shuffle(deck);
     }
+
     void DrawHand()
     {
         Debug.Log("Drawing hand...");

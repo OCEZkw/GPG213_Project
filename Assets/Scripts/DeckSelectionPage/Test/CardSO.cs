@@ -18,6 +18,8 @@ public class CardSO : ScriptableObject
     public float experienceScalingFactor = 1.5f; // How much more XP is needed for each level
 
     public List<LevelUpBonus> levelUpBonuses;
+    // New field for the card prefab
+    public GameObject cardPrefab;
 
     [System.Serializable]
     public class StatChange
@@ -31,6 +33,22 @@ public class CardSO : ScriptableObject
     {
         public PlayerStats.StatToChange statToChange;
         public float bonusPerLevel;
+    }
+
+    public GameObject CreateCardInstance()
+    {
+        if (cardPrefab == null)
+        {
+            Debug.LogError($"Card prefab is missing for {cardName}");
+            return null;
+        }
+
+        GameObject cardInstance = Instantiate(cardPrefab);
+
+        // You can add any additional setup here if needed
+        // For example, you might want to set the card's name or add components
+
+        return cardInstance;
     }
 
     public void UseCard(PlayerStats playerStats)
