@@ -20,6 +20,8 @@ public class InventoryManager : MonoBehaviour
 
     public Inventory inventory;
 
+    private Dictionary<(string, int), bool> cardSelectability = new Dictionary<(string, int), bool>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,6 +64,12 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void UpdateCardSelectability(string cardName, int cardIndex, bool isSelectable)
+    {
+        cardSelectability[(cardName, cardIndex)] = isSelectable;
+        UpdateCardSlots();
+    }
+
     public void UpdateCardSlots()
     {
         if (inventory != null)
@@ -70,7 +78,8 @@ public class InventoryManager : MonoBehaviour
             {
                 if (i < inventory.items.Count)
                 {
-                    cardSlot[i].UpdateSlot(inventory.items[i], i);  // Pass the index
+                    bool isSelectable = !cardSelectability.ContainsKey((inventory.items[i].cardName, i)) || cardSelectability[(inventory.items[i].cardName, i)];
+                    cardSlot[i].UpdateSlot(inventory.items[i], i, isSelectable);
                 }
                 else
                 {
@@ -83,6 +92,7 @@ public class InventoryManager : MonoBehaviour
             Debug.LogError("Cannot update card slots: Inventory is null");
         }
     }
+
 
     public void OnInventoryChanged()
     {
@@ -134,11 +144,11 @@ public class InventoryManager : MonoBehaviour
         selectedDeckSlot = deckSlot;
     }
 
-    public void PlaceCardOnSelectedDeckSlot(string cardName, Sprite cardSprite)
+    public void PlaceCardOnSelectedDeckSlot(string cardName, Sprite cardSprite, int cardIndex)
     {
         if (selectedDeckSlot != null)
         {
-            selectedDeckSlot.SetCard(cardName, cardSprite);
+            selectedDeckSlot.SetCard(cardName, cardSprite, cardIndex);
         }
     }
 

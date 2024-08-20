@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
 
             Quest1 quest2 = new Quest1
             {
-                title = "Enhance 3 different Cards",
+                title = "Enhance",
                 description = "Enhance 3 different cards to improve their power.",
                 goldReward = 200,
                 gachaSystem = gachaSystem,

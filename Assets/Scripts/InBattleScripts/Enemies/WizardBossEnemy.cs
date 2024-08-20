@@ -25,9 +25,12 @@ public class WizardBossEnemy : MonoBehaviour
 
     private WaveManager waveManager;
 
+    private EnemyAnimator bossAnimator;
+
     void Start()
     {
         InitializeBossParts(); // Ensure parts are initialized first
+        InitializeAnimator();
         waveManager = FindObjectOfType<WaveManager>();
         if (waveManager == null)
         {
@@ -64,6 +67,16 @@ public class WizardBossEnemy : MonoBehaviour
         if (leftHandPart != null)
             leftHandPart.Initialize(2500, leftHandType);
     }
+
+    void InitializeAnimator()
+    {
+        bossAnimator = GetComponent<EnemyAnimator>();
+        if (bossAnimator == null)
+        {
+            Debug.LogError("EnemyAnimator not found on WizardBossEnemy.");
+        }
+    }
+
 
     public void PartDamaged(GameObject part, int damage, bool isMagic)
     {
@@ -133,6 +146,7 @@ public class WizardBossEnemy : MonoBehaviour
             Player playerComponent = player.GetComponent<Player>();
             if (playerComponent != null && playerComponent.gameObject.activeInHierarchy)
             {
+                PlayAttackAnimation();
                 playerComponent.TakeMagicDamage(magicDamage);
                 isBossAttacking = true;
                 Debug.Log($"Staff attacked player for {magicDamage} magical damage.");
@@ -146,6 +160,7 @@ public class WizardBossEnemy : MonoBehaviour
             Player playerComponent = player.GetComponent<Player>();
             if (playerComponent != null && playerComponent.gameObject.activeInHierarchy)
             {
+                PlayAttackAnimation();
                 playerComponent.TakeDamage(attackDamage);
                 isBossAttacking = true;
                 Debug.Log($"Left hand attacked player for {attackDamage} physical damage.");
@@ -157,6 +172,18 @@ public class WizardBossEnemy : MonoBehaviour
         CheckBossDeath();
         // You can add additional logic here for the boss's turn after player actions
         yield return null;
+    }
+
+    private void PlayAttackAnimation()
+    {
+        if (bossAnimator != null)
+        {
+            bossAnimator.PlayAttackAnimation();
+        }
+        else
+        {
+            Debug.LogWarning("EnemyAnimator not found for attack animation");
+        }
     }
 }
 

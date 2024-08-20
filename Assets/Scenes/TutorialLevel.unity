@@ -2764,6 +2764,7 @@ GameObject:
   - component: {fileID: 1268508916}
   - component: {fileID: 1268508915}
   - component: {fileID: 1268508918}
+  - component: {fileID: 1268508919}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -2854,6 +2855,21 @@ MonoBehaviour:
   defense: 100
   magicDefense: 100
   healingAmount: 50
+--- !u!114 &1268508919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268508914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ebab6a11fc49e24793f745aacd029d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floatDistance: 5
+  floatDuration: 3
+  floatEase: 4
 --- !u!1 &1275194680
 GameObject:
   m_ObjectHideFlags: 0

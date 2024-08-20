@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class WaveManager : MonoBehaviour
 {
@@ -9,173 +10,172 @@ public class WaveManager : MonoBehaviour
     public class Wave
     {
         public int numberOfEnemies;
-        public float spawnInterval;
-        public bool isBossWave; // Add a flag to indicate a boss wave
+        public bool isBossWave;
         public GameObject bossPrefab;
     }
 
-    public List<Wave> waves; // List of waves
-    public Transform[] spawnPoints; // Enemy spawn points
-    public GameObject enemyPrefab; // Enemy prefab
+    public List<Wave> waves;
+    public Transform[] spawnPoints;
+    public GameObject enemyPrefab;
 
     private int currentWaveIndex = 0;
     private int enemiesRemainingToSpawn;
     public int enemiesRemainingAlive;
-    private float nextSpawnTime;
-    private EnemySpawner enemySpawner;
 
     private int currentEnemyCode = 0;
+    private List<GameObject> enemyInstances = new List<GameObject>();
 
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
+    private List<GameObject> currentWaveEnemies = new List<GameObject>();
+    private bool[] spawnPointsOccupied;
+
     void Start()
     {
-        enemySpawner = GetComponent<EnemySpawner>();
         InitializeWavesForLevel();
-        StartNextWave();
-    }
-
-    void Update()
-    {
-        if (enemiesRemainingToSpawn > 0 && Time.time >= nextSpawnTime)
-        {
-            SpawnEnemy();
-            nextSpawnTime = Time.time + waves[currentWaveIndex].spawnInterval;
-        }
+        spawnPointsOccupied = new bool[spawnPoints.Length];
     }
 
     void InitializeWavesForLevel()
     {
         int selectedLevel = PlayerPrefs.GetInt("SelectedLevel", 0);
-        // Here you would load or set up the waves data for the selected level
-        // For example:
-        // waves = LoadWavesForLevel(selectedLevel);
         Debug.Log("Initializing waves for level: " + selectedLevel);
+        // Here you would load or set up the waves data for the selected level
     }
 
     public void StartNextWave()
     {
         if (currentWaveIndex < waves.Count)
         {
-            if (waves[currentWaveIndex].isBossWave)
+            currentWaveEnemies.Clear();
+            Wave currentWave = waves[currentWaveIndex];
+
+            Debug.Log($"Starting Wave {currentWaveIndex + 1}");
+            Debug.Log($"Number of enemies to spawn: {currentWave.numberOfEnemies}");
+
+            if (currentWave.isBossWave)
             {
-                // Spawn boss only if it's a boss wave
-                Debug.Log("Spawning boss for wave " + currentWaveIndex);
-                SpawnBoss(waves[currentWaveIndex].bossPrefab);
-                enemiesRemainingAlive = 1; // Set enemiesRemainingAlive for boss wave
+                Debug.Log($"Spawning boss for wave {currentWaveIndex + 1}");
+                SpawnBoss(currentWave.bossPrefab);
+                enemiesRemainingAlive = 1;
             }
             else
             {
-                enemiesRemainingToSpawn = waves[currentWaveIndex].numberOfEnemies;
-                enemiesRemainingAlive = enemiesRemainingToSpawn;
-                nextSpawnTime = Time.time;
+                enemiesRemainingAlive = currentWave.numberOfEnemies;
+                SpawnAllEnemiesForWave(currentWave);
             }
+
+            currentWaveIndex++;
         }
         else
         {
             Debug.Log("All waves completed!");
+            StartCoroutine(ReturnToMainMenuWithDelay(3f));
         }
     }
 
-
-
-    void SpawnEnemy()
+    void SpawnAllEnemiesForWave(Wave wave)
     {
-        if (enemiesRemainingToSpawn > 0)
+        Debug.Log($"Spawning {wave.numberOfEnemies} enemies for wave {currentWaveIndex + 1}");
+
+        for (int i = 0; i < wave.numberOfEnemies; i++)
         {
-            int spawnIndex = enemiesRemainingToSpawn - 1;
-            if (spawnIndex < spawnPoints.Length)
-            {
-                Transform spawnPoint = spawnPoints[spawnIndex];
-                GameObject enemyInstance = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-
-                // Generate a unique enemy code (you can use a counter or random number generator)
-                int uniqueCode = GenerateUniqueEnemyCode();
-
-                // Access the Enemy script and set the enemyCode
-                Enemy enemy = enemyInstance.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    enemy.enemyCode = uniqueCode;
-                }
-
-                // Add the enemy instance to your management systems
-                enemySpawner.AddEnemyInstance(enemyInstance);
-
-                enemiesRemainingToSpawn--;
-            }
-            else
-            {
-                Debug.LogWarning("Not enough spawn points for the remaining enemies.");
-            }
+            int spawnPointIndex = i % spawnPoints.Length;
+            SpawnEnemy(spawnPoints[spawnPointIndex]);
         }
+
+        Debug.Log($"Spawned {currentWaveEnemies.Count} enemies. Remaining alive: {enemiesRemainingAlive}");
+    }
+
+    void SpawnEnemy(Transform spawnPoint)
+    {
+        GameObject enemyInstance = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        currentWaveEnemies.Add(enemyInstance);
+
+        int uniqueCode = GenerateUniqueEnemyCode();
+
+        Enemy enemy = enemyInstance.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.enemyCode = uniqueCode;
+        }
+
+        enemyInstances.Add(enemyInstance);
+
+        Debug.Log($"Spawned enemy at {spawnPoint.name}. Total spawned: {currentWaveEnemies.Count}");
     }
 
     void SpawnBoss(GameObject bossPrefab)
     {
         if (spawnPoints.Length > 0)
         {
-            Transform spawnPoint = spawnPoints[0]; // Use the first spawn point for the boss
+            Transform spawnPoint = spawnPoints[0];
             GameObject bossInstance = Instantiate(bossPrefab, spawnPoint.position, Quaternion.identity);
+            currentWaveEnemies.Add(bossInstance);
 
             if (bossInstance.TryGetComponent(out WizardBossEnemy wizardBoss))
             {
-                // Get the WizardBossEnemy component from the instantiated bossInstance
-                WizardBossEnemy boss = bossInstance.GetComponent<WizardBossEnemy>();
-                // Get the BossPart components from the instantiated boss instance
-                BossPart[] bossParts = bossInstance.GetComponentsInChildren<BossPart>();
-
-                if (bossParts.Length < 3)
-                {
-                    Debug.LogError("Not enough BossPart components found on the WizardBossEnemy prefab.");
-                    return;
-                }
-
-                // Initialize and assign unique codes to each part
-                int staffCode = GenerateUniqueEnemyCode();
-                int headCode = GenerateUniqueEnemyCode();
-                int leftHandCode = GenerateUniqueEnemyCode();
-
-                // Assign codes to each part
-                boss.AssignUniqueCodes(bossParts[0], bossParts[1], bossParts[2], staffCode, headCode, leftHandCode);
+                SetupWizardBoss(wizardBoss);
             }
             else if (bossInstance.TryGetComponent(out TripartiteBoss tripartiteBoss))
             {
                 tripartiteBoss.InitializeBossParts();
             }
 
-            enemiesRemainingAlive = 1; // Assume the boss is the only enemy in the wave
+            Debug.Log("Boss spawned");
         }
+    }
+
+    void SetupWizardBoss(WizardBossEnemy boss)
+    {
+        BossPart[] bossParts = boss.GetComponentsInChildren<BossPart>();
+
+        if (bossParts.Length < 3)
+        {
+            Debug.LogError("Not enough BossPart components found on the WizardBossEnemy prefab.");
+            return;
+        }
+
+        int staffCode = GenerateUniqueEnemyCode();
+        int headCode = GenerateUniqueEnemyCode();
+        int leftHandCode = GenerateUniqueEnemyCode();
+
+        boss.AssignUniqueCodes(bossParts[0], bossParts[1], bossParts[2], staffCode, headCode, leftHandCode);
     }
 
     int GenerateUniqueEnemyCode()
     {
-        // Example: You can use a simple counter for generating unique codes
         return ++currentEnemyCode;
     }
 
     public void OnEnemyDefeated()
     {
         enemiesRemainingAlive--;
+        Debug.Log($"Enemy defeated. Remaining alive: {enemiesRemainingAlive}");
 
         if (enemiesRemainingAlive <= 0)
         {
-            if (currentWaveIndex + 1 < waves.Count)
-            {
-                currentWaveIndex++;
-                StartCoroutine(StartNextWaveWithDelay(1f));
-            }
-            else
-            {
-                StartCoroutine(ReturnToMainMenuWithDelay(3f));
-            }
+            Debug.Log("All enemies in the current wave defeated.");
         }
     }
 
-    IEnumerator StartNextWaveWithDelay(float delay)
+    public bool ShouldStartNextWave()
     {
-        yield return new WaitForSeconds(delay);
-        StartNextWave();
+        return enemiesRemainingAlive <= 0 && currentWaveIndex < waves.Count;
+    }
+
+    public List<GameObject> GetEnemyInstances()
+    {
+        return enemyInstances;
+    }
+
+    public void RemoveEnemyInstance(GameObject enemyInstance)
+    {
+        enemyInstances.Remove(enemyInstance);
+        if (enemyInstance != null)
+        {
+            Destroy(enemyInstance);
+        }
     }
 
     IEnumerator ReturnToMainMenuWithDelay(float delay)
@@ -183,5 +183,43 @@ public class WaveManager : MonoBehaviour
         Debug.Log("All waves completed! Returning to main menu...");
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    public void OnFlowerDestroyed(int spawnPointIndex)
+    {
+        if (spawnPointIndex >= 0 && spawnPointIndex < spawnPointsOccupied.Length)
+        {
+            spawnPointsOccupied[spawnPointIndex] = false;
+            Debug.Log($"WaveManager: Spawn point {spawnPointIndex} is now available.");
+        }
+        else
+        {
+            Debug.LogWarning($"WaveManager: Invalid spawn point index: {spawnPointIndex}");
+        }
+        OnEnemyDefeated();
+    }
+
+    public int GetAvailableSpawnPoint()
+    {
+        for (int i = 1; i <= 2; i++)  // Check only spawn points 1 and 2 for flowers
+        {
+            if (!spawnPointsOccupied[i])
+            {
+                return i;
+            }
+        }
+        return -1;  // No available spawn point
+    }
+
+    public void SetSpawnPointOccupied(int index, bool occupied)
+    {
+        if (index >= 0 && index < spawnPointsOccupied.Length)
+        {
+            spawnPointsOccupied[index] = occupied;
+        }
+        else
+        {
+            Debug.LogWarning($"WaveManager: Attempted to set invalid spawn point index: {index}");
+        }
     }
 }

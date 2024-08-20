@@ -65,6 +65,14 @@ public class CardEffect : MonoBehaviour
                 ApplyEffectToBossPart(bossPart, effectValue);
             }
         }
+        else if (target.CompareTag("FlowerEnemy"))
+        {
+            FlowerEnemy flowerEnemy = target.GetComponent<FlowerEnemy>();
+            if (flowerEnemy != null)
+            {
+                ApplyEffectToFlowerEnemy(flowerEnemy, effectValue);
+            }
+        }
         else
         {
             Enemy enemy = target.GetComponent<Enemy>();
@@ -145,6 +153,20 @@ public class CardEffect : MonoBehaviour
             case CardEffectType.MagicAttackDamage:
                 bossPart.TakeDamage(modifiedEffectValue, true);
                 break;
+        }
+    }
+
+    private void ApplyEffectToFlowerEnemy(FlowerEnemy flowerEnemy, int effectValue)
+    {
+        int modifiedEffectValue = ModifyEffectByTyping(effectValue, cardType, flowerEnemy.enemyType);
+
+        switch (effectType)
+        {
+            case CardEffectType.AttackDamage:
+            case CardEffectType.MagicAttackDamage:
+                flowerEnemy.TakeDamage(modifiedEffectValue, cardType);
+                break;
+                // Add other effect types if necessary for FlowerEnemy
         }
     }
 

@@ -3393,15 +3393,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - numberOfEnemies: 1
-    spawnInterval: 0
-    isBossWave: 0
+    isBossWave: 1
     bossPrefab: {fileID: 2344797886425520206, guid: 498525694086e9145954a537ee24037c, type: 3}
   - numberOfEnemies: 3
-    spawnInterval: 0
     isBossWave: 0
     bossPrefab: {fileID: 844076834396374565, guid: 6746dbbd27b373d4989a4e9dac118a13, type: 3}
   - numberOfEnemies: 1
-    spawnInterval: 0
     isBossWave: 1
     bossPrefab: {fileID: 2344797886425520206, guid: 498525694086e9145954a537ee24037c, type: 3}
   spawnPoints:

@@ -3215,7 +3215,6 @@ GameObject:
   - component: {fileID: 1280359853}
   - component: {fileID: 1280359861}
   - component: {fileID: 1280359862}
-  - component: {fileID: 1280359864}
   - component: {fileID: 1280359863}
   - component: {fileID: 1280359865}
   - component: {fileID: 1280359866}
@@ -3293,7 +3292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   confirmedCardPosition: {fileID: 1870931658}
   deckManager: {fileID: 1280359853}
-  enemySpawner: {fileID: 1280359864}
+  enemySpawner: {fileID: 0}
   playerSpawner: {fileID: 1280359865}
   buttonManager: {fileID: 1280359863}
   player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
@@ -3331,23 +3330,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmButton: {fileID: 221563722}
---- !u!114 &1280359864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280359851}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dab7e5b3463c00249b93cdbaea693986, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 7520179415146543301, guid: f444428959af34047bb5073fe0d53663, type: 3}
-  enemySpawnPoints:
-  - {fileID: 1337436759}
-  - {fileID: 1713498180}
-  - {fileID: 1940966203}
 --- !u!114 &1280359865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3393,15 +3375,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - numberOfEnemies: 1
-    spawnInterval: 0
-    isBossWave: 0
-    bossPrefab: {fileID: 2344797886425520206, guid: 498525694086e9145954a537ee24037c, type: 3}
+    isBossWave: 1
+    bossPrefab: {fileID: 844076834396374565, guid: 6746dbbd27b373d4989a4e9dac118a13, type: 3}
   - numberOfEnemies: 3
-    spawnInterval: 0
     isBossWave: 1
     bossPrefab: {fileID: 844076834396374565, guid: 6746dbbd27b373d4989a4e9dac118a13, type: 3}
   - numberOfEnemies: 1
-    spawnInterval: 0
     isBossWave: 1
     bossPrefab: {fileID: 844076834396374565, guid: 6746dbbd27b373d4989a4e9dac118a13, type: 3}
   spawnPoints:

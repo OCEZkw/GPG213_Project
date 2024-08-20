@@ -26,13 +26,15 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private InventoryManager inventoryManager;
 
     public GameObject cardPrefab;
+    public bool isSelectable = true;
+    private bool isSelected = false;
 
     void Start()
     {
         inventoryManager = GameObject.Find("Canvas").GetComponent<InventoryManager>();
     }
 
-    public void UpdateSlot(Inventory.InventoryItem item, int index)
+    public void UpdateSlot(Inventory.InventoryItem item, int index, bool selectable)
     {
         if (item != null)
         {
@@ -41,7 +43,9 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             itemDescription = item.description;
             isFull = true;
             cardImage.sprite = cardSprite;
-            slotIndex = index;  // Set the slot index
+            slotIndex = index;
+            isSelectable = selectable;
+            UpdateVisuals();
         }
         else
         {
@@ -69,26 +73,33 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnHoverEnter()
     {
-        inventoryManager.DeselectAllSlots();
-        selectedShader.SetActive(true);
-        thisItemSelected = true;
-        UpdateItemDescription();
+        if (isSelectable)
+        {
+            inventoryManager.DeselectAllSlots();
+            selectedShader.SetActive(true);
+            thisItemSelected = true;
+            isSelected = true;
+            UpdateVisuals();
+            UpdateItemDescription();
+        }
     }
 
     private void OnHoverExit()
     {
         selectedShader.SetActive(false);
         thisItemSelected = false;
+        isSelected = false;
+        UpdateVisuals();
         ClearItemDescription();
     }
 
     private void OnLeftClick()
     {
-        if (thisItemSelected && isFull)
+        if (thisItemSelected && isFull && isSelectable)
         {
-            inventoryManager.PlaceCardOnSelectedDeckSlot(cardName, cardSprite);
+            inventoryManager.PlaceCardOnSelectedDeckSlot(cardName, cardSprite, slotIndex);
             inventoryManager.HideInventoryMenu();
-            inventoryManager.inventory.RemoveItem(cardName);  // Changed this line
+            inventoryManager.UpdateCardSelectability(cardName, slotIndex, false);
             inventoryManager.UpdateCardSlots();
         }
     }
@@ -121,5 +132,24 @@ public class CardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         selectedShader.SetActive(false);
         thisItemSelected = false;
         slotIndex = -1;  // Reset the slot index
+        isSelectable = true;
+        isSelected = false;
+        UpdateVisuals();
+    }
+
+    private void UpdateVisuals()
+    {
+        if (!isSelectable)
+        {
+            cardImage.color = Color.gray; // Darken the card if not selectable
+        }
+        else if (isSelected)
+        {
+            cardImage.color = new Color(0.8f, 0.8f, 0.8f); // Slightly darken when selected
+        }
+        else
+        {
+            cardImage.color = Color.white; // Reset to normal color
+        }
     }
 }

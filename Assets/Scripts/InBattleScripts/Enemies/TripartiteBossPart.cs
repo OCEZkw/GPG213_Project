@@ -18,6 +18,7 @@ public class TripartiteBossPart : BossPart
     private bool isCannonMode = false;
 
     private SpriteRenderer spriteRenderer;
+    private EnemyAnimator enemyAnimator;
 
     public void Initialize(int health, PartType type, TripartiteBoss boss)
     {
@@ -25,6 +26,7 @@ public class TripartiteBossPart : BossPart
         partType = type;
         parentBoss = boss;
         spriteRenderer = GetComponent<SpriteRenderer>();
+        enemyAnimator = GetComponent<EnemyAnimator>();
         if (spriteRenderer == null)
         {
             Debug.LogError($"TripartiteBossPart: SpriteRenderer not found on {gameObject.name}");
@@ -69,6 +71,8 @@ public class TripartiteBossPart : BossPart
 
     public void PerformAction()
     {
+        enemyAnimator?.PlayAttackAnimation();
+
         switch (partType)
         {
             case PartType.MainBody:
@@ -89,9 +93,10 @@ public class TripartiteBossPart : BossPart
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
-            player.TakeDamage(attackDamage);
+            player.TakeMagicDamage(magicDamage);
         }
     }
+
     private void PerformMagicBallAction()
     {
         if (parentBoss.IsInRageMode())
@@ -101,23 +106,41 @@ public class TripartiteBossPart : BossPart
         }
         else
         {
-            int randomAction = Random.Range(0, 3);
-            switch (randomAction)
+            List<int> availableActions = new List<int> { 0, 1, 2 };
+
+            while (availableActions.Count > 0)
             {
-                case 0:
-                    parentBoss.SpawnHealingFlower();
-                    Debug.Log("TripartiteBossPart: Magic Ball spawning healing flowers");
-                    break;
-                case 1:
-                    if (parentBoss.IsShieldDead())
-                        parentBoss.RespawnShield();
-                    Debug.Log("TripartiteBossPart: Magic Ball respawning Shield");
-                    break;
-                case 2:
-                    Debug.Log("TripartiteBossPart: Magic Ball increasing Main Body damage by 50");
-                    parentBoss.IncreaseMainBodyDamage(50);
-                    break;
+                int randomIndex = Random.Range(0, availableActions.Count);
+                int chosenAction = availableActions[randomIndex];
+
+                switch (chosenAction)
+                {
+                    case 0:
+                        parentBoss.SpawnHealingFlower();
+                        Debug.Log("TripartiteBossPart: Magic Ball spawning healing flowers");
+                        return;
+                    case 1:
+                        if (parentBoss.IsShieldDead())
+                        {
+                            parentBoss.RespawnShield();
+                            NotificationManager.Instance.ShowNotification("Magic Crystal revived shield");
+                            Debug.Log("TripartiteBossPart: Magic Ball respawning Shield");
+                            return;
+                        }
+                        else
+                        {
+                            availableActions.Remove(1);
+                            continue;
+                        }
+                    case 2:
+                        DealMagicDamageToPlayer();
+                        return;
+                }
             }
+
+            // If we've exhausted all options (which shouldn't happen), default to dealing damage
+            Debug.LogWarning("TripartiteBossPart: Exhausted all action options, defaulting to magic damage");
+            DealMagicDamageToPlayer();
         }
     }
 
@@ -131,7 +154,22 @@ public class TripartiteBossPart : BossPart
         else
         {
             Debug.Log("TripartiteBossPart: Shield decreasing player defenses");
+            NotificationManager.Instance.ShowNotification("Shield decreasing player defenses");
             DecreasePlayerDefenses();
+        }
+    }
+
+    private void DealMagicDamageToPlayer()
+    {
+        Player player = FindObjectOfType<Player>();
+        if (player != null)
+        {
+            player.TakeMagicDamage(magicDamage);
+            Debug.Log($"TripartiteBossPart: Magic Ball dealing {magicDamage} magic damage to player");
+        }
+        else
+        {
+            Debug.LogWarning("TripartiteBossPart: Player not found for dealing magic damage");
         }
     }
 
@@ -139,6 +177,7 @@ public class TripartiteBossPart : BossPart
     {
         // Implement spawning of healing flowers
         parentBoss.SpawnHealingFlower();
+        NotificationManager.Instance.ShowNotification("Magic Crystal spawned healing flower");
         Debug.Log("TripartiteBossPart: Spawning healing flowers (implement this functionality)");
     }
 
@@ -146,6 +185,7 @@ public class TripartiteBossPart : BossPart
     {
         // Implement spawning of card-locking flowers
         parentBoss.SpawnCardLockingFlower();
+        NotificationManager.Instance.ShowNotification("Magic Crystal spawned card-locking flower");
         Debug.Log("TripartiteBossPart: Spawning card-locking flowers (implement this functionality)");
     }
 
@@ -175,6 +215,7 @@ public class TripartiteBossPart : BossPart
         if (spriteRenderer != null && cannonSprite != null)
         {
             spriteRenderer.sprite = cannonSprite;
+            NotificationManager.Instance.ShowNotification("Shield transformed into cannon");
             Debug.Log($"TripartiteBossPart: Changed sprite to cannon for {gameObject.name}");
         }
         else
@@ -184,6 +225,8 @@ public class TripartiteBossPart : BossPart
             if (cannonSprite == null)
                 Debug.LogError("TripartiteBossPart: Cannon sprite is null");
         }
+
+        StartCoroutine(UpdateHealthSlider(currentHealth, currentHealth));
     }
 
     public void Revive()

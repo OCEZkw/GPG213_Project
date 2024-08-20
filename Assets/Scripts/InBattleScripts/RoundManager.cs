@@ -9,6 +9,7 @@ public class RoundManager : MonoBehaviour
 
     public int currentRound = 1;
     public int playerCost = 3;
+    private const int MAX_PLAYER_COST = 10;
     public TMP_Text roundText;
     public TMP_Text costText;
     public Player player;
@@ -34,7 +35,10 @@ public class RoundManager : MonoBehaviour
     public void StartNextRound()
     {
         currentRound++;
-        playerCost++; // Increase the total cost available
+        if (playerCost < MAX_PLAYER_COST)
+        {
+            playerCost = Mathf.Min(playerCost + 1, MAX_PLAYER_COST); // Increase the total cost available, but cap at MAX_PLAYER_COST
+        }
         player.UpdateCost(playerCost); // Reset player's current cost to the new total cost
         player.ResetCost(); // Reset player's current cost to full
         UpdateUI();

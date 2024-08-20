@@ -15,6 +15,8 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public bool thisItemSelected;
 
     public CardSO currentCardSO;
+    private string previousCardName;
+    private int previousCardIndex = -1;
 
     void Start()
     {
@@ -69,14 +71,19 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    public void SetCard(string cardName, Sprite cardSprite)
+    public void SetCard(string cardName, Sprite cardSprite, int cardIndex)  // Modify this line
     {
+        // Make the previous card selectable again if it exists
+        if (previousCardIndex != -1)
+        {
+            inventoryManager.UpdateCardSelectability(previousCardName, previousCardIndex, true);
+        }
+
         // Remove the current card from DeckData if any
         if (currentCardSO != null)
         {
             DeckData.Instance.RemoveCard(currentCardSO);
             inventoryManager.RemoveCardEffect(currentCardSO);
-            inventoryManager.AddItem(currentCardSO.cardName, currentCardSO.cardSprite, currentCardSO.description);
         }
 
         // Find the new card's CardSO
@@ -96,9 +103,13 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             DeckData.Instance.AddCard(currentCardSO);
             inventoryManager.ApplyCardEffect(currentCardSO);
+            inventoryManager.UpdateCardSelectability(cardName, cardIndex, false);
+            previousCardName = cardName;
+            previousCardIndex = cardIndex;  // Add this line
         }
 
         isFull = true;
         inventoryManager.CheckAllDeckSlotsFilled();
     }
 }
+

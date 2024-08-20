@@ -26,6 +26,7 @@ public class NewCardClick : MonoBehaviour
     private int selectedEnemyCode;
 
     private BossPart selectedBossPart;
+    private FlowerEnemy selectedFlowerEnemy;
 
     private CardFloatEffect cardFloatEffect;
     private Vector3 originalScale;
@@ -35,6 +36,7 @@ public class NewCardClick : MonoBehaviour
     private bool isLocked = false;
     public GameObject cardLockedIndicator;
     private Image cardImage;
+    private Color originalColor;
 
     void Start()
     {
@@ -70,9 +72,10 @@ public class NewCardClick : MonoBehaviour
         originalScale = transform.localScale;
 
         cardImage = GetComponent<Image>();
-        if (cardImage == null)
+        // Store the original color of the card
+        if (cardImage != null)
         {
-            cardImage = GetComponentInChildren<Image>();
+            originalColor = cardImage.color;
         }
 
         if (cardLockedIndicator != null)
@@ -80,7 +83,6 @@ public class NewCardClick : MonoBehaviour
             cardLockedIndicator.SetActive(false);
         }
     }
-
     public void SetLocked(bool locked)
     {
         isLocked = locked;
@@ -98,11 +100,11 @@ public class NewCardClick : MonoBehaviour
             collider.enabled = !locked;
         }
 
-        // Darken the card except for the lock object
+        // Darken the card except for the lock object when locked, restore original color when unlocked
         if (cardImage != null)
         {
             Color darkColor = new Color(0.5f, 0.5f, 0.5f, 1f);
-            cardImage.color = locked ? darkColor : Color.white;
+            cardImage.color = locked ? darkColor : originalColor;
         }
 
         Debug.Log($"Card {gameObject.name} {(locked ? "locked" : "unlocked")}");
@@ -138,6 +140,7 @@ public class NewCardClick : MonoBehaviour
             selectedEnemyCode = enemy.enemyCode; // Store the enemy code
             // Optionally, you can show some indication that this enemy is selected
             enemy.ShowSelectedReticle(true);
+            Enemy.HideAllReticles();
             // Optionally, update UI or perform other actions related to selecting an enemy
             Debug.Log($"Selected Enemy Code: {selectedEnemyCode}");
 
@@ -181,6 +184,27 @@ public class NewCardClick : MonoBehaviour
             //   buttonManager.ShowSelectTargetButton(false);
             isWaitingForTarget = false;
         }
+    }
+
+    public void SelectFlowerEnemy(FlowerEnemy flowerEnemy)
+    {
+        if (isWaitingForTarget)
+        {
+            selectedFlowerEnemy = flowerEnemy;
+            selectedEnemyCode = flowerEnemy.enemyCode; // Assuming FlowerEnemy has an enemyCode property
+            // Show indication that this FlowerEnemy is selected
+            flowerEnemy.ShowSelectedReticle(true);
+            Debug.Log($"Selected FlowerEnemy Code: {selectedEnemyCode}");
+
+            buttonManager.ShowConfirmButton(true);
+            NotificationManager.Instance.ShowTargetSelectionNotification(false);
+            isWaitingForTarget = false;
+        }
+    }
+
+    public FlowerEnemy GetSelectedFlowerEnemy()
+    {
+        return selectedFlowerEnemy;
     }
 
     // Method to get selected enemy
@@ -264,6 +288,61 @@ public class NewCardClick : MonoBehaviour
 
             // Select this card and move it upwards
             Select();
+            // Start listening for target selection
+            StartCoroutine(WaitForTargetSelection());
+        }
+    }
+
+    private IEnumerator WaitForTargetSelection()
+    {
+        while (isWaitingForTarget)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+                if (hit.collider != null)
+                {
+                    if (hit.collider.CompareTag("Enemy"))
+                    {
+                        Enemy enemy = hit.collider.GetComponent<Enemy>();
+                        if (enemy != null)
+                        {
+                            SelectEnemy(enemy);
+                            yield break;
+                        }
+                    }
+                    else if (hit.collider.CompareTag("BossPart"))
+                    {
+                        BossPart bossPart = hit.collider.GetComponent<BossPart>();
+                        if (bossPart != null)
+                        {
+                            SelectBossPart(bossPart);
+                            yield break;
+                        }
+                    }
+                    else if (hit.collider.CompareTag("Player"))
+                    {
+                        Player playerTarget = hit.collider.GetComponent<Player>();
+                        if (playerTarget != null)
+                        {
+                            SelectPlayer(playerTarget);
+                            yield break;
+                        }
+                    }
+                    else if (hit.collider.CompareTag("FlowerEnemy"))
+                    {
+                        FlowerEnemy flowerEnemy = hit.collider.GetComponent<FlowerEnemy>();
+                        if (flowerEnemy != null)
+                        {
+                            SelectFlowerEnemy(flowerEnemy);
+                            yield break;
+                        }
+                    }
+                }
+            }
+            yield return null;
         }
     }
 
@@ -286,8 +365,9 @@ public class NewCardClick : MonoBehaviour
         if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
         {
             ShowPlayerReticle(true);
-            DisableEnemyColliders(true); // Disable enemy colliders if it's a heal or defense card
-            DisablePlayerCollider(false); // Enable player collider for heal or defense card
+            DisableEnemyColliders(true);
+            DisableFlowerEnemyColliders(true);
+            DisablePlayerCollider(false);
         }
         else
         {
@@ -295,8 +375,11 @@ public class NewCardClick : MonoBehaviour
             ShowSelectedReticles(false);
             ShowAllBossPartReticles(true);
             ShowBossSelectedReticle(false);
-            DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
-            DisablePlayerCollider(true); // Disable player collider for other card types
+            ShowAllFlowerEnemyReticles(true);
+            ShowFlowerEnemySelectedReticles(false);
+            DisableEnemyColliders(false);
+            DisableFlowerEnemyColliders(false);
+            DisablePlayerCollider(true);
         }
 
         CheckNonSelectedCards();
@@ -328,11 +411,13 @@ public class NewCardClick : MonoBehaviour
         }
 
         // Determine whether to hide the reticle on the player or enemies
+
         if (cardEffect != null && cardEffect.IsDefenseOrHealCard())
         {
             ShowPlayerReticle(false);
-            DisableEnemyColliders(false); // Enable enemy colliders if it's a heal or defense card
-            DisablePlayerCollider(false); // Enable player collider for heal or defense card
+            DisableEnemyColliders(false);
+            DisableFlowerEnemyColliders(false);
+            DisablePlayerCollider(false);
         }
         else
         {
@@ -340,8 +425,11 @@ public class NewCardClick : MonoBehaviour
             ShowSelectedReticles(false);
             ShowAllBossPartReticles(false);
             ShowBossSelectedReticle(false);
-            DisableEnemyColliders(false); // Enable enemy colliders if it's not a heal or defense card
-            DisablePlayerCollider(false); // Enable player collider for other card types
+            ShowAllFlowerEnemyReticles(false);
+            ShowFlowerEnemySelectedReticles(false);
+            DisableEnemyColliders(false);
+            DisableFlowerEnemyColliders(false);
+            DisablePlayerCollider(false);
         }
 
         CheckNonSelectedCards();
@@ -402,6 +490,40 @@ public class NewCardClick : MonoBehaviour
         if (player != null)
         {
             player.ShowReticle(show); // Assuming the player has a ShowReticle method
+        }
+    }
+
+
+
+    //=======Flower Reticle======//
+    private void ShowAllFlowerEnemyReticles(bool show)
+    {
+        FlowerEnemy[] flowerEnemies = FindObjectsOfType<FlowerEnemy>();
+        foreach (FlowerEnemy flowerEnemy in flowerEnemies)
+        {
+            flowerEnemy.ShowReticle(show);
+        }
+    }
+
+    private void ShowFlowerEnemySelectedReticles(bool show)
+    {
+        FlowerEnemy[] flowerEnemies = FindObjectsOfType<FlowerEnemy>();
+        foreach (FlowerEnemy flowerEnemy in flowerEnemies)
+        {
+            flowerEnemy.ShowSelectedReticle(show);
+        }
+    }
+
+    private void DisableFlowerEnemyColliders(bool disable)
+    {
+        FlowerEnemy[] flowerEnemies = FindObjectsOfType<FlowerEnemy>();
+        foreach (FlowerEnemy flowerEnemy in flowerEnemies)
+        {
+            Collider2D collider = flowerEnemy.GetComponent<Collider2D>();
+            if (collider != null)
+            {
+                collider.enabled = !disable;
+            }
         }
     }
 

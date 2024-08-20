@@ -97,7 +97,7 @@ public class BossPart : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateHealthSlider(int oldHealth, int newHealth)
+    protected IEnumerator UpdateHealthSlider(int oldHealth, int newHealth)
     {
         float elapsedTime = 0f;
         float duration = 0.5f;
@@ -127,6 +127,7 @@ public class BossPart : MonoBehaviour
     public void ShowSelectedReticle(bool show)
     {
         selectedReticle.SetActive(show);
+        selectedReticle.GetComponent<ReticleScaleAnimation>()?.PlayAnimation(show);
     }
 
     public virtual void Heal(int amount)

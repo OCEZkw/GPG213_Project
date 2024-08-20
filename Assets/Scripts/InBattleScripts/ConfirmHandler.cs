@@ -31,6 +31,8 @@ public class ConfirmHandler : MonoBehaviour
     public float cardAnimationDuration = 1f; // Duration of the card animation
 
     private List<GameObject> usedCards = new List<GameObject>();
+    private WaveManager waveManager;
+    private bool shouldStartNextWave = false;
 
     private void Awake()
     {
@@ -44,9 +46,9 @@ public class ConfirmHandler : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-        WaveManager waveManager = FindObjectOfType<WaveManager>();
+        waveManager = FindObjectOfType<WaveManager>();
         if (waveManager != null)
         {
             waveManager.StartNextWave();
@@ -78,11 +80,12 @@ public class ConfirmHandler : MonoBehaviour
     {
         foreach (GameObject cardObject in selectedCards)
         {
+            HideOtherCards();
             yield return StartCoroutine(AnimateCardConfirmation(cardObject));
 
             cardObject.transform.position = confirmedCardPosition.position;
             cardObject.GetComponent<Collider2D>().enabled = false;
-            HideOtherCards();
+
 
             NewCardClick cardClick = cardObject.GetComponent<NewCardClick>();
             CardEffect cardEffect = cardObject.GetComponent<CardEffect>();
@@ -94,8 +97,8 @@ public class ConfirmHandler : MonoBehaviour
                 if (player.HasEnoughCost(cardEffect.cost))
                 {
                     buttonManager.ShowConfirmButton(false);
-                    enemyTarget.ShowReticle(false);
-                    enemyTarget.ShowSelectedReticle(false);
+                    Enemy.HideAllReticles();
+                    enemyTarget.ShowSelectedReticle(true);
                     yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, enemyTarget.gameObject));
                 }
                 else
@@ -113,6 +116,22 @@ public class ConfirmHandler : MonoBehaviour
                     bossPartTarget.ShowReticle(false);
                     bossPartTarget.ShowSelectedReticle(false);
                     yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, bossPartTarget.gameObject));
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to use this card.");
+                }
+            }
+            else if (cardClick.GetSelectedFlowerEnemy() != null &&
+                (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            {
+                FlowerEnemy flowerEnemy = cardClick.GetSelectedFlowerEnemy();
+                if (player.HasEnoughCost(cardEffect.cost))
+                {
+                    buttonManager.ShowConfirmButton(false);
+                    flowerEnemy.ShowReticle(false);
+                    flowerEnemy.ShowSelectedReticle(false);
+                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, flowerEnemy.gameObject));
                 }
                 else
                 {
@@ -142,6 +161,24 @@ public class ConfirmHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // Delay before enemy actions
 
+        if (waveManager.enemiesRemainingAlive > 0)
+        {
+            // Perform enemy actions only if there are enemies left
+            yield return StartCoroutine(PerformEnemyActions());
+        }
+        else
+        {
+            // Set the flag to start the next wave in the next round
+            shouldStartNextWave = true;
+            Debug.Log("All enemies defeated. Next wave will start in the next round.");
+        }
+
+
+        StartNextRound();
+    }
+
+    IEnumerator PerformEnemyActions()
+    {
         // Perform FlowerEnemy actions
         FlowerEnemy[] flowerEnemies = FindObjectsOfType<FlowerEnemy>();
         foreach (FlowerEnemy flowerEnemy in flowerEnemies)
@@ -150,7 +187,7 @@ public class ConfirmHandler : MonoBehaviour
             yield return new WaitForSeconds(0.5f); // Short delay between flower actions
         }
 
-        foreach (GameObject enemyObject in enemySpawner.GetEnemyInstances())
+        foreach (GameObject enemyObject in waveManager.GetEnemyInstances())
         {
             Enemy enemy = enemyObject.GetComponent<Enemy>();
             if (enemy != null && enemy.gameObject.activeSelf)
@@ -165,13 +202,11 @@ public class ConfirmHandler : MonoBehaviour
         WizardBossEnemy wizardBoss = FindObjectOfType<WizardBossEnemy>();
         if (wizardBoss != null)
         {
-            // Ensure playerInstance is a Player component
             wizardBoss.BossAttackAfterPlayerActions(playerInstance.GetComponent<Player>());
 
-            // Wait for the boss to finish attacking
-            while (wizardBoss.IsBossAttacking) // Adjust condition based on your boss logic
+            while (wizardBoss.IsBossAttacking)
             {
-                yield return null; // Wait until boss finishes attacking
+                yield return null;
             }
         }
 
@@ -185,7 +220,6 @@ public class ConfirmHandler : MonoBehaviour
                 yield return null;
             }
         }
-        StartNextRound();
     }
 
     IEnumerator UseConfirmedCard(GameObject cardObject, CardEffect cardEffect, GameObject target)
@@ -202,12 +236,20 @@ public class ConfirmHandler : MonoBehaviour
                     cardEffect.ApplyEffect(enemy.gameObject);
                 }
             }
-            else if (target.CompareTag("BossPart") || target.CompareTag("FlowerEnemy") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            else if (target.CompareTag("BossPart") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
             {
                 BossPart bossPart = target.GetComponent<BossPart>();
                 if (bossPart != null)
                 {
                     cardEffect.ApplyEffect(bossPart.gameObject);
+                }
+            }
+            else if (target.CompareTag("FlowerEnemy") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
+            {
+                FlowerEnemy flowerEnemy = target.GetComponent<FlowerEnemy>();
+                if (flowerEnemy != null)
+                {
+                    cardEffect.ApplyEffect(flowerEnemy.gameObject);
                 }
             }
             else if (target.CompareTag("Player") && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
@@ -328,10 +370,19 @@ public class ConfirmHandler : MonoBehaviour
         }
     }
 
+
     void StartNextRound()
     {
         ShowAllCards();
         ReplaceUsedCards();
+
+        if (shouldStartNextWave)
+        {
+            Debug.Log("Starting next wave...");
+            waveManager.StartNextWave();
+            shouldStartNextWave = false; // Reset the flag
+        }
+
         RoundManager.Instance.StartNextRound();
         NewCardClick.selectedCards.Clear();
     }
@@ -347,6 +398,7 @@ public class ConfirmHandler : MonoBehaviour
             if (!NewCardClick.selectedCards.Contains(card))
             {
                 HideCard(card);
+                buttonManager.ShowConfirmButton(false);
             }
         }
     }

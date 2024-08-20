@@ -720,7 +720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635357919313998798, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.0107850125
       objectReference: {fileID: 0}
     - target: {fileID: 6635357919313998798, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
       propertyPath: m_Color.r
@@ -738,16 +738,44 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7479517933674839063, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7479517933674839063, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7355768547284760068}
   m_SourcePrefab: {fileID: 100100000, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
 --- !u!1 &951369109776486657 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7479517933674839063, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
   m_PrefabInstance: {fileID: 7709991882630884630}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7355768547284760068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951369109776486657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e18485d3ec313440984a85d5c1a27f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startScale: 3
+  endScale: 1
+  initialShrinkDuration: 0.5
+  initialShrinkEaseType: 7
+  minScale: 0.8
+  maxScale: 1.2
+  scaleDuration: 0.5
+  rotationDuration: 8
+  rotationAngle: 360
 --- !u!4 &3223805140057122348 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5062650117160766266, guid: c2a8bcd772c11f347abc02fc373290e5, type: 3}
@@ -803,15 +831,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2094771562612620131, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
       propertyPath: m_Color.b
-      value: 0.2000908
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2094771562612620131, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
       propertyPath: m_Color.g
-      value: 0.47200057
+      value: 0.62911344
       objectReference: {fileID: 0}
     - target: {fileID: 2094771562612620131, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
       propertyPath: m_Color.r
-      value: 0.9496855
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2094771562612620131, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
       propertyPath: m_SortingOrder
@@ -828,13 +856,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4227954338206068268, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5190056988782107514}
   m_SourcePrefab: {fileID: 100100000, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
 --- !u!1 &6294737531065078796 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4227954338206068268, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}
   m_PrefabInstance: {fileID: 7924031313700207136}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5190056988782107514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6294737531065078796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d424d5695557dec43992d2c275c9a3c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationDuration: 8
+  scaleDuration: 0.5
+  minScale: 0.8
+  maxScale: 1.2
+  rotationAngle: 360
 --- !u!4 &8689185306961584118 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1540793476026803670, guid: c712a615b7d1a9e41be4fdc4c2db4dbc, type: 3}

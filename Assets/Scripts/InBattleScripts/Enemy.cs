@@ -15,12 +15,14 @@ public class Enemy : MonoBehaviour
     public GameObject reticle;
     public GameObject selectedReticle;
     public GameObject damageTextPrefab;
+    private WaveManager waveManager;
 
     [SerializeField] private ButtonManager buttonManager;
 
     public EnemyType enemyType;
 
     public int enemyCode;
+    public static List<Enemy> AllEnemies = new List<Enemy>();
 
     public enum DamageType
     {
@@ -33,6 +35,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         buttonManager = FindObjectOfType<ButtonManager>();
+        waveManager = FindObjectOfType<WaveManager>();
         healthSlider = GetComponentInChildren<Slider>();
         currentHealth = maxHealth;
 
@@ -47,6 +50,7 @@ public class Enemy : MonoBehaviour
 
         reticle.SetActive(false);
         selectedReticle.SetActive(false);
+        AllEnemies.Add(this);
     }
 
     void OnMouseDown()
@@ -74,6 +78,7 @@ public class Enemy : MonoBehaviour
     public void ShowSelectedReticle(bool show)
     {
         selectedReticle.SetActive(show);
+        selectedReticle.GetComponent<ReticleScaleAnimation>()?.PlayAnimation(show);
     }
 
     public void TakeDamage(int damage)
@@ -157,12 +162,15 @@ public class Enemy : MonoBehaviour
     void Die()
     {
         Debug.Log("Enemy died!");
-        WaveManager waveManager = FindObjectOfType<WaveManager>();
         if (waveManager != null)
         {
             waveManager.OnEnemyDefeated();
+            waveManager.RemoveEnemyInstance(gameObject);
         }
-        FindObjectOfType<EnemySpawner>().RemoveEnemyInstance(gameObject);
+        else
+        {
+            Debug.LogWarning("WaveManager not found. Unable to process enemy defeat.");
+        }
         Destroy(gameObject);
     }
 
@@ -177,6 +185,14 @@ public class Enemy : MonoBehaviour
                 damageText.text = damage.ToString() + (isMagic ? " MAGICAL" : " PHYSICAL");
                 StartCoroutine(AnimateDamageText(damageTextInstance));
             }
+        }
+    }
+
+    public static void HideAllReticles()
+    {
+        foreach (Enemy enemy in AllEnemies)
+        {
+            enemy.ShowReticle(false);
         }
     }
 
@@ -195,5 +211,10 @@ public class Enemy : MonoBehaviour
         }
 
         Destroy(damageTextInstance);
+    }
+
+    void OnDestroy()
+    {
+        AllEnemies.Remove(this);
     }
 }

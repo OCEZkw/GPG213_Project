@@ -9,6 +9,7 @@ public class TripartiteBoss : MonoBehaviour
     public TripartiteBossPart shield;
     private bool isRageMode = false;
     private int cannonChargeCounter = 0;
+    private const int CHARGES_NEEDED_TO_FIRE = 3;
     private WaveManager waveManager;
 
     public bool IsPerformingActions { get; private set; }
@@ -21,6 +22,7 @@ public class TripartiteBoss : MonoBehaviour
     // Add references to the shield sprites
     public Sprite normalShieldSprite;
     public Sprite cannonShieldSprite;
+    private int currentEnemyCode = 1000;
 
     void Start()
     {
@@ -117,22 +119,27 @@ public class TripartiteBoss : MonoBehaviour
     {
         if (!isRageMode && mainBody.currentHealth <= mainBody.maxHealth * 0.2f)
         {
-            Debug.Log("TripartiteBoss: Entering Rage Mode!");
-            EnterRageMode();
+            StartCoroutine(EnterRageModeSequence());
         }
     }
 
-    void EnterRageMode()
+    private IEnumerator EnterRageModeSequence()
     {
         isRageMode = true;
         Debug.Log("TripartiteBoss: Entering Rage Mode!");
+        NotificationManager.Instance.ShowNotification("Blossom Queen entering rage mode");
+
+        yield return new WaitForSeconds(2f);  // Wait for 2 seconds
 
         // Heal Main Body
         int healAmount = Mathf.RoundToInt(mainBody.maxHealth * 0.5f);
         mainBody.Heal(healAmount);
         Debug.Log($"TripartiteBoss: Healed Main Body by {healAmount} HP");
+        NotificationManager.Instance.ShowNotification($"Blossom Queen healed for {healAmount} HP");
 
-        // Revive and transform shield if it's dead
+        yield return new WaitForSeconds(2f);  // Wait for another 2 seconds
+
+        // Revive and transform shield if it's dead, or just transform if it's alive
         if (shield.IsDead)
         {
             ReviveAndTransformShield();
@@ -147,6 +154,14 @@ public class TripartiteBoss : MonoBehaviour
     {
         shield.gameObject.SetActive(true);
         shield.Revive();
+        NotificationManager.Instance.ShowNotification("Shield revived");
+
+        StartCoroutine(DelayedTransformShieldToCannon());
+    }
+
+    private IEnumerator DelayedTransformShieldToCannon()
+    {
+        yield return new WaitForSeconds(2f);  // Wait for 2 seconds
         TransformShieldToCannon();
     }
 
@@ -159,7 +174,8 @@ public class TripartiteBoss : MonoBehaviour
         }
 
         shield.TransformIntoCannon(cannonShieldSprite);
-        Debug.Log("TripartiteBoss: Attempting to transform Shield into Cannon");
+        Debug.Log("TripartiteBoss: Shield transformed into Cannon");
+        NotificationManager.Instance.ShowNotification("Shield transformed into cannon");
     }
 
 
@@ -191,21 +207,36 @@ public class TripartiteBoss : MonoBehaviour
     {
         mainBody.attackDamage += amount;
     }
+
     public void IncrementCannonCharge()
     {
         cannonChargeCounter++;
-        if (cannonChargeCounter >= 3)
+        int roundsLeft = CHARGES_NEEDED_TO_FIRE - cannonChargeCounter;
+
+        if (roundsLeft > 0)
         {
+            NotificationManager.Instance.ShowNotification($"Cannon charging! {roundsLeft} {(roundsLeft == 1 ? "round" : "rounds")} until firing!");
+        }
+
+        if (cannonChargeCounter >= CHARGES_NEEDED_TO_FIRE)
+        {
+            NotificationManager.Instance.ShowNotification("Cannon fully charged! Firing!");
             FireCannon();
             cannonChargeCounter = 0;
         }
     }
+
     private void FireCannon()
     {
         Player player = FindObjectOfType<Player>();
         if (player != null)
         {
-            player.TakeDamage(player.maxHealth);
+            int damage = player.maxHealth;  // Or whatever damage value you want to use
+            player.TakeDamage(damage);
+        }
+        else
+        {
+            Debug.LogWarning("Player not found when trying to fire cannon.");
         }
     }
 
@@ -213,26 +244,28 @@ public class TripartiteBoss : MonoBehaviour
     public void SpawnHealingFlower()
     {
         SpawnFlower(healingFlowerPrefab);
+        NotificationManager.Instance.ShowNotification("Magic Crystal spawned healing flower");
     }
 
     // New method to spawn card-locking flowers
     public void SpawnCardLockingFlower()
     {
         SpawnFlower(cardLockingFlowerPrefab);
+        NotificationManager.Instance.ShowNotification("Magic Crystal spawned card-locking flower");
     }
 
-    // Updated helper method to spawn flowers using WaveManager's spawn points
-    private void SpawnFlower(GameObject flowerPrefab)
+    // Updated method to spawn flowers with enemy codes
+    public void SpawnFlower(GameObject flowerPrefab)
     {
-        if (waveManager == null || waveManager.spawnPoints == null || waveManager.spawnPoints.Length == 0)
+        if (waveManager == null || waveManager.spawnPoints == null || waveManager.spawnPoints.Length < 3)
         {
             Debug.LogWarning("WaveManager or spawn points not available!");
             return;
         }
 
-        // Find an unoccupied spawn point
+        // Check only spawn points 1 and 2
         int availableSpawnPoint = -1;
-        for (int i = 0; i < spawnPointsOccupied.Length; i++)
+        for (int i = 1; i <= 2; i++)
         {
             if (!spawnPointsOccupied[i])
             {
@@ -246,11 +279,41 @@ public class TripartiteBoss : MonoBehaviour
             Transform spawnPoint = waveManager.spawnPoints[availableSpawnPoint];
             GameObject flower = Instantiate(flowerPrefab, spawnPoint.position, Quaternion.identity);
             spawnPointsOccupied[availableSpawnPoint] = true;
-            Debug.Log($"Spawned {flowerPrefab.name} at spawn point {availableSpawnPoint}");
+
+            FlowerEnemy flowerEnemy = flower.GetComponent<FlowerEnemy>();
+            if (flowerEnemy != null)
+            {
+                flowerEnemy.enemyCode = GenerateUniqueEnemyCode();
+                flowerEnemy.SetSpawnPointIndex(availableSpawnPoint);
+                Debug.Log($"Spawned {flowerPrefab.name} at spawn point {availableSpawnPoint} with enemy code {flowerEnemy.enemyCode}");
+            }
+            else
+            {
+                Debug.LogWarning($"FlowerEnemy component not found on {flowerPrefab.name}");
+            }
         }
         else
         {
-            Debug.Log("All spawn points are occupied. Using alternative ability.");
+            Debug.Log("Spawn points 1 and 2 are occupied. No flower spawned.");
         }
+    }
+
+    public void OnFlowerDestroyed(int spawnPointIndex)
+    {
+        if (spawnPointIndex >= 0 && spawnPointIndex < spawnPointsOccupied.Length)
+        {
+            spawnPointsOccupied[spawnPointIndex] = false;
+            Debug.Log($"Spawn point {spawnPointIndex} is now available.");
+        }
+        else
+        {
+            Debug.LogWarning($"Invalid spawn point index: {spawnPointIndex}");
+        }
+    }
+
+    // New method to generate unique enemy codes
+    private int GenerateUniqueEnemyCode()
+    {
+        return currentEnemyCode++;
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class TutorialConfirmHandler : MonoBehaviour
 {
@@ -20,6 +21,18 @@ public class TutorialConfirmHandler : MonoBehaviour
     public ButtonManager buttonManager;
     public Player player;
 
+    public float cardFadeOutDuration = 0.5f;
+    public float cardSlideDownDuration = 0.5f;
+    public float cardFadeInDuration = 0.5f;
+    public float cardMoveUpDistance = 100f;
+
+    public GameObject deckCardObject;
+    public GameObject movingCardObject;
+    public float cardAnimationDuration = 1f;
+
+    private List<GameObject> usedCards = new List<GameObject>();
+    private WaveManager waveManager;
+    private bool isFirstRound = true;
 
     private void Awake()
     {
@@ -35,14 +48,15 @@ public class TutorialConfirmHandler : MonoBehaviour
 
     void Start()
     {
-        WaveManager waveManager = FindObjectOfType<WaveManager>();
-        if (waveManager != null)
+        waveManager = FindObjectOfType<WaveManager>();
+        if (waveManager == null)
         {
-            waveManager.StartNextWave();
+            Debug.LogError("WaveManager not found in the scene!");
         }
         else
         {
-            Debug.LogWarning("WaveManager not found.");
+            // Start the first wave immediately for the tutorial
+            waveManager.StartNextWave();
         }
 
         playerSpawner.SpawnPlayer();
@@ -67,6 +81,8 @@ public class TutorialConfirmHandler : MonoBehaviour
     {
         foreach (GameObject cardObject in selectedCards)
         {
+            yield return StartCoroutine(AnimateCardConfirmation(cardObject));
+
             cardObject.transform.position = confirmedCardPosition.position;
             cardObject.GetComponent<Collider2D>().enabled = false;
             HideOtherCards();
@@ -84,22 +100,6 @@ public class TutorialConfirmHandler : MonoBehaviour
                     enemyTarget.ShowReticle(false);
                     enemyTarget.ShowSelectedReticle(false);
                     yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, enemyTarget.gameObject));
-                }
-                else
-                {
-                    Debug.Log("Not enough resources to use this card.");
-                }
-            }
-            else if (cardClick.GetSelectedBossPart() != null &&
-                     (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
-            {
-                BossPart bossPartTarget = cardClick.GetSelectedBossPart().GetComponent<BossPart>();
-                if (player.HasEnoughCost(cardEffect.cost))
-                {
-                    buttonManager.ShowConfirmButton(false);
-                    bossPartTarget.ShowReticle(false);
-                    bossPartTarget.ShowSelectedReticle(false);
-                    yield return StartCoroutine(UseConfirmedCard(cardObject, cardEffect, bossPartTarget.gameObject));
                 }
                 else
                 {
@@ -129,7 +129,18 @@ public class TutorialConfirmHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // Delay before enemy actions
 
-        foreach (GameObject enemyObject in enemySpawner.GetEnemyInstances())
+        if (waveManager.enemiesRemainingAlive > 0)
+        {
+            // Perform enemy actions only if there are enemies left
+            yield return StartCoroutine(PerformEnemyActions());
+        }
+
+        StartNextRound();
+    }
+
+    IEnumerator PerformEnemyActions()
+    {
+        foreach (GameObject enemyObject in waveManager.GetEnemyInstances())
         {
             Enemy enemy = enemyObject.GetComponent<Enemy>();
             if (enemy != null && enemy.gameObject.activeSelf)
@@ -138,20 +149,6 @@ public class TutorialConfirmHandler : MonoBehaviour
                 yield return new WaitForSeconds(2f); // Delay between enemy attacks
             }
         }
-
-        playerInstance = playerSpawner.GetPlayerInstance();
-        WizardBossEnemy wizardBoss = FindObjectOfType<WizardBossEnemy>();
-        if (wizardBoss != null)
-        {
-            wizardBoss.BossAttackAfterPlayerActions(playerInstance.GetComponent<Player>());
-
-            while (wizardBoss.IsBossAttacking)
-            {
-                yield return null;
-            }
-        }
-
-        StartNextRound();
     }
 
     IEnumerator UseConfirmedCard(GameObject cardObject, CardEffect cardEffect, GameObject target)
@@ -168,14 +165,6 @@ public class TutorialConfirmHandler : MonoBehaviour
                     cardEffect.ApplyEffect(enemy.gameObject);
                 }
             }
-            else if (target.CompareTag("BossPart") && (cardEffect.effectType == CardEffectType.AttackDamage || cardEffect.effectType == CardEffectType.MagicAttackDamage))
-            {
-                BossPart bossPart = target.GetComponent<BossPart>();
-                if (bossPart != null)
-                {
-                    cardEffect.ApplyEffect(bossPart.gameObject);
-                }
-            }
             else if (target.CompareTag("Player") && (cardEffect.effectType == CardEffectType.Healing || cardEffect.effectType == CardEffectType.Defense))
             {
                 Player player = target.GetComponent<Player>();
@@ -186,9 +175,63 @@ public class TutorialConfirmHandler : MonoBehaviour
             }
         }
 
+        RectTransform cardRect = cardObject.GetComponent<RectTransform>();
+        cardRect.anchoredPosition = new Vector2(5000, 5000); // Move far off-screen
+
         cardObject.SetActive(false);
-        ReplaceCardInHand(cardObject);
+        usedCards.Add(cardObject);
         yield return new WaitForSeconds(1f);
+    }
+
+    private IEnumerator AnimateCardConfirmation(GameObject cardObject)
+    {
+        RectTransform cardRect = cardObject.GetComponent<RectTransform>();
+        CanvasGroup canvasGroup = cardObject.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = cardObject.AddComponent<CanvasGroup>();
+        }
+
+        CardFloatEffect floatEffect = cardObject.GetComponent<CardFloatEffect>();
+        if (floatEffect != null)
+        {
+            floatEffect.enabled = false;
+            CardFloatManager.Instance.UnregisterCard(floatEffect);
+        }
+
+        Canvas canvas = cardRect.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("Cannot find canvas for the card.");
+            yield break;
+        }
+
+        Vector2 startPos = cardRect.anchoredPosition;
+        Vector2 endPos = startPos + new Vector2(0, cardMoveUpDistance);
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(cardRect.DOAnchorPos(endPos, cardFadeOutDuration));
+        sequence.Join(canvasGroup.DOFade(0, cardFadeOutDuration));
+
+        yield return sequence.WaitForCompletion();
+
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, confirmedCardPosition.position);
+        Vector2 confirmedAnchoredPosition;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.GetComponent<RectTransform>(),
+            screenPoint,
+            canvas.worldCamera,
+            out confirmedAnchoredPosition
+        );
+
+        cardRect.anchoredPosition = confirmedAnchoredPosition + new Vector2(0, -cardMoveUpDistance);
+
+        sequence = DOTween.Sequence();
+        sequence.Append(cardRect.DOAnchorPos(confirmedAnchoredPosition, cardSlideDownDuration));
+        sequence.Join(canvasGroup.DOFade(1, cardFadeInDuration));
+
+        yield return sequence.WaitForCompletion();
     }
 
     void EnemyAttack(Enemy enemy)
@@ -201,16 +244,25 @@ public class TutorialConfirmHandler : MonoBehaviour
             {
                 int damage = enemy.CalculateDamage();
 
-                if (enemy.enemyDamageType == Enemy.DamageType.Physical)
+                EnemyAnimator enemyAnimator = enemy.GetComponent<EnemyAnimator>();
+                if (enemyAnimator != null)
                 {
-                    player.TakeDamage(damage);
-                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} physical damage.");
+                    enemyAnimator.PlayAttackAnimation();
                 }
-                else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
+
+                DOVirtual.DelayedCall(0.5f, () =>
                 {
-                    player.TakeMagicDamage(damage);
-                    Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} magical damage.");
-                }
+                    if (enemy.enemyDamageType == Enemy.DamageType.Physical)
+                    {
+                        player.TakeDamage(damage);
+                        Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} physical damage.");
+                    }
+                    else if (enemy.enemyDamageType == Enemy.DamageType.Magical)
+                    {
+                        player.TakeMagicDamage(damage);
+                        Debug.Log($"Enemy {enemy.enemyCode} attacked player for {damage} magical damage.");
+                    }
+                });
             }
         }
     }
@@ -218,13 +270,27 @@ public class TutorialConfirmHandler : MonoBehaviour
     void StartNextRound()
     {
         ShowAllCards();
+        ReplaceUsedCards();
+
+        if (waveManager.ShouldStartNextWave())
+        {
+            Debug.Log("Starting next wave...");
+            waveManager.StartNextWave();
+        }
+        else
+        {
+            Debug.Log("Continuing current wave...");
+        }
+
         RoundManager.Instance.StartNextRound();
         NewCardClick.selectedCards.Clear();
     }
 
+
     public void HideOtherCards()
     {
-        foreach (GameObject card in tutorialDeckManager.GetHand())
+        GameObject[] allCards = GameObject.FindGameObjectsWithTag("Card");
+        foreach (GameObject card in allCards)
         {
             if (!NewCardClick.selectedCards.Contains(card))
             {
@@ -241,66 +307,128 @@ public class TutorialConfirmHandler : MonoBehaviour
         }
     }
 
-    void ReplaceCardInHand(GameObject usedCard)
+    void ReplaceUsedCards()
     {
-        List<GameObject> hand = tutorialDeckManager.GetHand();
-        int cardIndex = hand.IndexOf(usedCard);
-        if (cardIndex != -1)
+        StartCoroutine(ReplaceUsedCardsSimultaneously());
+    }
+
+    IEnumerator ReplaceUsedCardsSimultaneously()
+    {
+        List<GameObject> cardsToReplace = new List<GameObject>(usedCards);
+        usedCards.Clear();
+
+        List<(GameObject, int)> newCards = new List<(GameObject, int)>();
+
+        foreach (GameObject usedCard in cardsToReplace)
         {
-            hand.RemoveAt(cardIndex);
-            Destroy(usedCard);
-
-            if (tutorialDeckManager.tutorialDeck.Count > 0)
+            int cardIndex = tutorialDeckManager.GetHand().IndexOf(usedCard);
+            if (cardIndex != -1)
             {
-                List<GameObject> availableCards = new List<GameObject>(tutorialDeckManager.tutorialDeck);
+                tutorialDeckManager.GetHand()[cardIndex] = null;
+                Destroy(usedCard);
 
-                foreach (var card in hand)
+                if (tutorialDeckManager.tutorialDeck.Count > 0)
                 {
-                    availableCards.RemoveAll(c => c.name == card.name.Replace("(Clone)", ""));
-                }
-                availableCards.RemoveAll(c => c.name == usedCard.name.Replace("(Clone)", ""));
+                    List<GameObject> availableCards = new List<GameObject>(tutorialDeckManager.tutorialDeck);
 
-                if (availableCards.Count > 0)
-                {
-                    int randomIndex = Random.Range(0, availableCards.Count);
-                    GameObject newCard = Instantiate(availableCards[randomIndex], tutorialDeckManager.canvasTransform);
-
-                    RectTransform cardRectTransform = newCard.GetComponent<RectTransform>();
-                    RectTransform handPositionRectTransform = tutorialDeckManager.handPositions[cardIndex] as RectTransform;
-
-                    cardRectTransform.anchorMin = handPositionRectTransform.anchorMin;
-                    cardRectTransform.anchorMax = handPositionRectTransform.anchorMax;
-                    cardRectTransform.pivot = handPositionRectTransform.pivot;
-                    cardRectTransform.anchoredPosition = handPositionRectTransform.anchoredPosition;
-                    cardRectTransform.sizeDelta = handPositionRectTransform.sizeDelta;
-
-                    Image image = newCard.GetComponent<Image>();
-                    if (image != null)
+                    foreach (var card in tutorialDeckManager.GetHand())
                     {
-                        image.raycastTarget = true;
+                        if (card != null)
+                        {
+                            availableCards.RemoveAll(c => c.name == card.name.Replace("(Clone)", ""));
+                        }
                     }
 
-                    BoxCollider2D boxCollider = newCard.GetComponent<BoxCollider2D>();
-                    if (boxCollider == null)
+                    if (availableCards.Count > 0)
                     {
-                        boxCollider = newCard.AddComponent<BoxCollider2D>();
+                        int randomIndex = Random.Range(0, availableCards.Count);
+                        GameObject newCard = Instantiate(availableCards[randomIndex], tutorialDeckManager.deckPosition.position, Quaternion.identity, tutorialDeckManager.canvasTransform);
+                        newCards.Add((newCard, cardIndex));
                     }
-                    boxCollider.size = cardRectTransform.sizeDelta;
-
-                    var newCardClick = newCard.GetComponent<NewCardClick>();
-                    if (newCardClick != null)
-                    {
-                        newCardClick.deckManager = tutorialDeckManager;
-                        newCardClick.buttonManager = ButtonManager.Instance;
-                        // Set other necessary properties for NewCardClick
-                        newCardClick.roundManager = FindObjectOfType<RoundManager>();
-                        newCardClick.player = FindObjectOfType<Player>();
-                    }
-
-                    hand.Insert(cardIndex, newCard);
-                    HideOtherCards();
                 }
             }
         }
+
+        tutorialDeckManager.GetHand().RemoveAll(card => card == null);
+
+        List<Coroutine> animationCoroutines = new List<Coroutine>();
+        foreach ((GameObject newCard, int cardIndex) in newCards)
+        {
+            animationCoroutines.Add(StartCoroutine(AnimateReplacementCard(newCard, cardIndex)));
+        }
+
+        foreach (Coroutine coroutine in animationCoroutines)
+        {
+            yield return coroutine;
+        }
+
+        foreach ((GameObject newCard, int cardIndex) in newCards)
+        {
+            tutorialDeckManager.GetHand().Insert(cardIndex, newCard);
+        }
     }
+
+    IEnumerator AnimateReplacementCard(GameObject newCard, int cardIndex)
+    {
+        RectTransform cardRect = newCard.GetComponent<RectTransform>();
+        RectTransform handPositionRect = tutorialDeckManager.handPositions[cardIndex] as RectTransform;
+
+        Image cardFront = newCard.transform.Find("CardFront").GetComponent<Image>();
+        Image cardBack = newCard.transform.Find("CardBack").GetComponent<Image>();
+
+        if (cardFront == null || cardBack == null)
+        {
+            Debug.LogError("Card front or back not found in prefab: " + newCard.name);
+            yield break;
+        }
+
+        cardRect.localScale = Vector3.one;
+        cardFront.gameObject.SetActive(false);
+        cardBack.gameObject.SetActive(true);
+
+        yield return cardRect.DOAnchorPos(handPositionRect.anchoredPosition, tutorialDeckManager.drawDuration).SetEase(Ease.OutQuad).WaitForCompletion();
+
+        cardRect.anchorMin = handPositionRect.anchorMin;
+        cardRect.anchorMax = handPositionRect.anchorMax;
+        cardRect.pivot = handPositionRect.pivot;
+        cardRect.sizeDelta = handPositionRect.sizeDelta;
+
+        yield return cardRect.DORotate(new Vector3(0, 90, 0), tutorialDeckManager.flipDuration / 2).SetEase(Ease.InOutQuad).OnComplete(() => {
+            cardFront.gameObject.SetActive(true);
+            cardBack.gameObject.SetActive(false);
+        }).WaitForCompletion();
+
+        yield return cardRect.DORotate(Vector3.zero, tutorialDeckManager.flipDuration / 2).SetEase(Ease.InOutQuad).WaitForCompletion();
+
+        SetupReplacementCard(newCard, cardIndex);
+    }
+
+    void SetupReplacementCard(GameObject card, int handIndex)
+    {
+        BoxCollider2D boxCollider = card.GetComponent<BoxCollider2D>();
+        if (boxCollider == null)
+        {
+            boxCollider = card.AddComponent<BoxCollider2D>();
+        }
+        boxCollider.size = card.GetComponent<RectTransform>().sizeDelta;
+
+        var newCardClick = card.GetComponent<NewCardClick>();
+        if (newCardClick != null)
+        {
+            newCardClick.deckManager = tutorialDeckManager;
+            newCardClick.buttonManager = ButtonManager.Instance;
+            newCardClick.roundManager = FindObjectOfType<RoundManager>();
+            newCardClick.player = FindObjectOfType<Player>();
+        }
+
+        CardFloatEffect floatEffect = card.GetComponent<CardFloatEffect>();
+        if (floatEffect == null)
+        {
+            floatEffect = card.AddComponent<CardFloatEffect>();
+        }
+
+        RectTransform handPositionRect = tutorialDeckManager.handPositions[handIndex] as RectTransform;
+        floatEffect.Initialize(handPositionRect.anchoredPosition);
+    }
+
 }
