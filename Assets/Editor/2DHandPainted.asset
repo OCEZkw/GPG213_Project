@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442ed276b0044d14a5d2597ec0e22a71, type: 3}
   m_Name: 2DHandPainted
   m_EditorClassIdentifier: 
-  names: []
-  versions: 
-  tagsLayersVersion: 0
+  names:
+  - Sample
+  versions: 0100
+  tagsLayersVersion: 1

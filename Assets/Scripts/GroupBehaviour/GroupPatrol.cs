@@ -81,7 +81,8 @@ public class GroupPatrol : MonoBehaviour
         // Move the group
         Vector2 targetPos = currentPath[currentPathIndex];
         Vector2 moveDirection = (targetPos - (Vector2)transform.position).normalized;
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+        Vector3 movement = moveDirection * moveSpeed * Time.deltaTime;
+        transform.Translate(movement);
 
         // Check if we've reached the current path point
         if (Vector2.Distance(transform.position, targetPos) < arrivalDistance)
@@ -93,9 +94,10 @@ public class GroupPatrol : MonoBehaviour
             }
         }
 
-        // Update character positions
-        UpdateCharacterPositions();
+        // Update character positions and animations
+        UpdateCharacters(movement);
     }
+
 
     void GetNextPath()
     {
@@ -140,6 +142,42 @@ public class GroupPatrol : MonoBehaviour
 
             Vector2 totalForce = cohesionForce + separationForce;
             character.transform.position += (Vector3)totalForce * Time.deltaTime;
+        }
+    }
+
+    void UpdateCharacters(Vector3 groupMovement)
+    {
+        Vector2 groupCenter = transform.position;
+
+        foreach (Character character in characters)
+        {
+            Vector3 previousPosition = character.transform.position;
+
+            Vector2 cohesionForce = (groupCenter - (Vector2)character.transform.position) * cohesionStrength;
+            Vector2 separationForce = Vector2.zero;
+
+            foreach (Character otherCharacter in characters)
+            {
+                if (otherCharacter != character)
+                {
+                    Vector2 diff = character.transform.position - otherCharacter.transform.position;
+                    if (diff.magnitude < separationRadius)
+                    {
+                        separationForce += diff.normalized / diff.magnitude;
+                    }
+                }
+            }
+
+            separationForce *= separationStrength;
+
+            Vector2 totalForce = cohesionForce + separationForce;
+            character.transform.position += (Vector3)totalForce * Time.deltaTime;
+
+            // Calculate individual character movement
+            Vector3 characterMovement = character.transform.position - previousPosition + groupMovement;
+
+            // Update character's animation based on its movement
+            character.UpdateMovement(characterMovement);
         }
     }
 }

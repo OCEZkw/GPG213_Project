@@ -18,6 +18,13 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private string previousCardName;
     private int previousCardIndex = -1;
 
+    // Audio-related fields
+    private AudioSource audioSource;
+    public AudioClip hoverSound;
+    public AudioClip clickSound;
+
+    private bool isSelected = false;
+
     void Start()
     {
         inventoryManager = FindObjectOfType<InventoryManager>();
@@ -25,33 +32,74 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             new GameObject("DeckData").AddComponent<DeckData>();
         }
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        if (cardImage == null)
+        {
+            cardImage = GetComponent<Image>();
+            if (cardImage == null)
+            {
+                cardImage = gameObject.AddComponent<Image>();
+            }
+        }
+
     }
 
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        OnHoverEnter();
+        PlaySound(hoverSound);
+        selectedShader.SetActive(true);
+        Debug.Log($"DeckSlot: Mouse entered {gameObject.name}");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        OnHoverExit();
+        if (!isSelected)
+        {
+            selectedShader.SetActive(false);
+        }
+        Debug.Log($"DeckSlot: Mouse exited {gameObject.name}");
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            OnLeftClick();
+            PlaySound(clickSound);
+            inventoryManager.DeselectAllDeckSlots(); // Deselect other DeckSlots
+            Select();
+            inventoryManager.ShowInventoryMenu();
         }
+    }
+
+    public void Select()
+    {
+        isSelected = true;
+        selectedShader.SetActive(true);
+        inventoryManager.SetSelectedDeckSlot(this);
+        Debug.Log($"DeckSlot: Selected {gameObject.name}");
+    }
+
+    public void Deselect()
+    {
+        isSelected = false;
+        selectedShader.SetActive(false);
+        Debug.Log($"DeckSlot: Deselected {gameObject.name}");
     }
 
     private void OnHoverEnter()
     {
+        Debug.Log("DeckSlot: OnHoverEnter");
         inventoryManager.DeselectAllSlots();
         selectedShader.SetActive(true);
         thisItemSelected = true;
         inventoryManager.SetSelectedDeckSlot(this);
+        Debug.Log($"DeckSlot: Selected DeckSlot {gameObject.name}");
     }
 
     private void OnHoverExit()
@@ -65,51 +113,72 @@ public class DeckSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void OnLeftClick()
     {
-        if (thisItemSelected)
-        {
-            inventoryManager.ShowInventoryMenu();
-        }
+        inventoryManager.ShowInventoryMenu();
+        Debug.Log("DeckSlot: Showing Inventory Menu");
     }
 
-    public void SetCard(string cardName, Sprite cardSprite, int cardIndex)  // Modify this line
+    public void SetCard(CardSO cardSO, Sprite cardSprite, int cardIndex)
     {
-        // Make the previous card selectable again if it exists
+        Debug.Log($"DeckSlot.SetCard called with cardSO: {(cardSO != null ? cardSO.cardName : "null")}, cardSprite: {(cardSprite != null ? "valid" : "null")}, cardIndex: {cardIndex}");
+
+        if (cardSO == null)
+        {
+            Debug.LogError("DeckSlot.SetCard: cardSO is null");
+            return;
+        }
+
+        if (DeckData.Instance == null)
+        {
+            Debug.LogError("DeckSlot.SetCard: DeckData.Instance is null");
+            return;
+        }
+
+        if (inventoryManager == null)
+        {
+            Debug.LogError("DeckSlot.SetCard: inventoryManager is null");
+            return;
+        }
+
         if (previousCardIndex != -1)
         {
             inventoryManager.UpdateCardSelectability(previousCardName, previousCardIndex, true);
         }
 
-        // Remove the current card from DeckData if any
         if (currentCardSO != null)
         {
             DeckData.Instance.RemoveCard(currentCardSO);
             inventoryManager.RemoveCardEffect(currentCardSO);
         }
 
-        // Find the new card's CardSO
-        currentCardSO = null;
-        foreach (CardSO cardSO in inventoryManager.cardSOs)
+        currentCardSO = cardSO;
+
+        if (cardImage != null)
         {
-            if (cardSO.cardName == cardName)
-            {
-                currentCardSO = cardSO;
-                break;
-            }
+            cardImage.sprite = cardSprite;
+        }
+        else
+        {
+            Debug.LogWarning("DeckSlot.SetCard: cardImage is null");
         }
 
-        // Assign the new card sprite and add its stat effect
-        cardImage.sprite = cardSprite;
-        if (currentCardSO != null)
-        {
-            DeckData.Instance.AddCard(currentCardSO);
-            inventoryManager.ApplyCardEffect(currentCardSO);
-            inventoryManager.UpdateCardSelectability(cardName, cardIndex, false);
-            previousCardName = cardName;
-            previousCardIndex = cardIndex;  // Add this line
-        }
+        DeckData.Instance.AddCard(currentCardSO);
+        inventoryManager.ApplyCardEffect(currentCardSO);
+        inventoryManager.UpdateCardSelectability(currentCardSO.cardName, cardIndex, false);
+        previousCardName = currentCardSO.cardName;
+        previousCardIndex = cardIndex;
 
         isFull = true;
         inventoryManager.CheckAllDeckSlotsFilled();
+
+        Debug.Log($"DeckSlot.SetCard completed for {cardSO.cardName}");
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }
 

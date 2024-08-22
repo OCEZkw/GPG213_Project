@@ -27,6 +27,9 @@ public class Player : MonoBehaviour
 
     [SerializeField] private PlayerAnimator playerAnimator;
 
+    [SerializeField] private AudioClip gruntSound; // Single grunt sound clip
+    private AudioSource audioSource;
+
 
     void Start()
     {
@@ -53,6 +56,11 @@ public class Player : MonoBehaviour
         if (healText != null)
         {
             healText.gameObject.SetActive(false);
+        }
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
     }
 
@@ -114,6 +122,9 @@ public class Player : MonoBehaviour
         int actualDamage = Mathf.RoundToInt(damage * 100f / (100f + defense));
         currentHealth -= actualDamage;
 
+        // Play grunt sound
+        PlayGrunt();
+
         // Play animations and effects before health check
         ShowDamageText(actualDamage, "PHYSICAL");
         playerAnimator?.PlayDamageAnimation();
@@ -132,6 +143,9 @@ public class Player : MonoBehaviour
     {
         int actualMagicDamage = Mathf.RoundToInt(magicDamage * 100f / (100f + magicDefense));
         currentHealth -= actualMagicDamage;
+
+        // Play grunt sound
+        PlayGrunt();
 
         // Play animations and effects before health check
         ShowDamageText(actualMagicDamage, "MAGICAL");
@@ -303,6 +317,14 @@ public class Player : MonoBehaviour
         if (reticle != null)
         {
             reticle.SetActive(show);
+        }
+    }
+
+    private void PlayGrunt()
+    {
+        if (gruntSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(gruntSound);
         }
     }
 }

@@ -30,21 +30,22 @@ public class TutorialDeckManager : MonoBehaviour, IDeckManager
         {
             tutorialConfirmHandler.tutorialDeckManager = this;  // Assign this deck manager to the tutorial confirm handler
         }
-        InitializeDeck();
-        StartCoroutine(DrawHand());
+      //  InitializeDeck();
+      //  StartCoroutine(DrawHand());
     }
 
-    void InitializeDeck()
+    public void InitializeDeck()
     {
         if (tutorialDeck == null || tutorialDeck.Count == 0)
         {
             Debug.LogError("Tutorial deck is not set!");
             return;
         }
+        StartCoroutine(DrawHand());
         Debug.Log("Tutorial deck initialized with " + tutorialDeck.Count + " cards.");
     }
 
-    IEnumerator DrawHand()
+    public IEnumerator DrawHand()
     {
         Debug.Log("Drawing tutorial hand...");
         Debug.Log("Deck count: " + tutorialDeck.Count);
@@ -214,6 +215,17 @@ public class TutorialDeckManager : MonoBehaviour, IDeckManager
         if (floatEffect != null)
         {
             floatEffect.Initialize(handPositionRect.anchoredPosition);
+        }
+    }
+
+    public void HideAllCards()
+    {
+        foreach (GameObject card in hand)
+        {
+            if (card != null)
+            {
+                card.SetActive(false);
+            }
         }
     }
 }

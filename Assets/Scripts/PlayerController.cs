@@ -22,6 +22,16 @@ public class PlayerController : MonoBehaviour
 
     public Quest1 quest;
 
+    // New Animator variable
+    private Animator animator;
+    private bool isFacingRight = false;
+
+    [Header("Audio")]
+    public AudioClip walkingSound;
+    private AudioSource audioSource;
+    private float footstepTimer = 0f;
+    public float footstepInterval = 0.3f;
+
     void Start()
     {
         List<Quest1> activeQuests = GameManager.Instance.activeQuests;
@@ -39,6 +49,12 @@ public class PlayerController : MonoBehaviour
             interactText.gameObject.SetActive(false);
         }
 
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator component not found on the player!");
+        }
+
         // Load player position if in main menu
         if (SceneManager.GetActiveScene().name == MainMenuSceneName)
         {
@@ -53,6 +69,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogWarning("Inventory menu is not assigned in the inspector");
         }
+
+        // Set up AudioSource for walking sound
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = walkingSound;
+        audioSource.loop = false;
+        audioSource.playOnAwake = false;
 
     }
 
@@ -83,12 +105,41 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Check if player is grounded
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, groundLayer);
+        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, groundLayer);
 
         // Handle movement
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
         Vector2 movement = new Vector2(moveHorizontal * moveSpeed, rb.velocity.y);
         rb.velocity = new Vector2(movement.x, rb.velocity.y);
+
+        if (isGrounded && Mathf.Abs(moveHorizontal) > 0.1f)
+        {
+            footstepTimer += Time.deltaTime;
+            if (footstepTimer >= footstepInterval)
+            {
+                PlayWalkingSound();
+                footstepTimer = 0f;
+            }
+        }
+        else
+        {
+            footstepTimer = footstepInterval; // Reset timer when not walking
+        }
+
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", Mathf.Abs(moveHorizontal) > 0.1f);
+
+            // Flip the sprite based on movement direction
+            if (moveHorizontal > 0 && !isFacingRight)
+            {
+                Flip();
+            }
+            else if (moveHorizontal < 0 && isFacingRight)
+            {
+                Flip();
+            }
+        }
 
         // Handle jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -105,6 +156,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInventory();
+        }
+    }
+
+    private void PlayWalkingSound()
+    {
+        if (audioSource != null && walkingSound != null)
+        {
+            audioSource.PlayOneShot(walkingSound);
         }
     }
 
@@ -154,6 +213,9 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Interacted with " + interactableObject.name);
 
+            // Play interaction sound
+            interactableObject.PlayInteractionSound();
+
             switch (interactableObject.interactionType)
             {
                 case InteractionType.LoadScene:
@@ -161,6 +223,7 @@ public class PlayerController : MonoBehaviour
                     {
                         // Save current position before loading new scene
                         GameManager.Instance.SavePlayerPosition(transform.position, SceneManager.GetActiveScene().name);
+                        // Load the new scene immediately
                         SceneManager.LoadScene(interactableObject.sceneToLoad);
                     }
                     else
@@ -180,10 +243,34 @@ public class PlayerController : MonoBehaviour
                     }
                     break;
 
+                case InteractionType.PlayAudio:
+                    // The audio is already playing from the PlayInteractionSound() call
+                    break;
+
                 default:
                     Debug.LogWarning("Unknown interaction type for interactable object: " + interactableObject.name);
                     break;
             }
         }
+    }
+
+    private IEnumerator LoadSceneAfterAudio(string sceneToLoad, float delay)
+    {
+        // Save the player's position before changing scenes
+        GameManager.Instance.SavePlayerPosition(transform.position, SceneManager.GetActiveScene().name);
+
+        // Wait for the audio to finish playing
+        yield return new WaitForSeconds(delay);
+
+        // Load the new scene
+        SceneManager.LoadScene(sceneToLoad);
+    }
+
+    private void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
     }
 }

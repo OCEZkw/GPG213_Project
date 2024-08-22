@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     public GameObject selectedReticle;
     public GameObject damageTextPrefab;
     private WaveManager waveManager;
+    private TutorialWaveManager tutorialWaveManager;
 
     [SerializeField] private ButtonManager buttonManager;
 
@@ -36,6 +37,7 @@ public class Enemy : MonoBehaviour
     {
         buttonManager = FindObjectOfType<ButtonManager>();
         waveManager = FindObjectOfType<WaveManager>();
+        tutorialWaveManager = FindObjectOfType<TutorialWaveManager>();
         healthSlider = GetComponentInChildren<Slider>();
         currentHealth = maxHealth;
 
@@ -167,8 +169,10 @@ public class Enemy : MonoBehaviour
             waveManager.OnEnemyDefeated();
             waveManager.RemoveEnemyInstance(gameObject);
         }
-        else
+        else if (tutorialWaveManager != null)
         {
+            tutorialWaveManager.OnEnemyDefeated();
+            tutorialWaveManager.RemoveEnemyInstance(gameObject);
             Debug.LogWarning("WaveManager not found. Unable to process enemy defeat.");
         }
         Destroy(gameObject);

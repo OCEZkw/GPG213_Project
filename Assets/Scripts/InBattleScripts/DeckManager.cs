@@ -31,11 +31,11 @@ public class DeckManager : MonoBehaviour, IDeckManager
     void Start()
     {
         confirmHandler.deckManager = this;  // Assign this deck manager to the confirm handler
-        InitializeDeck();
-        DrawHand();
+     //   InitializeDeck();
+     //   DrawHand();
     }
 
-    void InitializeDeck()
+    public void InitializeDeck()
     {
         // Clear the existing deck
         deck.Clear();
@@ -64,7 +64,7 @@ public class DeckManager : MonoBehaviour, IDeckManager
         Shuffle(deck);
     }
 
-    void DrawHand()
+    public void DrawHand()
     {
         Debug.Log("Drawing hand...");
         Debug.Log("Deck count: " + deck.Count);
@@ -281,6 +281,17 @@ public class DeckManager : MonoBehaviour, IDeckManager
                 cardClick.SetLocked(false);
             }
             Debug.Log($"Card unlocked: {card.name}");
+        }
+    }
+
+    public void HideAllCards()
+    {
+        foreach (GameObject card in hand)
+        {
+            if (card != null)
+            {
+                card.SetActive(false);
+            }
         }
     }
 }

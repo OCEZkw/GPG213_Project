@@ -30,10 +30,87 @@ public class WaveManager : MonoBehaviour
     private List<GameObject> currentWaveEnemies = new List<GameObject>();
     private bool[] spawnPointsOccupied;
 
+    // New audio-related fields
+    [SerializeField] private AudioClip footstepsAudio;
+    [SerializeField] private AudioClip battleMusic;
+    [SerializeField] private AudioClip victoryMusic;
+    private AudioSource victoryMusicAudioSource;
+    private AudioSource footstepsAudioSource;
+    private AudioSource battleMusicAudioSource;
+
+    // References to other managers
+    [SerializeField] private DeckManager deckManager;
+
+    [SerializeField] private float footstepsPauseDuration = 0.5f; // Duration between footstep sounds
+    [SerializeField] private float totalFootstepsDuration = 3f;
+
+    [SerializeField] private CameraWalkEffect cameraWalkEffect;
+
+    [SerializeField] private GameObject winPanel;
+
+
+
     void Start()
     {
-        InitializeWavesForLevel();
         spawnPointsOccupied = new bool[spawnPoints.Length];
+        // Create two separate AudioSources
+        footstepsAudioSource = gameObject.AddComponent<AudioSource>();
+        battleMusicAudioSource = gameObject.AddComponent<AudioSource>();
+        victoryMusicAudioSource = gameObject.AddComponent<AudioSource>();
+        victoryMusicAudioSource.clip = victoryMusic;
+        victoryMusicAudioSource.loop = true;
+        victoryMusicAudioSource.playOnAwake = false;
+
+        StartCoroutine(GameStartSequence());
+    }
+
+    IEnumerator GameStartSequence()
+    {
+        // Play footsteps and wait for them to finish
+        yield return StartCoroutine(PlayIntermittentFootsteps());
+
+        yield return new WaitForSeconds(1f);
+
+        // Initialize the game
+        InitializeWavesForLevel();
+        // Now start the first wave
+        StartNextWave();
+        // Start battle music
+        battleMusicAudioSource.clip = battleMusic;
+        battleMusicAudioSource.loop = true;
+        battleMusicAudioSource.Play();
+
+        // Wait a moment before starting the first wave
+        yield return new WaitForSeconds(1f);
+
+        deckManager.InitializeDeck();
+        // Draw initial hand
+        deckManager.DrawHand();
+    }
+
+    IEnumerator PlayIntermittentFootsteps()
+    {
+        float elapsedTime = 0f;
+        int stepCount = 0;
+
+        while (elapsedTime < totalFootstepsDuration)
+        {
+            footstepsAudioSource.PlayOneShot(footstepsAudio);
+            cameraWalkEffect.PlayStepEffect();
+            stepCount++;
+
+            yield return new WaitForSeconds(footstepsAudio.length);
+
+            elapsedTime += footstepsAudio.length;
+
+            if (elapsedTime + footstepsPauseDuration < totalFootstepsDuration)
+            {
+                yield return new WaitForSeconds(footstepsPauseDuration);
+                elapsedTime += footstepsPauseDuration;
+            }
+        }
+
+        Debug.Log($"Played {stepCount} footsteps");
     }
 
     void InitializeWavesForLevel()
@@ -70,7 +147,67 @@ public class WaveManager : MonoBehaviour
         else
         {
             Debug.Log("All waves completed!");
-            StartCoroutine(ReturnToMainMenuWithDelay(3f));
+            StartCoroutine(ShowWinPanel());
+        }
+    }
+
+    IEnumerator ShowWinPanel()
+    {
+        // Hide all cards
+        deckManager.HideAllCards();
+
+        // Fade out battle music
+        StartCoroutine(FadeOutAudio(battleMusicAudioSource, 1f));
+
+        // Start victory music
+        StartCoroutine(FadeInAudio(victoryMusicAudioSource, 1f));
+
+        // Short delay to let music transition start
+        yield return new WaitForSeconds(0.5f);
+
+        // Show win panel
+        winPanel.SetActive(true);
+
+        // Trigger win text animation
+        WinPanelAnimator winPanelAnimator = winPanel.GetComponent<WinPanelAnimator>();
+        if (winPanelAnimator != null)
+        {
+            winPanelAnimator.AnimateText();
+        }
+
+        yield return new WaitForSeconds(5f); // Wait for 5 seconds before returning to main menu
+
+        // Fade out victory music
+        StartCoroutine(FadeOutAudio(victoryMusicAudioSource, 1f));
+
+        yield return new WaitForSeconds(1f); // Wait for fade out
+
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    private IEnumerator FadeOutAudio(AudioSource audioSource, float fadeDuration)
+    {
+        float startVolume = audioSource.volume;
+
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / fadeDuration;
+            yield return null;
+        }
+
+        audioSource.Stop();
+        audioSource.volume = startVolume;
+    }
+
+    private IEnumerator FadeInAudio(AudioSource audioSource, float fadeDuration)
+    {
+        audioSource.volume = 0;
+        audioSource.Play();
+
+        while (audioSource.volume < 1)
+        {
+            audioSource.volume += Time.deltaTime / fadeDuration;
+            yield return null;
         }
     }
 

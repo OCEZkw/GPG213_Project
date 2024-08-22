@@ -6,13 +6,12 @@ using TMPro;
 
 public class TutorialManager : MonoBehaviour
 {
-    public Image darkOverlay;
     public GameObject highlightPrefab;
     public GameObject textBubbleObject;
     public GameObject textBubbleObject2;
     public TextMeshProUGUI textBubbleText;
     public TextMeshProUGUI textBubbleText2;
-    public WaveManager waveManager;
+    public TutorialWaveManager tutorialWaveManager;
     public TutorialDeckManager tutorialDeckManager;
     public NewCardClick newCardClick;
     public Canvas mainCanvas;
@@ -22,24 +21,42 @@ public class TutorialManager : MonoBehaviour
     private bool isTutorialActive = false;
 
     public List<TutorialPanel> tutorialPanels = new List<TutorialPanel>();
+    // Replace Image with GloveAnimation
+    public GloveAnimation glove;
+    public GloveAnimation glove1;
+    public GloveAnimation glove2;
+    public GloveAnimation glove3;
+
+    public Image NPC;
+
+    public float typingSpeed = 0.05f;
+    private Coroutine typingCoroutine;
+    private bool isTyping = false;
+    private string fullText = "";
 
     void Start()
     {
         // Ensure the text bubble is hidden at the start
         textBubbleObject.SetActive(false);
         textBubbleObject2.SetActive(false);
-        StartTutorial();
     }
 
     void Update()
     {
-        if (isTutorialActive && Input.GetMouseButtonDown(0))  // Left mouse button
+        if (isTutorialActive && Input.GetMouseButtonDown(0))
         {
-            NextStep();
+            if (isTyping)
+            {
+                CompleteTyping();
+            }
+            else
+            {
+                NextStep();
+            }
         }
     }
 
-    void NextStep()
+    public void NextStep()
     {
         // Clear previous step
         RemoveHighlight();
@@ -50,34 +67,59 @@ public class TutorialManager : MonoBehaviour
         switch (currentStep)
         {
             case 0:
-                Cost();
+                Welcome();
+                NPC.gameObject.SetActive(true);
+                glove.gameObject.SetActive(true);
+                ShowAndAnimateGlove(glove);
                 break;
             case 1:
-                Cost2();
-                
+                Welcome2();
                 break;
             case 2:
-                CardCost();
+                Cost();
                 break;
             case 3:
-                TypingChart();
+                Cost2(); 
                 break;
             case 4:
-                CardType();
+                CardCost();
                 break;
             case 5:
-                EnemyType();
+                TypingChart();
                 break;
             case 6:
-                HighlightCard();
+                CardType();
                 break;
             case 7:
-                HighlightEnemy();
+                CardType1();
                 break;
             case 8:
-                ConfirmButton();
+                CardType2();
                 break;
             case 9:
+                EnemyType();
+                break;
+            case 10:
+                glove.gameObject.SetActive(false);
+                glove1.gameObject.SetActive(true);
+                ShowAndAnimateGlove(glove1);
+                HighlightCard();
+                break;
+            case 11:
+                glove1.gameObject.SetActive(false);
+                glove2.gameObject.SetActive(true);
+                ShowAndAnimateGlove(glove2);
+                HighlightEnemy();
+                break;
+            case 12:
+                glove2.gameObject.SetActive(false);
+                glove3.gameObject.SetActive(true);
+                ShowAndAnimateGlove(glove3);
+                ConfirmButton();
+                break;
+            case 13:
+                glove3.gameObject.SetActive(false);
+                NPC.gameObject.SetActive(false);
                 EndTutorial();
                 break;
             default:
@@ -88,17 +130,17 @@ public class TutorialManager : MonoBehaviour
         currentStep++;
     }
 
-    void StartTutorial()
+    void ShowAndAnimateGlove(GloveAnimation gloveAnim)
+    {
+        gloveAnim.gameObject.SetActive(true);
+        gloveAnim.StartTapAnimation();
+    }
+
+    public void StartTutorial()
     {
         isTutorialActive = true;
         currentStep = 0;
-        darkOverlay.gameObject.SetActive(true);
 
-        // Hide all panels at the start
-        foreach (var panel in tutorialPanels)
-        {
-            panel.panel.SetActive(false);
-        }
 
         NextStep();
     }
@@ -106,7 +148,6 @@ public class TutorialManager : MonoBehaviour
     void EndTutorial()
     {
         isTutorialActive = false;
-        darkOverlay.gameObject.SetActive(false);
         textBubbleObject.SetActive(false);
         textBubbleObject2.SetActive(false);
 
@@ -115,25 +156,21 @@ public class TutorialManager : MonoBehaviour
         {
             panel.panel.SetActive(false);
         }
+    }
 
-        ResumeGame();
+    void Welcome()
+    {
+        ShowTextBubble("Hey you, I've never seen you around before you must be new to this village");
+    }
+
+    void Welcome2()
+    {
+        ShowTextBubble("My names Alisa, let me show you how things are done here");
     }
 
     void HighlightEnemy()
     {
-        if (waveManager.enemiesRemainingAlive > 0)
-        {
-            GameObject enemy = FindFirstEnemy();
-            if (enemy != null)
-            {
-                HighlightWorldObject(enemy.transform);
-                ShowTextBubble2("Good job! Now lets select the enemy and defeat it!");
-            }
-        }
-        else
-        {
-            ShowTextBubble("No enemies found. Let's move on.");
-        }
+        ShowTextBubble2("Good job! Now lets select the enemy and defeat it!");
     }
 
     void HighlightCard()
@@ -172,12 +209,22 @@ public class TutorialManager : MonoBehaviour
 
     void CardType()
     {
-        ShowTextBubble("Here shows the cards element and the type of effect it does");
+        ShowTextBubble("Here shows the cards element and the type of effect it does. For example this is an attack card that is fire element");
+    }
+
+    void CardType1()
+    {
+        ShowTextBubble("This is a water element heal card which you can select yourself to heal yourself");
+    }
+
+    void CardType2()
+    {
+        ShowTextBubble("This is a water element shield card which you can select yourself to increase defense");
     }
 
     void EnemyType()
     {
-        ShowTextBubble("Enemy element is displayed here");
+        ShowTextBubble("The enemy element is displayed here make sure to refer to the chart and use effective cards to do more damage!");
     }
 
     void ConfirmButton()
@@ -225,46 +272,63 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private void ShowTextBubble(string text)
+    void ShowTextBubble(string text)
     {
         textBubbleObject.SetActive(true);
-        textBubbleText.text = text;
+        StartTyping(textBubbleText, text);
     }
 
-    private void ShowTextBubble2(string text)
+    void ShowTextBubble2(string text)
     {
         textBubbleObject2.SetActive(true);
-        textBubbleText2.text = text;
+        StartTyping(textBubbleText2, text);
     }
 
     private void HideTextBubble()
     {
         textBubbleObject.SetActive(false);
+        textBubbleObject2.SetActive(false);
+        StopTyping();
+    }
+
+    private void StartTyping(TextMeshProUGUI textComponent, string text)
+    {
+        StopTyping();
+        fullText = text;
+        isTyping = true;
+        typingCoroutine = StartCoroutine(TypeText(textComponent, text));
+    }
+
+    private void StopTyping()
+    {
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+        isTyping = false;
+    }
+
+    private void CompleteTyping()
+    {
+        StopTyping();
+        TextMeshProUGUI activeText = textBubbleObject.activeSelf ? textBubbleText : textBubbleText2;
+        activeText.text = fullText;
+    }
+
+    private IEnumerator TypeText(TextMeshProUGUI textComponent, string text)
+    {
+        textComponent.text = "";
+        foreach (char c in text)
+        {
+            textComponent.text += c;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+        isTyping = false;
     }
 
     private GameObject FindFirstEnemy()
     {
         return GameObject.FindGameObjectWithTag("Enemy");
-    }
-
-    private void PauseGame()
-    {
-        Time.timeScale = 0f;
-        // Disable other game systems here
-        if (waveManager != null) waveManager.enabled = false;
-        if (tutorialDeckManager != null) tutorialDeckManager.enabled = false;
-        if (newCardClick != null) newCardClick.enabled = false;
-        // Add any other systems that need to be paused
-    }
-
-    private void ResumeGame()
-    {
-        Time.timeScale = 1f;
-        // Re-enable other game systems here
-        if (waveManager != null) waveManager.enabled = true;
-        if (tutorialDeckManager != null) tutorialDeckManager.enabled = true;
-        if (newCardClick != null) newCardClick.enabled = true; ;
-        // Add any other systems that need to be resumed
     }
 
     void UpdatePanels()

@@ -31,7 +31,7 @@ public class TutorialConfirmHandler : MonoBehaviour
     public float cardAnimationDuration = 1f;
 
     private List<GameObject> usedCards = new List<GameObject>();
-    private WaveManager waveManager;
+    private TutorialWaveManager tutorialWaveManager;
     private bool isFirstRound = true;
 
     private void Awake()
@@ -48,15 +48,15 @@ public class TutorialConfirmHandler : MonoBehaviour
 
     void Start()
     {
-        waveManager = FindObjectOfType<WaveManager>();
-        if (waveManager == null)
+        tutorialWaveManager = FindObjectOfType<TutorialWaveManager>();
+        if (tutorialWaveManager == null)
         {
             Debug.LogError("WaveManager not found in the scene!");
         }
         else
         {
             // Start the first wave immediately for the tutorial
-            waveManager.StartNextWave();
+           // tutorialWaveManager.StartNextWave();
         }
 
         playerSpawner.SpawnPlayer();
@@ -129,7 +129,7 @@ public class TutorialConfirmHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1f); // Delay before enemy actions
 
-        if (waveManager.enemiesRemainingAlive > 0)
+        if (tutorialWaveManager != null && tutorialWaveManager.enemiesRemainingAlive > 0)
         {
             // Perform enemy actions only if there are enemies left
             yield return StartCoroutine(PerformEnemyActions());
@@ -140,7 +140,7 @@ public class TutorialConfirmHandler : MonoBehaviour
 
     IEnumerator PerformEnemyActions()
     {
-        foreach (GameObject enemyObject in waveManager.GetEnemyInstances())
+        foreach (GameObject enemyObject in tutorialWaveManager.GetEnemyInstances())
         {
             Enemy enemy = enemyObject.GetComponent<Enemy>();
             if (enemy != null && enemy.gameObject.activeSelf)
@@ -272,10 +272,10 @@ public class TutorialConfirmHandler : MonoBehaviour
         ShowAllCards();
         ReplaceUsedCards();
 
-        if (waveManager.ShouldStartNextWave())
+        if (tutorialWaveManager.ShouldStartNextWave())
         {
             Debug.Log("Starting next wave...");
-            waveManager.StartNextWave();
+            tutorialWaveManager.StartNextWave();
         }
         else
         {

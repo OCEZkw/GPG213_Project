@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -45,6 +46,12 @@ public class InventoryManager : MonoBehaviour
             // Initial update of card slots
             UpdateCardSlots();
         }
+
+        if (DeckData.Instance == null)
+        {
+            new GameObject("DeckData").AddComponent<DeckData>();
+            Debug.Log("InventoryManager: Created DeckData instance");
+        }
     }
 
     // Update is called once per frame
@@ -78,8 +85,9 @@ public class InventoryManager : MonoBehaviour
             {
                 if (i < inventory.items.Count)
                 {
+                    CardSO cardSO = GetCardSOByName(inventory.items[i].cardName);
                     bool isSelectable = !cardSelectability.ContainsKey((inventory.items[i].cardName, i)) || cardSelectability[(inventory.items[i].cardName, i)];
-                    cardSlot[i].UpdateSlot(inventory.items[i], i, isSelectable);
+                    cardSlot[i].UpdateSlot(inventory.items[i], i, isSelectable, cardSO);
                 }
                 else
                 {
@@ -91,6 +99,11 @@ public class InventoryManager : MonoBehaviour
         {
             Debug.LogError("Cannot update card slots: Inventory is null");
         }
+    }
+
+    private CardSO GetCardSOByName(string cardName)
+    {
+        return cardSOs.FirstOrDefault(card => card.cardName == cardName);
     }
 
 
@@ -115,40 +128,63 @@ public class InventoryManager : MonoBehaviour
 
     public void DeselectAllSlots()
     {
-        for (int i = 0; i < cardSlot.Length; i++)
+        DeselectAllCardSlots();
+        DeselectAllDeckSlots();
+    }
+
+    public void DeselectAllCardSlots()
+    {
+        foreach (var slot in cardSlot)
         {
-            cardSlot[i].selectedShader.SetActive(false);
-            cardSlot[i].thisItemSelected = false;
+            slot.selectedShader.SetActive(false);
+            slot.thisItemSelected = false;
         }
-        for (int i = 0; i < deckSlot.Length; i++)
+    }
+
+    public void DeselectAllDeckSlots()
+    {
+        foreach (var slot in deckSlot)
         {
-            deckSlot[i].selectedShader.SetActive(false);
-            deckSlot[i].thisItemSelected = false;
+            slot.Deselect();
         }
+        selectedDeckSlot = null;
     }
 
     public void ShowInventoryMenu()
     {
         InventoryMenu.SetActive(true);
-        DeckMenu.SetActive(false);
+        Debug.Log("InventoryManager: Showing Inventory Menu");
     }
 
     public void HideInventoryMenu()
     {
         InventoryMenu.SetActive(false);
         DeckMenu.SetActive(true);
+        Debug.Log("InventoryManager: Hiding Inventory Menu, Showing Deck Menu");
     }
 
     public void SetSelectedDeckSlot(DeckSlot deckSlot)
     {
-        selectedDeckSlot = deckSlot;
-    }
-
-    public void PlaceCardOnSelectedDeckSlot(string cardName, Sprite cardSprite, int cardIndex)
-    {
         if (selectedDeckSlot != null)
         {
-            selectedDeckSlot.SetCard(cardName, cardSprite, cardIndex);
+            selectedDeckSlot.Deselect();
+        }
+        selectedDeckSlot = deckSlot;
+        Debug.Log($"InventoryManager: Set selected DeckSlot to {(deckSlot != null ? deckSlot.gameObject.name : "null")}");
+    }
+
+
+    public void PlaceCardOnSelectedDeckSlot(CardSO cardSO, Sprite cardSprite, int cardIndex)
+    {
+        Debug.Log($"InventoryManager: Attempting to place card on selected DeckSlot. SelectedDeckSlot is {(selectedDeckSlot != null ? "not null" : "null")}");
+        if (selectedDeckSlot != null)
+        {
+            selectedDeckSlot.SetCard(cardSO, cardSprite, cardIndex);
+            Debug.Log($"InventoryManager: Placed card {cardSO.cardName} on DeckSlot {selectedDeckSlot.gameObject.name}");
+        }
+        else
+        {
+            Debug.LogWarning("InventoryManager: Cannot place card. No DeckSlot selected.");
         }
     }
 
@@ -184,5 +220,10 @@ public class InventoryManager : MonoBehaviour
         }
         // If all slots are filled, enable the button
         uiManager.EnableLevelLoadButton(true);
+    }
+
+    public bool IsDeckSlotSelected()
+    {
+        return selectedDeckSlot != null;
     }
 }

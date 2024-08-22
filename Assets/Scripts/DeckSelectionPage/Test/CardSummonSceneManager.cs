@@ -32,6 +32,7 @@ public class CardSummonSceneManager : MonoBehaviour
     public Sprite cardBackSprite;
 
     public Button skipButton;
+    private bool isSkipping = false;
 
     private void Start()
     {
@@ -306,12 +307,34 @@ public class CardSummonSceneManager : MonoBehaviour
 
     private void SkipAllAnimations()
     {
+        if (isSkipping) return; // Prevent multiple skips
+        isSkipping = true;
+
         skipSummon = true;
         StopAllCoroutines();
-        DisplayAllCardsImmediately();
+        StartCoroutine(SkipAnimationsCoroutine());
     }
 
-    private void DisplayAllCardsImmediately()
+    private IEnumerator SkipAnimationsCoroutine()
+    {
+        // Disable the skip button to prevent further clicks
+        if (skipButton != null)
+        {
+            skipButton.interactable = false;
+        }
+
+        yield return StartCoroutine(DisplayAllCardsImmediately());
+
+        // Re-enable the skip button
+        if (skipButton != null)
+        {
+            skipButton.interactable = true;
+        }
+
+        isSkipping = false;
+    }
+
+    private IEnumerator DisplayAllCardsImmediately()
     {
         if (currentCardObject != null)
         {
@@ -331,6 +354,9 @@ public class CardSummonSceneManager : MonoBehaviour
             cardObject.transform.localScale = Vector3.one;
 
             GachaSystem.Instance.AddCardToInventory(card);
+
+            // Add a small delay between displaying each card
+            yield return new WaitForSeconds(0.1f);
         }
 
         // Clear the static variable after use
@@ -340,7 +366,8 @@ public class CardSummonSceneManager : MonoBehaviour
         mainCamera.transform.rotation = Quaternion.Euler(startRotation, 0, 0);
 
         // Return to the CardSummonSelect scene after a short delay
-        StartCoroutine(ReturnToCardSummonSelectWithDelay(1f));
+        yield return new WaitForSeconds(1f);
+        ReturnToCardSummonSelectScene();
     }
 
     private IEnumerator ReturnToCardSummonSelectWithDelay(float delay)

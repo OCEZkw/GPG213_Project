@@ -171,6 +171,8 @@ MonoBehaviour:
   selectedShader: {fileID: 3476611037099301767}
   thisItemSelected: 0
   currentCardSO: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 9e47b190e12f3d64ab67580401700dae, type: 3}
+  clickSound: {fileID: 8300000, guid: 580c45279e0bb9b4fb35e5a97282e87f, type: 3}
 --- !u!1 &6783273961098129256
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,7 +51,7 @@ public class ConfirmHandler : MonoBehaviour
         waveManager = FindObjectOfType<WaveManager>();
         if (waveManager != null)
         {
-            waveManager.StartNextWave();
+           // waveManager.StartNextWave();
         }
         else
         {
