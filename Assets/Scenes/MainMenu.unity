@@ -6562,7 +6562,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 1}
+  m_Offset: {x: 0, y: 1.05}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -6573,7 +6573,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 2}
+  m_Size: {x: 0.6, y: 2}
   m_EdgeRadius: 0
 --- !u!82 &407464037
 AudioSource:
@@ -13967,6 +13967,7 @@ GameObject:
   - component: {fileID: 888716574}
   - component: {fileID: 888716573}
   - component: {fileID: 888716578}
+  - component: {fileID: 888716579}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -14087,6 +14088,24 @@ MonoBehaviour:
   activeQuests: []
   completedQuests: []
   gachaSystem: {fileID: 888716574}
+--- !u!114 &888716579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888716572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1decccf7cb50744ab941bcb3dc3b643, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  attackDamage: 20
+  magicDamage: 20
+  defense: 20
+  magicDefense: 20
+  healingAmount: 10
 --- !u!1001 &904472882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28547,6 +28566,10 @@ PrefabInstance:
     - target: {fileID: 4000010300450076, guid: 7d908ba845b1044e6829ed5fb7c4be10, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212000010037997588, guid: 7d908ba845b1044e6829ed5fb7c4be10, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212000010177224794, guid: 7d908ba845b1044e6829ed5fb7c4be10, type: 3}
       propertyPath: m_SortingOrder
