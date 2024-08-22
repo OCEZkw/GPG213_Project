@@ -3391,8 +3391,12 @@ GameObject:
   m_Component:
   - component: {fileID: 769779790}
   - component: {fileID: 769779791}
+  - component: {fileID: 769779792}
+  - component: {fileID: 769779795}
+  - component: {fileID: 769779793}
+  - component: {fileID: 769779794}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ToDestroy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3431,6 +3435,65 @@ MonoBehaviour:
   defense: 50
   magicDefense: 50
   healingAmount: 50
+--- !u!114 &769779792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769779788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ebab6a11fc49e24793f745aacd029d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floatDistance: 5
+  floatDuration: 3
+  floatEase: 4
+--- !u!114 &769779793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769779788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa9381d52215c64399c690d3957646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  confirmButton: {fileID: 221563722}
+--- !u!114 &769779794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769779788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad00f359950f1ad4aa231750b551dbf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentRound: 1
+  playerCost: 3
+  roundText: {fileID: 552469358}
+  costText: {fileID: 1109539624}
+  player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
+--- !u!114 &769779795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769779788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a83bbfa5788c6341bf6d17e347d6e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  notificationObject: {fileID: 182247833}
+  notificationObject2: {fileID: 182247833}
 --- !u!1 &771748951
 GameObject:
   m_ObjectHideFlags: 0
@@ -3568,7 +3631,6 @@ GameObject:
   m_Component:
   - component: {fileID: 828001987}
   - component: {fileID: 828001986}
-  - component: {fileID: 828001988}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -3645,21 +3707,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &828001988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 828001985}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ebab6a11fc49e24793f745aacd029d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floatDistance: 5
-  floatDuration: 3
-  floatEase: 4
 --- !u!1 &891128380
 GameObject:
   m_ObjectHideFlags: 0
@@ -4814,11 +4861,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1280359852}
-  - component: {fileID: 1280359862}
   - component: {fileID: 1280359864}
-  - component: {fileID: 1280359863}
   - component: {fileID: 1280359865}
-  - component: {fileID: 1280359866}
   - component: {fileID: 1280359868}
   - component: {fileID: 1280359869}
   - component: {fileID: 1280359870}
@@ -4844,33 +4888,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1280359862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280359851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a83bbfa5788c6341bf6d17e347d6e9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  notificationObject: {fileID: 0}
-  notificationObject2: {fileID: 0}
---- !u!114 &1280359863
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280359851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4aa9381d52215c64399c690d3957646c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  confirmButton: {fileID: 221563722}
 --- !u!114 &1280359864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4902,23 +4919,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3179615536509461105, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
   playerSpawnPoint: {fileID: 394656053}
---- !u!114 &1280359866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280359851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad00f359950f1ad4aa231750b551dbf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentRound: 1
-  playerCost: 3
-  roundText: {fileID: 552469358}
-  costText: {fileID: 1109539624}
-  player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
 --- !u!114 &1280359868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4972,7 +4972,7 @@ MonoBehaviour:
   tutorialDeckManager: {fileID: 1280359868}
   enemySpawner: {fileID: 1280359864}
   playerSpawner: {fileID: 1280359865}
-  buttonManager: {fileID: 1280359863}
+  buttonManager: {fileID: 769779793}
   player: {fileID: 2159077784965765675, guid: 0c2b64a59ea12df4194eed18dabe12b0, type: 3}
   cardFadeOutDuration: 0.5
   cardSlideDownDuration: 0.5

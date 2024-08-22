@@ -6,7 +6,6 @@ using DG.Tweening;
 
 public class TutorialConfirmHandler : MonoBehaviour
 {
-    public static TutorialConfirmHandler Instance { get; private set; }
 
     public Transform confirmedCardPosition;
     public TutorialDeckManager tutorialDeckManager;
@@ -34,17 +33,6 @@ public class TutorialConfirmHandler : MonoBehaviour
     private TutorialWaveManager tutorialWaveManager;
     private bool isFirstRound = true;
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     void Start()
     {

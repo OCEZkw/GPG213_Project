@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - BossPart
   - FlowerEnemy
+  - ToDestroy
   layers:
   - Default
   - TransparentFX

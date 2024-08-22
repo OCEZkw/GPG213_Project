@@ -13962,101 +13962,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 888716577}
-  - component: {fileID: 888716576}
-  - component: {fileID: 888716575}
-  - component: {fileID: 888716574}
-  - component: {fileID: 888716573}
-  - component: {fileID: 888716578}
-  - component: {fileID: 888716579}
+  - component: {fileID: 888716580}
+  - component: {fileID: 888716581}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GameManager5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &888716573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888716572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec31ed913ec04584f8b9f3536c7457cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &888716574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888716572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e51d4bd4922e9a4cacd2d5218ba5a67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allCards:
-  - {fileID: 11400000, guid: 1b9fad2a2cc78234cbefc427589da5fa, type: 2}
-  - {fileID: 11400000, guid: 71c833e05a0caf34bb0980f08a3668e8, type: 2}
-  - {fileID: 11400000, guid: 785db1c7b45afe74ca4bb7df2bae093c, type: 2}
-  - {fileID: 11400000, guid: 74e345bcddfdf6f49a3892fc030bba99, type: 2}
-  - {fileID: 11400000, guid: 722215746f2d46046bb3f2295c9c9e67, type: 2}
-  - {fileID: 11400000, guid: 4f4eb0336b4d75b4abeef1ca7c8e8438, type: 2}
-  - {fileID: 11400000, guid: e09b1b30abc966a4d97b708cafe4e288, type: 2}
-  - {fileID: 11400000, guid: ac36247dd992ef44082be6578a74cbe2, type: 2}
-  - {fileID: 11400000, guid: 2f92e9eacdf7d96479f9b73da27e801d, type: 2}
-  rarityRates:
-  - rarity: 0
-    rate: 90
-  - rarity: 1
-    rate: 5
-  - rarity: 2
-    rate: 2
-  - rarity: 3
-    rate: 2
-  - rarity: 4
-    rate: 1
---- !u!114 &888716575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888716572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edd738256ac5c3040a1b527171c79ea9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &888716576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888716572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 247484f20f2becb4bbe2d538635c32c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardSOs:
-  - {fileID: 11400000, guid: 1b9fad2a2cc78234cbefc427589da5fa, type: 2}
-  - {fileID: 11400000, guid: 71c833e05a0caf34bb0980f08a3668e8, type: 2}
-  - {fileID: 11400000, guid: 785db1c7b45afe74ca4bb7df2bae093c, type: 2}
-  - {fileID: 11400000, guid: 74e345bcddfdf6f49a3892fc030bba99, type: 2}
-  - {fileID: 11400000, guid: 722215746f2d46046bb3f2295c9c9e67, type: 2}
-  - {fileID: 11400000, guid: 4f4eb0336b4d75b4abeef1ca7c8e8438, type: 2}
-  - {fileID: 11400000, guid: e09b1b30abc966a4d97b708cafe4e288, type: 2}
-  - {fileID: 11400000, guid: ac36247dd992ef44082be6578a74cbe2, type: 2}
-  - {fileID: 11400000, guid: 2f92e9eacdf7d96479f9b73da27e801d, type: 2}
-  <CurrentGold>k__BackingField: 0
-  <CurrentGems>k__BackingField: 0
-  items: []
 --- !u!4 &888716577
 Transform:
   m_ObjectHideFlags: 0
@@ -14072,7 +13986,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &888716578
+--- !u!114 &888716580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14081,14 +13995,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 888716572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e2d4b49ea4be234e8f61d2feaae67d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b96d2996733bd44e850f1130c39ee55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableQuests: []
-  activeQuests: []
-  completedQuests: []
-  gachaSystem: {fileID: 888716574}
---- !u!114 &888716579
+  gameManagerPrefab: {fileID: 7269447165425553669, guid: 6646007f9e87bba4dbeedf4896a30001, type: 3}
+  gachaSystemPrefab: {fileID: 3334856041539672393, guid: 2af6ffacf6317ce4f8c35073046fc2f9, type: 3}
+  gachaManagerPrefab: {fileID: 1305766858247586201, guid: 3c7240f592750734187ae960ac84edc9, type: 3}
+  inventory: {fileID: 7493839031873991043, guid: 8db8c9aab61408546b1d572571dcfbe4, type: 3}
+  inventoryItemVisualizer: {fileID: 6987970365979752662, guid: 24f573aabc6ba5a45a5d108bf15e0697, type: 3}
+  playerStats: {fileID: 8616193768890520883, guid: f65877d33d1ea414dbc8d8eb5ef5f252, type: 3}
+--- !u!114 &888716581
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14097,15 +14013,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 888716572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1decccf7cb50744ab941bcb3dc3b643, type: 3}
+  m_Script: {fileID: 11500000, guid: c7c02eae6ef767644afe1e902b6cf437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  attackDamage: 20
-  magicDamage: 20
-  defense: 20
-  magicDefense: 20
-  healingAmount: 10
+  objectsToDestroy:
+  - ToDestroy
 --- !u!1001 &904472882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32594,7 +32506,7 @@ MonoBehaviour:
     description: Summon 10x Cards
     goldReward: 100
     gemReward: 0
-    gachaSystem: {fileID: 888716574}
+    gachaSystem: {fileID: 0}
     goal:
       goalType: 0
       requiredAmount: 10
@@ -32605,7 +32517,7 @@ MonoBehaviour:
     description: Enhance 10x
     goldReward: 100
     gemReward: 0
-    gachaSystem: {fileID: 888716574}
+    gachaSystem: {fileID: 0}
     goal:
       goalType: 1
       requiredAmount: 3

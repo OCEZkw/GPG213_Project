@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7493839031873991043
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8133200474537125173}
+  - component: {fileID: 8036389810149907438}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8133200474537125173
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7493839031873991043}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8036389810149907438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7493839031873991043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 247484f20f2becb4bbe2d538635c32c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardSOs:
+  - {fileID: 11400000, guid: 1b9fad2a2cc78234cbefc427589da5fa, type: 2}
+  - {fileID: 11400000, guid: 71c833e05a0caf34bb0980f08a3668e8, type: 2}
+  - {fileID: 11400000, guid: 785db1c7b45afe74ca4bb7df2bae093c, type: 2}
+  - {fileID: 11400000, guid: 74e345bcddfdf6f49a3892fc030bba99, type: 2}
+  - {fileID: 11400000, guid: 722215746f2d46046bb3f2295c9c9e67, type: 2}
+  - {fileID: 11400000, guid: 4f4eb0336b4d75b4abeef1ca7c8e8438, type: 2}
+  - {fileID: 11400000, guid: e09b1b30abc966a4d97b708cafe4e288, type: 2}
+  - {fileID: 11400000, guid: ac36247dd992ef44082be6578a74cbe2, type: 2}
+  - {fileID: 11400000, guid: 2f92e9eacdf7d96479f9b73da27e801d, type: 2}
+  <CurrentGold>k__BackingField: 0
+  <CurrentGems>k__BackingField: 0
+  items: []
