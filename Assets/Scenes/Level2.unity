@@ -3496,7 +3496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f613d590b2f8ee14d93951336cc6588e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  confirmedCardPosition: {fileID: 0}
+  confirmedCardPosition: {fileID: 1927362245}
   deckManager: {fileID: 1280359853}
   enemySpawner: {fileID: 0}
   playerSpawner: {fileID: 1280359865}
